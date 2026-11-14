@@ -24,7 +24,7 @@ selling, not decoration. One soft sage accent marks the thing to look at.
 
 **House rules**
 - No colored border lines anywhere (no colored top, bottom or left accents on cards, stats, steps or sections). Neutral 1px dividers inside a card are fine.
-- No animation beyond the mobile menu and the hero slider (autoplay, one slide every 3.5s).
+- Motion is calm and short, built from the motion tokens (`--ease-out`, `--dur-fast` 160ms, `--dur-base` 260ms, `--dur-reveal` 800ms). Sections fade up as they scroll in, siblings staggered by `--reveal-step`; the hero arrives in sequence on load; big stats count up once; buttons, cards, icon chips and accordions have small hover moves. All of it turns off for reduced motion (`src/scripts/motion.ts`).
 - Keep homepage copy short. Details (price after month 12, add-on prices) live on their own pages.
 - Only the colors, sizes and spacing below. If something new is needed, add a token here first.
 
@@ -109,6 +109,10 @@ Google Sans and the system font.
 | `--container-padding-x` | 20 → 40px | Side gutter |
 | `--grid-gap` | 16px | Between cards, everywhere |
 | `--card-pad` | 22 → 32px | Inside every card |
+| `--stack-body` | 24px | Heading to its body copy |
+| `--stack-actions` | 32px | Body copy to its buttons |
+
+Two sections on the same surface in a row share their padding (no double gap).
 
 **Radius:** `sm` 10px (inputs, UI icons) · `md` 14px (UI panels, FAQ items, notes) ·
 `lg` 20px (cards, photos) · `xl` 26px (big panels: plan, quiz, add-on band) · `full` (buttons, tags, icon chips).
@@ -148,6 +152,9 @@ only places blue and red appear.
 ### Section header (`SectionHead.astro`)
 Eyebrow, H2, optional intro. `align`: `left` (default), `center` (left on phones) or `split`
 (heading left, intro or link right).
+
+### Reviews (`HomeReviews.astro`)
+Three cards. Long reviews show about 7 lines that fade out under a gradient, with a "Read more" pill that opens the full review in place.
 
 ### Accordion (`.accordion`)
 White items, radius `md`, a round plus that turns into a dark x when open. One open at a time.

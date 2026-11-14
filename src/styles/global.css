@@ -130,6 +130,8 @@
     --container-max: 1280px;
     --container-padding-x: clamp(1.25rem, 0.6rem + 2.6vw, 2.5rem);
     --grid-gap: 1rem;
+    --stack-body: var(--space-6);     /* heading to its body copy */
+    --stack-actions: var(--space-8);  /* body copy to its buttons */
     --card-pad: clamp(1.375rem, 1.1rem + 1vw, 2rem);
     --measure: 58ch;
 
@@ -144,6 +146,14 @@
     --shadow-sm: 0 6px 20px rgb(17 48 28 / 0.07);
     --shadow-md: 0 10px 30px rgb(0 0 0 / 0.12);
     --shadow-lg: 0 18px 40px rgb(0 0 0 / 0.22);
+
+    /* Motion: one easing, three durations. Everything turns off for reduced motion. */
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --dur-fast: 160ms;
+    --dur-base: 260ms;
+    --dur-reveal: 800ms;
+    --reveal-shift: 1.5rem;
+    --reveal-step: 90ms;
 
     /* Legacy names kept for the CMS blocks */
     --section-padding-y: var(--section-y);
@@ -256,6 +266,18 @@
   .section { padding-block: var(--section-y); }
   .pt-section { padding-top: var(--section-y); }
   .pb-section { padding-bottom: var(--section-y); }
+  /* Two sections on the same surface read as one band: no double padding between them.
+     (A component's inline <script> can sit between the two.) */
+  :is(.surface-cream.section, .surface-cream.pb-section) + :is(.surface-cream.section, .surface-cream.pt-section),
+  :is(.surface-cream.section, .surface-cream.pb-section) + script + :is(.surface-cream.section, .surface-cream.pt-section),
+  :is(.surface-white.section, .surface-white.pb-section) + :is(.surface-white.section, .surface-white.pt-section),
+  :is(.surface-white.section, .surface-white.pb-section) + script + :is(.surface-white.section, .surface-white.pt-section),
+  :is(.surface-tint.section, .surface-tint.pb-section) + :is(.surface-tint.section, .surface-tint.pt-section),
+  :is(.surface-tint.section, .surface-tint.pb-section) + script + :is(.surface-tint.section, .surface-tint.pt-section),
+  :is(.surface-deep.section, .surface-deep.pb-section) + :is(.surface-deep.section, .surface-deep.pt-section),
+  :is(.surface-deep.section, .surface-deep.pb-section) + script + :is(.surface-deep.section, .surface-deep.pt-section),
+  :is(.surface-deeper.section, .surface-deeper.pb-section) + :is(.surface-deeper.section, .surface-deeper.pt-section),
+  :is(.surface-deeper.section, .surface-deeper.pb-section) + script + :is(.surface-deeper.section, .surface-deeper.pt-section) { padding-top: 0; }
   .stack > * + * { margin-top: var(--stack, var(--space-4)); }
 
   .grid-2, .grid-3, .grid-4 { display: grid; gap: var(--grid-gap); grid-template-columns: 1fr; }
@@ -298,7 +320,7 @@
 
   /* Section header: eyebrow, heading, intro. Centered on desktop, left on phones. */
   .section-head { margin-bottom: var(--section-head-gap); }
-  .section-head > p:not(.eyebrow) { margin-top: var(--space-5); }
+  .section-head > p:not(.eyebrow) { margin-top: var(--stack-body); }
   .section-head--center { text-align: center; }
   .section-head--center :is(.t-h2, p) { margin-inline: auto; }
   .section-head--split { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: var(--space-6) var(--space-12); }
@@ -504,4 +526,58 @@
   .contact-form .btn { justify-self: start; }
   .contact-form__success { padding: 1.5rem; border-radius: var(--radius-md); background: var(--color-sage-100); }
   .contact-form__success p { color: var(--color-text); font-weight: 600; }
+}
+
+/* ─── Motion ───────────────────────────────────────────────────────────────────
+   Entrance: sections fade up as they scroll in (src/scripts/motion.ts adds .is-in).
+   Hidden only while html has .motion, which is set in <head> when motion is allowed,
+   so the page never stays blank without JavaScript or with reduced motion. */
+@layer components {
+  .motion :is(.section .section-head, .section .split > *, .section .grid-2 > *, .section .grid-3 > *, .section .grid-4 > *, .section .plan, .section .plan__own, .section .accordion > details, [data-reveal]):not(.is-in) {
+    opacity: 0; transform: translateY(var(--reveal-shift));
+  }
+  .motion .is-in {
+    transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-reveal) var(--ease-out);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  /* Hero: the headline, copy and slider arrive in sequence on load. */
+  @keyframes rise { from { opacity: 0; transform: translateY(var(--reveal-shift)); } }
+  @keyframes slide-in { from { opacity: 0; transform: translateX(3rem); } }
+  .motion .hero__top > :first-child > * { animation: rise var(--dur-reveal) var(--ease-out) both; }
+  .motion .hero__top > :first-child > :nth-child(2) { animation-delay: 80ms; }
+  .motion .hero__side { animation: rise var(--dur-reveal) var(--ease-out) 220ms both; }
+  .motion .hero .slide { animation: slide-in 1s var(--ease-out) both; animation-delay: calc(320ms + var(--i, 0) * 90ms); }
+  .motion .hero__trust li { animation: rise var(--dur-reveal) var(--ease-out) both; animation-delay: calc(600ms + var(--i, 0) * 80ms); }
+
+  /* Micro interactions */
+  .btn { transition: background-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out); }
+  .btn:hover { transform: translateY(-2px); }
+  .btn:active { transform: translateY(0) scale(0.98); }
+  .btn .icon, .link .icon { transition: transform var(--dur-base) var(--ease-out); }
+  .btn:hover .icon, .link:hover .icon { transform: translateX(3px); }
+  .link { transition: text-decoration-thickness var(--dur-fast) var(--ease-out); }
+
+  .card { transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
+  .card .icon-chip { transition: transform var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease-out); }
+  .card:hover .icon-chip { transform: scale(1.08) rotate(-4deg); }
+  :is(.result, .review, .card--feature):hover { transform: translateY(-4px); }
+
+  .accordion .plus { transition: transform var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out); }
+  .accordion summary:hover .plus { transform: scale(1.08); }
+  .accordion details[open] summary:hover .plus { transform: rotate(45deg) scale(1.08); }
+  .accordion details { transition: background-color var(--dur-base) var(--ease-out); }
+  @keyframes open-in { from { opacity: 0; transform: translateY(-0.5rem); } }
+  .motion .accordion details[open] > :not(summary) { animation: open-in var(--dur-base) var(--ease-out); }
+
+  .media img { transition: transform 1.2s var(--ease-out); }
+  .media:hover img { transform: scale(1.04); }
+
+  .site-header { transition: box-shadow var(--dur-base) var(--ease-out); }
+  .site-header.is-scrolled { box-shadow: 0 8px 24px rgb(0 0 0 / 0.18); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+    .btn:hover, .card:hover, .card:hover .icon-chip, .media:hover img, .btn:hover .icon, .link:hover .icon { transform: none; }
+  }
 }

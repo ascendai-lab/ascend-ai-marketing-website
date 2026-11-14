@@ -89,6 +89,14 @@ const structuredData = [businessJsonLd, ...jsonLd].filter(Boolean)
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      // Turn on entrance animations before first paint, unless the visitor prefers reduced motion.
+      // If the motion script never loads, show everything after 3 seconds.
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('motion')
+        setTimeout(function () { if (!window.__motionReady) document.documentElement.classList.remove('motion') }, 3000)
+      }
+    </script>
     <title>{pageTitle}</title>
     {pageDescription && <meta name="description" content={pageDescription} />}
     <link rel="canonical" href={canonical} />
@@ -197,6 +205,10 @@ const structuredData = [businessJsonLd, ...jsonLd].filter(Boolean)
       )
     }
     <VisualEditing enabled={draftMode} zIndex={1000} />
+    <script>
+      import '@/scripts/motion'
+      ;(window as unknown as { __motionReady: boolean }).__motionReady = true
+    </script>
   </body>
 </html>
 

@@ -5,7 +5,7 @@ import Btn from '@components/ui/Btn.astro'
 import { results, links } from '@/content/home'
 ---
 
-<Section surface="cream" pad="bottom" anchorId="work">
+<Section surface="cream" anchorId="work">
   <SectionHead eyebrow={results.eyebrow} heading={results.heading} align="split">
     <Btn href={links.work} variant="link" icon="arrow-ur">{results.link}</Btn>
   </SectionHead>
@@ -13,7 +13,7 @@ import { results, links } from '@/content/home'
     {results.items.map((item) => (
       <article class:list={['card result', item.dark && 'surface-deep']}>
         <p class="tag">{item.tag}</p>
-        <p class="result__num">{item.num}</p>
+        <p class="result__num" data-count>{item.num}</p>
         <p class="result__what">{item.what}</p>
         {item.quote && <p class="result__quote">{item.quote}</p>}
         <p class="result__who">{item.who}</p>

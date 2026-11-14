@@ -18,8 +18,10 @@ import { reviews, reviewSummary, links } from '@/content/home'
             <p class="review__stars" aria-label="5 out of 5 stars">
               {[0, 1, 2, 3, 4].map(() => <Icon name="star" fill />)}
             </p>
-            <p class="review__text" id={`review-${i}`} data-clamp>{review.text}</p>
-            <button type="button" class="link review__more" aria-controls={`review-${i}`} aria-expanded="false" hidden>Read more</button>
+            <div class="review__text" id={`review-${i}`}><p>{review.text}</p></div>
+            <button type="button" class="review__more" aria-controls={`review-${i}`} aria-expanded="false" hidden>
+              <span>Read more</span><Icon name="chevron-right" />
+            </button>
             <p class="review__who"><strong>{review.name}</strong><span>{review.detail}</span></p>
           </li>
         ))}
@@ -29,16 +31,24 @@ import { reviews, reviewSummary, links } from '@/content/home'
 }
 
 <script>
-  // Long reviews start collapsed. "Read more" shows the whole review; the button only appears when text is cut off.
+  // Long reviews start collapsed: the last lines fade out under a gradient. "Read more" opens the whole review in place.
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   document.querySelectorAll<HTMLButtonElement>('.review__more').forEach((button) => {
     const text = document.getElementById(button.getAttribute('aria-controls') ?? '')
-    if (!text) return
-    button.hidden = text.scrollHeight <= text.clientHeight + 2
+    const label = button.querySelector('span')
+    if (!text || !label) return
+    const fits = () => text.scrollHeight <= text.clientHeight + 2
+    if (fits()) { text.classList.add('is-short'); return }
+    button.hidden = false
     button.addEventListener('click', () => {
       const open = button.getAttribute('aria-expanded') !== 'true'
+      const from = text.offsetHeight
       text.classList.toggle('is-open', open)
+      const to = text.offsetHeight
       button.setAttribute('aria-expanded', String(open))
-      button.textContent = open ? 'Show less' : 'Read more'
+      label.textContent = open ? 'Show less' : 'Read more'
+      if (reduce) return
+      text.animate([{ height: `${from}px` }, { height: `${to}px` }], { duration: 360, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' })
     })
   })
 </script>
@@ -47,10 +57,25 @@ import { reviews, reviewSummary, links } from '@/content/home'
   .review { display: flex; flex-direction: column; gap: var(--space-5); align-self: start; }
   .review__stars { display: flex; gap: 2px; color: var(--color-brand); }
   .review__stars :global(.icon) { width: 1.125rem; height: 1.125rem; }
-  .review__text { font-size: var(--text-body); line-height: 1.55; color: var(--surface-fg); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5; line-clamp: 5; overflow: hidden; }
+  .review__text {
+    --clamp: 10.5em;
+    max-height: var(--clamp); overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent);
+    mask-image: linear-gradient(to bottom, #000 45%, transparent);
+  }
+  .review__text p { font-size: var(--text-body); line-height: 1.55; color: var(--surface-fg); }
+  .review__text.is-open, .review__text.is-short { max-height: none; -webkit-mask-image: none; mask-image: none; }
+  .review__more {
+    align-self: flex-start; display: inline-flex; align-items: center; gap: var(--space-2);
+    margin-top: calc(var(--space-3) * -1); min-height: 44px; padding: 0 var(--space-4);
+    border: 0; border-radius: var(--radius-full); background: var(--surface-bg, var(--color-surface)); cursor: pointer;
+    font: inherit; font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--surface-fg);
+    box-shadow: inset 0 0 0 1px var(--surface-line);
+  }
   .review__more[hidden] { display: none; }
-  .review__text.is-open { display: block; -webkit-line-clamp: unset; line-clamp: unset; }
-  .review__more { align-self: flex-start; margin-top: calc(var(--space-2) * -1); background: none; border: 0; padding: 0; cursor: pointer; font: inherit; font-size: var(--text-sm); color: var(--surface-fg); }
+  .review__more:hover { box-shadow: inset 0 0 0 1.5px var(--surface-fg); }
+  .review__more :global(.icon) { width: 1rem; height: 1rem; transform: rotate(90deg); transition: transform var(--dur-base) var(--ease-out); }
+  .review__more[aria-expanded='true'] :global(.icon) { transform: rotate(-90deg); }
   .review__who { margin-top: auto; padding-top: var(--space-5); border-top: 1px solid var(--surface-line); font-size: var(--text-sm); color: var(--surface-muted); display: grid; gap: var(--space-1); }
   .review__who strong { color: var(--surface-fg); font-weight: var(--weight-strong); }
 </style>
