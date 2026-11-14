@@ -355,3 +355,24 @@
 .mC .c-footer-base { background: none !important; position: relative; }
 .mC .c-footer-base::before { content: ""; position: absolute; top: 0; left: 40px; right: 40px; height: 1px; background: var(--c-line); }
 @media (max-width: 680px) { .mC .c-footer-base::before { left: 16px; right: 16px; } }
+/* Round 6: C owns rule-separated components */
+.mC .c-hero h1 { font-size: clamp(42px, 4.6vw, 66px); }
+.mC .c-acc { gap: 0; box-shadow: inset 0 1px 0 var(--c-line); }
+.mC .c-acc details { background: transparent; border-radius: 0; box-shadow: inset 0 -1px 0 var(--c-line); }
+.mC .c-acc summary { padding: 24px 0; font-size: 20px; }
+.mC .c-acc details p { padding: 0 0 24px; }
+.mC .c-acc summary .i { background: transparent; box-shadow: inset 0 0 0 1px var(--c-line); }
+.mC .c-acc details[open] summary .i { background: var(--c-ink); color: #fff; box-shadow: none; }
+.mC .c-climate { gap: 0; background: var(--c-bg); border-radius: 24px; overflow: hidden; }
+.mC .c-climate li { background: transparent; border-radius: 0; padding: 36px 32px; }
+.mC .c-climate li + li { box-shadow: inset 1px 0 0 var(--c-line); }
+.mC .c-climate .c-ico { width: 56px; height: 56px; border-radius: 50%; }
+.mC .c-final-panel { background: var(--c-panel); box-shadow: none; }
+.mC .c-quiz { background: #fff; }
+.mC .c-quiz .quiz-option { background: var(--c-bg); }
+.mC .c-worklink { margin-top: 10px; }
+@media (max-width: 1100px) { .mC .c-hq { order: -1; } }
+@media (max-width: 680px) {
+  .mC .c-climate li + li { box-shadow: inset 0 1px 0 var(--c-line); }
+  .mC .c-stats { grid-template-columns: 1fr 1fr; } .mC .c-stats > div { padding: 16px 14px; } .mC .c-stats dd { font-size: 12.5px; }
+}
