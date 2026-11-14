@@ -1,0 +1,46 @@
+---
+/**
+ * The site's one button. Use this for every hand-built button or button link.
+ * (CMS buttons use Button.astro, which renders the same classes.)
+ *  - primary: the main action. Deep green on light surfaces, sage on dark ones.
+ *  - secondary: the second action, an outlined pill.
+ *  - link: an underlined text link for a third, quieter action.
+ */
+import Icon, { type IconName } from './Icon.astro'
+
+interface Props {
+  href?: string
+  variant?: 'primary' | 'secondary' | 'link'
+  size?: 'md' | 'sm'
+  icon?: IconName
+  block?: boolean
+  type?: 'button' | 'submit'
+  class?: string
+  [key: `data-${string}`]: string | undefined
+  'aria-label'?: string
+}
+
+const { href, variant = 'primary', size = 'md', icon, block = false, type = 'button', class: className, ...rest } = Astro.props
+const classes = [variant === 'link' ? 'link' : ['btn', `btn--${variant}`, size === 'sm' && 'btn--sm', block && 'btn--block'], className]
+const external = href?.startsWith('http')
+---
+
+{
+  href ? (
+    <a href={href} class:list={classes} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined} {...rest}>
+      {variant === 'link' ? (
+        <span><slot />{icon && <Icon name={icon} />}</span>
+      ) : (
+        <>
+          <span><slot /></span>
+          {icon && <Icon name={icon} />}
+        </>
+      )}
+    </a>
+  ) : (
+    <button type={type} class:list={classes} {...rest}>
+      <span><slot /></span>
+      {icon && <Icon name={icon} />}
+    </button>
+  )
+}

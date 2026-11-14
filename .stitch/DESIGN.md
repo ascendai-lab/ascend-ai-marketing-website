@@ -1,287 +1,173 @@
-# Design System: [Client Name] ([Business Type])
+# Design System: Ascend AI Marketing (HVAC websites and lead systems) · "Evergreen"
 
-<!--
-  ┌─────────────────────────────────────────────────────────────────┐
-  │  ASCEND AI MARKETING — DESIGN.MD TEMPLATE                       │
-  │                                                                 │
-  │  HOW TO USE THIS FILE:                                          │
-  │  1. Replace every [PLACEHOLDER] with client-specific values     │
-  │  2. This file is read by Google Stitch for design generation    │
-  │  3. This file is read by Claude Code for consistent building    │
-  │  4. The CSS tokens in global.css must match these values        │
-  │  5. Commit this file to the repo root + .stitch/ folder         │
-  └─────────────────────────────────────────────────────────────────┘
--->
+The source of truth for every visual decision on the site. The tokens live in
+`src/styles/global.css` and must match this file. A live preview of every token and
+component is at `/design-system` (not indexed).
 
 ---
 
-## 1. Visual Theme & Atmosphere
+## 1. Visual theme and atmosphere
 
-[2–4 sentences describing the emotional feel and personality of this brand.
-What does the design say about the company? What makes it different from
-competitors in this market? What should a first-time visitor feel?
+Evergreen feels like a calm, sure-footed partner for a busy trade. A deep green hero
+and dark "proof" sections carry authority. Warm cream pages give the copy room to
+breathe. Real product UI (missed-call texts, the lead inbox, booked jobs) does the
+selling, not decoration. One soft sage accent marks the thing to look at.
 
-Example: "Apex Roofing's design is built to convey durability and trust —
-the visual equivalent of a solid handshake. Deep slate tones and structured
-layouts communicate professionalism, while warm accent colors and approachable
-typography remind homeowners this is a family business, not a faceless contractor.
-Where competitors use generic stock-photo-heavy sites, Apex leads with real
-project photography and clear social proof."]
+**Key characteristics**
+- Deep green and warm cream, with a single sage accent.
+- Round, friendly type (Google Sans Flex with a little `ROND`), set light and large.
+- Pill buttons, generous rounded cards, no hard lines between sections.
+- Product UI pieces (texts, inbox rows, status pills) float over real photos.
+- The missed-call quiz is the main call to action. "Book a 15-minute call" is the second.
 
-**Key Characteristics:**
-- [Characteristic 1 — e.g. "Clean, structured layouts that signal professionalism"]
-- [Characteristic 2 — e.g. "Warm accents that humanize a trade business"]
-- [Characteristic 3 — e.g. "Real photography over stock images"]
-- [Characteristic 4 — e.g. "Bold, scannable headlines for busy homeowners"]
+**Name rule:** always write the full name, **Ascend AI Marketing**. Never "Ascend AI".
 
----
-
-## 2. Color Palette & Roles
-
-### Primary
-- **Brand Primary** (`#[HEX]`): [Role — e.g. "CTA buttons, links, active nav states, key highlights"]
-- **Brand Hover** (`#[HEX]`): [Role — e.g. "Hover state for brand primary elements"]
-- **Brand Accent** (`#[HEX]`): [Role — e.g. "Secondary highlights, badges, decorative elements"]
-
-### Surfaces & Backgrounds
-- **Background** (`#[HEX]`): [Role — e.g. "Primary page background"]
-- **Background Muted** (`#[HEX]`): [Role — e.g. "Section alternation, card backgrounds"]
-- **Background Dark** (`#[HEX]`): [Role — e.g. "Footer, dark CTA sections"]
-
-### Text
-- **Text Primary** (`#[HEX]`): [Role — e.g. "Headings and high-emphasis body text"]
-- **Text Muted** (`#[HEX]`): [Role — e.g. "Body copy, descriptions, secondary info"]
-- **Text Inverse** (`#[HEX]`): [Role — e.g. "Text on dark backgrounds"]
-
-### Borders
-- **Border** (`#[HEX]`): [Role — e.g. "Default borders, card outlines, dividers"]
-- **Border Strong** (`#[HEX]`): [Role — e.g. "Prominent borders, hover states"]
-
-### Semantic
-- **Success** (`#[HEX]`): [Role — e.g. "Form success states, confirmation messages"]
-- **Error** (`#[HEX]`): [Role — e.g. "Form errors, warnings"]
+**House rules**
+- No colored border lines anywhere (no colored top, bottom or left accents on cards, stats, steps or sections). Neutral 1px dividers inside a card are fine.
+- No animation beyond the mobile menu and the hero slider's scroll.
+- Only the colors, sizes and spacing below. If something new is needed, add a token here first.
 
 ---
 
-## 3. Typography Rules
+## 2. Color
 
-### Font Families
-- **Heading**: `[Font Name]` — [Why this font / what it conveys]
-- **Body**: `[Font Name]` — [Why this font / what it conveys]
-- **Mono** (optional): `[Font Name]` — for code or data
-
-*Google Fonts import URL: `[paste the Google Fonts URL here]`*
-
-### Hierarchy
-
-| Role | Font | Size | Weight | Line Height | Notes |
-|---|---|---|---|---|---|
-| Display / H1 | [Heading] | clamp(2rem, 5vw, 3.5rem) | 800 | 1.1 | Homepage hero only |
-| H2 | [Heading] | clamp(1.75rem, 3vw, 2.5rem) | 700 | 1.2 | Section headings |
-| H3 | [Heading] | 1.5rem | 700 | 1.3 | Card titles, sub-sections |
-| H4 | [Heading] | 1.125rem | 600 | 1.4 | Small headings |
-| Body Large | [Body] | 1.125rem | 400 | 1.6 | Intro paragraphs |
-| Body | [Body] | 1rem | 400 | 1.6 | Standard body copy |
-| Body Small | [Body] | 0.875rem | 400 | 1.5 | Captions, metadata |
-| Label | [Body] | 0.75rem | 600 | 1.4 | Badges, tags, overlines |
-| Button | [Body] | 1rem | 700 | 1 | All button text |
-
-### Principles
-- [Principle 1 — e.g. "Headings are bold and assertive — this is a trade business, not a spa"]
-- [Principle 2 — e.g. "Body text is generous at 1.6 line-height — mobile readers need breathing room"]
-- [Principle 3 — e.g. "No font sizes below 14px anywhere on the site"]
-
----
-
-## 4. Component Stylings
-
-### Buttons
-
-**Primary Button**
-- Background: Brand Primary (`#[HEX]`)
-- Text: White or Text Inverse
-- Padding: `0.75rem 1.75rem`
-- Radius: `var(--radius-md)` ([VALUE]px)
-- Hover: Brand Hover (`#[HEX]`)
-- [Any other notes]
-
-**Secondary / Outline Button**
-- Background: Transparent
-- Border: 2px solid Border Strong
-- Text: Text Primary
-- Hover: Background Muted fill
-- Radius: same as primary
-
-**Ghost Button**
-- Background: Transparent
-- Text: Brand Primary
-- No border
-- Hover: Background Muted
-
-### Cards
-- Background: Background Muted (`#[HEX]`)
-- Border: 1px solid Border (`#[HEX]`)
-- Radius: `var(--radius-xl)` ([VALUE]px)
-- Padding: `2rem`
-- Hover: Lifted shadow — `0 8px 30px rgba(0,0,0,0.08)`
-
-### Forms / Inputs
-- Background: Background (`#[HEX]`)
-- Border: 1px solid Border
-- Focus: 2px ring, Brand Primary color
-- Radius: `var(--radius-md)`
-- Padding: `0.625rem 0.875rem`
-- Font size: `1rem`
-
-### Navigation
-- Background: Background + `backdrop-filter: blur(8px)`
-- Position: `sticky top-0`
-- Height: `4rem`
-- Border-bottom: 1px solid Border
-- Active link: Text Primary + Background Muted highlight
-- CTA button: Primary Button style
-
-### Hero Section
-- Background: Background Muted
-- Layout: [Single column / Two column split / Full-width image overlay]
-- Headline size: Display (clamp)
-- [Any other notes]
-
----
-
-## 5. Layout Principles
-
-### Spacing System (base 8px)
-- `--spacing-1`: 0.5rem (8px)
-- `--spacing-2`: 1rem (16px)
-- `--spacing-3`: 1.5rem (24px)
-- `--spacing-4`: 2rem (32px)
-- `--spacing-6`: 3rem (48px)
-- `--spacing-8`: 4rem (64px)
-- `--spacing-10`: 5rem (80px)
-
-### Container
-- Max width: `1200px`
-- Padding: `1.5rem` each side (mobile: `1rem`)
-
-### Section Padding
-- Standard sections: `5rem` top and bottom
-- Hero: `5rem` top, `5rem` bottom
-- Compact sections: `3rem` top and bottom
-
-### Grid System
-- Mobile: single column
-- Tablet (640px+): 2-column
-- Desktop (1024px+): up to 3-column
-- Gap: `1.5rem` standard, `2rem` for feature grids
-
-### Border Radius Scale
-- `--radius-sm`: 4px — minimal elements
-- `--radius-md`: 8px — buttons, inputs
-- `--radius-lg`: 12px — small cards
-- `--radius-xl`: 16px — standard cards
-- `--radius-2xl`: 24px — hero images, large containers
-- `--radius-full`: 9999px — pills, badges
-
----
-
-## 6. Depth & Elevation
-
-| Level | Treatment | Used For |
+### Primitives (`@theme` in global.css, also Tailwind utilities)
+| Token | Hex | Use |
 |---|---|---|
-| Flat | No shadow, no border | Page background |
-| Bordered | `1px solid var(--color-border)` | Cards, inputs |
-| Lifted | `0 4px 16px rgba(0,0,0,0.06)` | Hover cards |
-| Floating | `0 8px 30px rgba(0,0,0,0.10)` | Modals, dropdowns |
-| Hero | `0 25px 50px rgba(0,0,0,0.15)` | Hero images |
+| `green-950` | `#0d2616` | Deepest sections (How it works) |
+| `green-900` | `#11301c` | Header, hero, dark sections, primary button on light |
+| `green-800` | `#173d25` | Photo placeholders |
+| `green-700` | `#194728` | Brand green: icons, eyebrow dot, links on light |
+| `sage-300` | `#abc9ae` | The accent: primary button on dark, accent words, "now" price |
+| `sage-200` | `#c4dcc6` | Sage hover |
+| `sage-100` | `#dce8dd` | Tint band, score box, "booked" status |
+| `cream-200` | `#eee8dd` | Page background |
+| `cream-100` | `#f7f3ec` | Cards on white, quiz options, inputs |
+| `white` | `#ffffff` | Cards on cream, white sections |
+| `ink` | `#1e1e1e` | Headings and strong text |
+| `stone-600` | `#474d49` | Body text |
+| `stone-500` | `#5f6661` | Muted text, labels |
+| `line` | `#e4ddd0` | Dividers |
+| `blue-500` | `#2d9ffe` | Product UI only (text bubbles, UI icons) |
+| `red-600` / `red-100` | `#c9412b` / `#fde9e6` | Missed-call icon in product UI, form errors |
+
+Tailwind's default palette is switched off, so off-brand colors can't be used by accident.
+
+### Surfaces
+Every section is one surface. The surface sets its children's colors, so cards, buttons,
+icons and text adapt without extra classes.
+
+| Surface | Background | Cards | Primary button |
+|---|---|---|---|
+| `surface-cream` | cream-200 | white | green-900 |
+| `surface-white` | white | cream-100 | green-900 |
+| `surface-tint` | sage-100 | white | green-900 |
+| `surface-deep` | green-900 | white at 6% | sage-300 |
+| `surface-deeper` | green-950 | white at 6% | sage-300 |
+
+Page rhythm: deep hero, then cream and white sections, with deep sections used for
+proof and the final quiz.
 
 ---
 
-## 7. Do's and Don'ts
+## 3. Typography
 
-### House rules (apply to every Ascend AI site, keep them when filling in this file)
-- NEVER use colored border lines: no colored top/bottom/left accent stripes on cards, stats, steps, quotes or sections. Separate things with space, a background or a soft shadow. Neutral hairlines on inputs and dividers are fine.
-- Give every element breathing room. Never jam a button under text in a tight box.
-- White (or near-white) page background; use tints sparingly so accent colors blend instead of clashing.
-- Hero fact lists (hours, ages, address) are plain icon text, not chips, so the main CTA stands out. Keep buttons slim.
-- Nothing that looks AI-generated: no generic bordered stat strips, gimmicky doodles or repeated filler sections.
+**Font:** Google Sans Flex (`opsz,wdth,wght,ROND`), `ROND 20`, falling back to
+Google Sans and the system font.
 
-### Do
-- [DO 1 — e.g. "Use Brand Primary only for CTAs and key interactive elements"]
-- [DO 2 — e.g. "Alternate section backgrounds between Background and Background Muted"]
-- [DO 3 — e.g. "Use real client photography wherever possible"]
-- [DO 4 — e.g. "Keep paragraphs short — 2–3 sentences max for this audience"]
-- [DO 5 — e.g. "Include a CTA in every section — this is a lead-gen site"]
+| Role | Class | Size | Weight | Line height |
+|---|---|---|---|---|
+| Display (H1) | `.t-display` | 40 → 70px | 400 | 1.04 |
+| H2 | `.t-h2` | 32 → 52px | 420 | 1.1 |
+| H3 | `.t-h3` | 22 → 26px | 420 | 1.2 |
+| H4 / card title | `.t-h4` | 18px | 550 | 1.3 |
+| Stat | `--text-stat` | 48 → 64px | 450 | 1 |
+| Lead | `.lead` | 19 → 24px | 400 | 1.45 |
+| Body large | `.body-lg` | 18px | 400 | 1.65 |
+| Body | — | 16px | 400 | 1.6 |
+| Small | `.text-sm` | 14px | 400 | 1.5 |
+| Label / eyebrow | `.eyebrow` | 13px, caps, +0.16em | 500 | — |
+| Button | `.btn` | 16px (14px small) | 560 | 1 |
 
-### Don't
-- [DON'T 1 — e.g. "Don't use more than 2 type weights — bold and regular only"]
-- [DON'T 2 — e.g. "Don't use gradients — flat color only"]
-- [DON'T 3 — e.g. "Don't use decorative fonts — legibility is priority one"]
-- [DON'T 4 — e.g. "Don't stack more than 2 CTAs in the same view"]
-- [DON'T 5 — e.g. "Don't use cool-toned grays — all neutrals should feel warm"]
+- Headings are light and large, with tight negative tracking. Wrap one phrase in `<em>` to color it (sage on dark, green on light).
+- Every section opens with an eyebrow: a small square dot and an uppercase label.
+- Nothing smaller than 12px. Body copy stays under about 60 characters wide.
 
 ---
 
-## 8. Responsive Behavior
+## 4. Space, radius, elevation
 
-### Breakpoints
-| Name | Width | Key Changes |
+**Space** is a 4px scale: `--space-1` (4) `-2` (8) `-3` (12) `-4` (16) `-5` (20) `-6` (24)
+`-8` (32) `-10` (40) `-12` (48) `-14` (56) `-16` (64) `-20` (80).
+
+| Token | Value | Use |
 |---|---|---|
-| Mobile | < 640px | Single column, stacked nav, reduced type scale |
-| Tablet | 640px–1023px | 2-column grids, condensed nav |
-| Desktop | 1024px+ | Full layout, multi-column, max typography |
+| `--section-y` | 80 → 120px | Top and bottom of every section |
+| `--section-head-gap` | 40 → 56px | Section header to its content |
+| `--container-max` | 1280px | Content width |
+| `--container-padding-x` | 20 → 40px | Side gutter |
+| `--grid-gap` | 16px | Between cards, everywhere |
+| `--card-pad` | 22 → 32px | Inside every card |
 
-### Collapsing Strategy
-- Navigation: full horizontal → hamburger at mobile
-- Hero: 2-column → single column stacked (text above image)
-- Service cards: 3-col → 2-col → 1-col
-- Footer: 3-col → 2-col → 1-col
-- Type scale: clamp() handles fluid scaling automatically
+**Radius:** `sm` 10px (inputs, UI icons) · `md` 14px (UI panels, FAQ items, notes) ·
+`lg` 20px (cards, photos) · `xl` 26px (big panels: plan, quiz, add-on band) · `full` (buttons, tags, icon chips).
 
----
-
-## 9. Agent Prompt Guide
-
-### Quick Color Reference
-```
-Brand Primary:    #[HEX]
-Brand Hover:      #[HEX]
-Background:       #[HEX]
-Background Muted: #[HEX]
-Text Primary:     #[HEX]
-Text Muted:       #[HEX]
-Border:           #[HEX]
-```
-
-### CSS Variable Mapping
-```css
---color-brand:         #[HEX];
---color-brand-hover:   #[HEX];
---color-bg:            #[HEX];
---color-bg-muted:      #[HEX];
---color-bg-dark:       #[HEX];
---color-text:          #[HEX];
---color-text-muted:    #[HEX];
---color-text-inverse:  #[HEX];
---color-border:        #[HEX];
---color-border-strong: #[HEX];
---font-heading:        '[Font Name]', system-ui, sans-serif;
---font-body:           '[Font Name]', system-ui, sans-serif;
-```
-
-### Example Component Prompts (for Stitch)
-- "Create a hero section on [Background Muted] with a [Display] headline in [Heading font] weight 800.
-   Subheadline in [Text Muted] at Body Large. Primary CTA button in [Brand Primary] with white text,
-   [radius-md] radius. Two-column layout with text left, image right."
-
-- "Design a service card on [Background Muted] with [border] border, [radius-xl] radius.
-   Icon placeholder in [Brand Primary]. Card title in H3 [Heading font]. Description in Body [Body font]
-   [Text Muted]. Hover: lifted shadow."
-
-- "Build a dark CTA banner section on [Background Dark] background. Headline in white H2.
-   Body text in white 80% opacity. Button in white background, [Brand Primary] text."
+**Elevation:** only things floating over a photo get a shadow: `--shadow-sm` (UI panel),
+`--shadow-md` (notes, chip cards), `--shadow-lg` (inbox, quiz).
 
 ---
 
-*Generated by Ascend AI Marketing — Design.MD Generator*
-*Client: [Client Name] | Date: [DATE] | Version: 1.0*
+## 5. Components
+
+### Buttons (`Btn.astro`, classes `.btn`)
+One height (52px), one pill shape, two styles and a text link. The header button is the only small one (42px).
+- **Primary** `.btn--primary`: the main action. Green-900 on light surfaces, sage on dark ones. Hover goes to ink (light) or white (dark).
+- **Secondary** `.btn--secondary`: an outlined pill. White with a hairline on light, transparent with a 40% white ring on dark.
+- **Link** `.link`: underlined text with an optional arrow, for a third, quieter action.
+- On phones, buttons in an `.actions` row go full width.
+- CMS buttons (`Button.astro`) render the same classes. The old `ghost` variant maps to the link style.
+
+### Cards (`.card`)
+- Background from the surface (`--surface-card`), radius `lg`, padding `--card-pad`, no border, no shadow.
+- `.card--feature`: icon chip, title, text. On phones it becomes a row.
+- `.card--row`: icon chip beside one line of text.
+- A dark card in a light section adds `surface-deep` to the card itself.
+
+### Icon chip (`.icon-chip`)
+44px circle with a 20px stroke icon. Green-900 with white on light surfaces, sage at 16% with
+sage on dark. `.icon-chip--ui` is the blue rounded square used only inside product UI.
+
+### Tags (`.tag`)
+Small pills for categories ("Local SEO and Google Ads") and offers (`.tag--accent`, sage).
+
+### Product UI
+`.ui-panel`, `.ui-row`, `.bubble`, `.avatar`, `.status--new|done|muted`, `.float-note`. These are the
+only places blue and red appear.
+
+### Section header (`SectionHead.astro`)
+Eyebrow, H2, optional intro. `align`: `left` (default), `center` (left on phones) or `split`
+(heading left, intro or link right).
+
+### Accordion (`.accordion`)
+White items, radius `md`, a round plus that turns into a dark x when open. One open at a time.
+
+### Hero slider (`HeroSlider.astro`)
+A row of photo and product-UI cards that scrolls sideways, with snap points and prev/next
+buttons. No quiz card in the slider, and no autoplay.
+
+### Missed-call quiz (`MissedCallQuiz.astro`)
+White panel, radius `xl`, shadow `lg`. Four-option answers on cream-100. The lead posts to
+`/api/contact`.
+
+### Header and footer
+- Header: sticky, green-900, logo left, pill nav centered, primary button right. On phones: a full-screen green menu.
+- Footer: cream, logo and quiz button, three link columns, then **Ascend AI Marketing** in very large green type across the full width (no logo mark), then the copyright line.
+
+---
+
+## 6. Building pages (DRY)
+
+- Copy for the homepage lives in `src/content/home.ts`. Sections live in `src/components/home/`.
+- New pages are built from the same pieces: `Section`, `SectionHead`, `Btn`, `.card`, `.icon-chip`, `.grid-2|3|4`, `.split`.
+- Service pages share one template; only their content changes.
+- Never write a raw color, font size, radius or spacing value in a component. Use a token.

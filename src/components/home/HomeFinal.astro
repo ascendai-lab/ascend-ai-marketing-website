@@ -1,0 +1,25 @@
+---
+import Section from '@components/ui/Section.astro'
+import Btn from '@components/ui/Btn.astro'
+import MissedCallQuiz from './MissedCallQuiz.astro'
+import { finalCta, links, hero } from '@/content/home'
+---
+
+<Section surface="deep" anchorId="quiz">
+  <div class="split">
+    <div>
+      <p class="eyebrow">{finalCta.eyebrow}</p>
+      <h2 class="t-h2 final__h" set:html={finalCta.heading} />
+      <p class="body-lg final__body">{finalCta.body}</p>
+      <div class="actions final__actions"><Btn href={links.book} variant="secondary">{hero.secondary}</Btn></div>
+      <Btn href={links.teardown} variant="link" icon="arrow-ur">{finalCta.teardown}</Btn>
+    </div>
+    <MissedCallQuiz id="missed-call-quiz" />
+  </div>
+</Section>
+
+<style>
+  .final__h { font-size: clamp(2.375rem, 1.6rem + 3vw, 3.875rem); max-width: 13ch; }
+  .final__body { margin-top: var(--space-6); }
+  .final__actions { margin: var(--space-8) 0 var(--space-2); }
+</style>

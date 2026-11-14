@@ -1,0 +1,51 @@
+---
+import Section from '@components/ui/Section.astro'
+import Btn from '@components/ui/Btn.astro'
+import Icon from '@components/ui/Icon.astro'
+import { faq, links, hero } from '@/content/home'
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.items.map((item) => ({ '@type': 'Question', name: item.q, acceptedAnswer: { '@type': 'Answer', text: item.a } })),
+}
+---
+
+<Section surface="cream" anchorId="faq">
+  <div class="split split--top">
+    <div>
+      <p class="eyebrow">{faq.eyebrow}</p>
+      <h2 class="t-h2">{faq.heading}</h2>
+      <p class="body-lg faq__body">{faq.body}</p>
+      <div class="actions faq__actions">
+        <Btn href={links.quiz} icon="arrow">{hero.primary}</Btn>
+        <Btn href={links.book} variant="secondary">{hero.secondary}</Btn>
+      </div>
+    </div>
+    <div class="accordion" data-one-open>
+      {faq.items.map((item, i) => (
+        <details open={i === 0}>
+          <summary>{item.q}<span class="plus"><Icon name="plus" /></span></summary>
+          <p>{item.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+  <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+</Section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-one-open]').forEach((group) => {
+    group.addEventListener('toggle', (event) => {
+      const opened = event.target as HTMLDetailsElement
+      if (!opened.open) return
+      group.querySelectorAll<HTMLDetailsElement>('details[open]').forEach((d) => { if (d !== opened) d.open = false })
+    }, true)
+  })
+</script>
+
+<style>
+  .faq__body { margin-top: var(--space-6); }
+  .faq__actions { margin-top: var(--space-8); }
+  @media (min-width: 1101px) { .split { grid-template-columns: 5fr 7fr; } }
+</style>

@@ -1,0 +1,35 @@
+---
+/** Eyebrow, heading and intro for a section. Put <em> in the heading to color one phrase. */
+interface Props {
+  eyebrow?: string
+  heading: string
+  intro?: string
+  align?: 'left' | 'center' | 'split'
+  as?: 'h1' | 'h2'
+  class?: string
+}
+
+const { eyebrow, heading, intro, align = 'left', as: Tag = 'h2', class: className } = Astro.props
+---
+
+<header class:list={['section-head', align !== 'left' && `section-head--${align}`, className]}>
+  {
+    align === 'split' ? (
+      <>
+        <div>
+          {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+          <Tag class="t-h2" set:html={heading} />
+        </div>
+        {intro && <p class="body-lg">{intro}</p>}
+        <slot />
+      </>
+    ) : (
+      <>
+        {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+        <Tag class="t-h2" set:html={heading} />
+        {intro && <p class="body-lg">{intro}</p>}
+        <slot />
+      </>
+    )
+  }
+</header>

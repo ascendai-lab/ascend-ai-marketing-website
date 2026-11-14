@@ -8,6 +8,7 @@ import { applyTitleTemplate } from '@/lib/format'
 import { toOpeningHoursSpec } from '@/lib/hours'
 import Header from '@components/layout/Header.astro'
 import Footer from '@components/layout/Footer.astro'
+import Icons from '@components/ui/Icons.astro'
 import type { SanityImageValue } from '@components/ui/SanityImage.astro'
 
 interface Seo {
@@ -38,7 +39,7 @@ const { layout, title, seo, description, image, type = 'website', publishedAt, m
 const { settings } = layout
 const { draftMode } = Astro.locals
 
-const siteName = stegaClean(settings?.siteName) || 'Website'
+const siteName = stegaClean(settings?.siteName) || 'Ascend AI Marketing'
 const defaults = settings?.defaultSeo
 const rawTitle = stegaClean(seo?.metaTitle || title || defaults?.metaTitle) || ''
 const pageTitle = rawTitle ? applyTitleTemplate(settings?.titleTemplate, rawTitle) : siteName
@@ -119,6 +120,10 @@ const structuredData = [businessJsonLd, ...jsonLd].filter(Boolean)
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       )
     }
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wdth,wght,ROND@6..144,75..125,300..800,0..100&display=swap" />
+    <meta name="theme-color" content="#11301c" />
     <link rel="sitemap" href="/sitemap.xml" />
     {tracking?.googleSiteVerification && <meta name="google-site-verification" content={stegaClean(tracking.googleSiteVerification)} />}
 
@@ -173,6 +178,7 @@ const structuredData = [businessJsonLd, ...jsonLd].filter(Boolean)
         </noscript>
       )
     }
+    <Icons />
     <a href="#main-content" class="skip-link btn btn--primary">Skip to content</a>
 
     <Header layout={layout} />

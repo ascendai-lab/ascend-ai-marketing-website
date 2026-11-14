@@ -9,8 +9,8 @@ Your techs are on roofs, in attics and under houses. Nobody can answer every cal
 If you don't pick up, they call the next number on Google. You never hear from them again.
 It's frustrating. You do good work. Still, money slips away each time the phone rings and no one gets to it. A good shop should not lose a job to a voicemail.
 We've watched good shops lose jobs this way
-We've watched good contractors lose jobs to slow callbacks. That's why Ascend AI exists. Missed call text back is one of the first things we set up for your shop. It starts working the day you go live.
-Mark Johnson founded Ascend AI in 2019. He has 20+ years building websites and has built hundreds of them. You work with a real team you can reach, not a ticket system.
+We've watched good contractors lose jobs to slow callbacks. That's why Ascend AI Marketing exists. Missed call text back is one of the first things we set up for your shop. It starts working the day you go live.
+Mark Johnson founded Ascend AI Marketing in 2019. He has 20+ years building websites and has built hundreds of them. You work with a real team you can reach, not a ticket system.
 Etheric Networks (past client) got 45 qualified leads in 60 days. "Within just two months, we saw incredible results." Camille, Etheric Networks.
 Three steps to missed call text back
 Take the 60-second quiz. See what missed calls may cost your shop.

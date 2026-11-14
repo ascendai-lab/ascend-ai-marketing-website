@@ -9,8 +9,8 @@ A homeowner fills out your form. Then they fill out two more on other sites. Who
 You see the lead at lunch. Or tonight. Or tomorrow morning. By then, someone else has called and booked it.
 You're on a job, not at a desk. But it stings to know a lead went cold before you saw it. A good shop should not lose a job because it was busy doing good work.
 We build replies that don't wait on you
-We've watched good contractors lose jobs to slow callbacks. That's why Ascend AI exists. You can't drop a job to answer every form. You don't have to.
-Mark Johnson founded Ascend AI in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
+We've watched good contractors lose jobs to slow callbacks. That's why Ascend AI Marketing exists. You can't drop a job to answer every form. You don't have to.
+Mark Johnson founded Ascend AI Marketing in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
 Etheric Networks (past client) got 45 qualified leads in 60 days. "Within just two months, we saw incredible results." Camille, Etheric Networks. We also linked their web forms to their sales team, so every lead got a fast follow-up.
 Speed to lead in three steps
 Take the 60-second quiz. See what slow replies may cost your shop.

@@ -1,0 +1,121 @@
+---
+/** A live sheet of every token and component. Not indexed. See .stitch/DESIGN.md. */
+import BaseLayout from '@layouts/BaseLayout.astro'
+import Section from '@components/ui/Section.astro'
+import SectionHead from '@components/ui/SectionHead.astro'
+import Btn from '@components/ui/Btn.astro'
+import Icon from '@components/ui/Icon.astro'
+import { loadQuery } from '@cms/lib/load'
+import { layoutQuery } from '@cms/queries'
+import type { Layout } from '@cms/lib/types'
+
+const emptyLayout: Layout = { settings: null, navigation: null, footerPages: [] }
+const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => emptyLayout)
+
+const colors = [
+  ['green-950', '#0d2616'], ['green-900', '#11301c'], ['green-800', '#173d25'], ['green-700', '#194728'],
+  ['sage-300', '#abc9ae'], ['sage-200', '#c4dcc6'], ['sage-100', '#dce8dd'],
+  ['cream-200', '#eee8dd'], ['cream-100', '#f7f3ec'], ['white', '#ffffff'],
+  ['ink', '#1e1e1e'], ['stone-600', '#474d49'], ['stone-500', '#5f6661'], ['line', '#e4ddd0'],
+  ['blue-500', '#2d9ffe'], ['red-600', '#c9412b'],
+]
+const type = [
+  ['t-display', 'Display · 40 → 70', 'Book more HVAC jobs'],
+  ['t-h2', 'H2 · 32 → 52', 'Three steps to a full schedule.'],
+  ['t-h3', 'H3 · 22 → 26', 'Go live in 72 hours.'],
+  ['t-h4', 'H4 · 18', 'Missed call text back'],
+  ['lead', 'Lead · 19 → 24', "It's not your work. It's your phone."],
+  ['body-lg', 'Body large · 18', 'We build your HVAC website and lead system.'],
+  ['', 'Body · 16', 'Calls, texts and web forms land in one inbox.'],
+  ['text-sm', 'Small · 14', 'You pay Google or Meta for ad spend.'],
+]
+const spaces = [1, 2, 3, 4, 5, 6, 8, 10, 12, 14, 16, 20]
+const radii = ['sm', 'md', 'lg', 'xl', 'full']
+---
+
+<BaseLayout layout={layout} seo={{ metaTitle: 'Design system', noIndex: true }}>
+  <Section surface="deep">
+    <p class="eyebrow">Ascend AI Marketing · Evergreen</p>
+    <h1 class="t-display">Design system</h1>
+    <p class="body-lg ds-intro">Every color, size and component the site uses. Change a token in global.css and it changes everywhere.</p>
+  </Section>
+
+  <Section surface="cream">
+    <SectionHead eyebrow="Color" heading="Palette" />
+    <ul class="ds-swatches">
+      {colors.map(([name, hex]) => (
+        <li><span style={`background:${hex}`} /><strong>{name}</strong><code>{hex}</code></li>
+      ))}
+    </ul>
+  </Section>
+
+  <Section surface="white">
+    <SectionHead eyebrow="Type" heading="Type scale" intro="Google Sans Flex, ROND 20." />
+    <ul class="ds-type">
+      {type.map(([cls, label, sample]) => (
+        <li><code>{label}</code><p class={cls}>{sample}</p></li>
+      ))}
+    </ul>
+  </Section>
+
+  <Section surface="cream">
+    <SectionHead eyebrow="Space and shape" heading="Spacing and radius" intro="A 4px scale. Cards are 16px apart everywhere." />
+    <ul class="ds-space">
+      {spaces.map((n) => <li><span style={`width:var(--space-${n})`} /><code>space-{n} · {n * 4}px</code></li>)}
+    </ul>
+    <ul class="ds-radius">
+      {radii.map((r) => <li><span style={`border-radius:var(--radius-${r})`} /><code>{r}</code></li>)}
+    </ul>
+  </Section>
+
+  {(['cream', 'white', 'deep'] as const).map((surface) => (
+    <Section surface={surface}>
+      <SectionHead eyebrow={`Surface · ${surface}`} heading="Buttons, cards and chips" />
+      <div class="actions">
+        <Btn href="#" icon="arrow">Take the 60-second quiz</Btn>
+        <Btn href="#" variant="secondary">Book a 15-minute call</Btn>
+        <Btn href="#" variant="link" icon="arrow-ur">See the full plan</Btn>
+        <Btn href="#" size="sm">Small (header only)</Btn>
+      </div>
+      <ul class="grid-3 ds-cards">
+        <li class="card card--feature"><span class="icon-chip"><Icon name="phone-missed" /></span><h3 class="t-h4">Missed call text back</h3><p>If you can't answer, the homeowner gets a text in seconds.</p></li>
+        <li class="card card--row"><span class="icon-chip"><Icon name="clock" /></span><p>Web leads sit for hours before anyone calls back.</p></li>
+        <li class="card"><p class="tag">Local SEO and Google Ads</p><p class="ds-stat">$100,000+</p><p>in revenue</p></li>
+      </ul>
+    </Section>
+  ))}
+
+  <Section surface="white">
+    <SectionHead eyebrow="Product UI" heading="UI pieces" />
+    <div class="grid-3">
+      <div class="ui-panel">
+        <div class="ui-row"><span class="ui-missed"><Icon name="phone-missed" /></span><div><strong>Missed call</strong><span>2:14 PM · Homeowner</span></div></div>
+        <p class="bubble">Sorry we missed you! This is your HVAC team.</p>
+        <p class="bubble bubble--in">AC stopped cooling.</p>
+      </div>
+      <div class="ui-panel">
+        <div class="ui-row"><span class="avatar">JR</span><div><strong>AC not cooling</strong><span>Missed call · text sent</span></div><em class="status status--new">New</em></div>
+        <div class="ui-row"><span class="avatar">SM</span><div><strong>Furnace tune-up</strong><span>Booked Tue 9:00 AM</span></div><em class="status status--done">Booked</em></div>
+      </div>
+      <div class="float-note"><span class="icon-chip icon-chip--ui"><Icon name="cal" /></span><div><strong>New job booked</strong><span>On your calendar by lunch</span></div></div>
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  .ds-intro { margin-top: var(--space-6); }
+  .ds-swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: var(--grid-gap); }
+  .ds-swatches li { display: grid; gap: var(--space-1); font-size: var(--text-sm); }
+  .ds-swatches span { height: 5rem; border-radius: var(--radius-md); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.06); }
+  .ds-swatches code, .ds-type code, .ds-space code, .ds-radius code { font-family: var(--font-mono); font-size: 0.75rem; color: var(--surface-muted); }
+  .ds-type li { display: grid; gap: var(--space-2); padding-block: var(--space-5); border-top: 1px solid var(--surface-line); }
+  .ds-type p { max-width: none; }
+  .ds-space { display: grid; gap: var(--space-2); }
+  .ds-space li { display: flex; align-items: center; gap: var(--space-4); }
+  .ds-space span { height: 1rem; background: var(--color-green-700); border-radius: 2px; }
+  .ds-radius { display: flex; flex-wrap: wrap; gap: var(--space-6); margin-top: var(--space-10); }
+  .ds-radius li { display: grid; gap: var(--space-2); justify-items: center; }
+  .ds-radius span { width: 5rem; height: 5rem; background: var(--color-white); }
+  .ds-cards { margin-top: var(--space-10); }
+  .ds-stat { font-size: var(--text-stat); line-height: 1; letter-spacing: -0.04em; color: var(--surface-fg); margin: var(--space-6) 0 var(--space-2); }
+</style>

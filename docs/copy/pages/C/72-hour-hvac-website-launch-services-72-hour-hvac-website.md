@@ -10,8 +10,8 @@ Every one of those days, homeowners land on an old, slow site. They hit back and
 It's frustrating. Maybe an agency burned you before. You paid every month and still don't own the site.
 A good shop should not lose a job to a voicemail.
 A real team that builds fast.
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
-Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI started in 2019. You get a real team, not a ticket system.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
+Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. You get a real team, not a ticket system.
 Etheric Networks (past client) got 45 qualified leads in 60 days.
 "Within just two months, we saw incredible results." Camille, Etheric Networks
 Miracle Temple C.O.G.I.C. (past client, church website): over $750,000 given online through the giving system we built. We've been their web partner for 12+ years, and we still are.

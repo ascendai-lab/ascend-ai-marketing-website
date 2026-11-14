@@ -1,0 +1,33 @@
+---
+import Section from '@components/ui/Section.astro'
+import SectionHead from '@components/ui/SectionHead.astro'
+import Btn from '@components/ui/Btn.astro'
+import { results, links } from '@/content/home'
+---
+
+<Section surface="cream" pad="bottom" anchorId="work">
+  <SectionHead eyebrow={results.eyebrow} heading={results.heading} align="split">
+    <Btn href={links.work} variant="link" icon="arrow-ur">{results.link}</Btn>
+  </SectionHead>
+  <div class="grid-3">
+    {results.items.map((item) => (
+      <article class:list={['card result', item.dark && 'surface-deep']}>
+        <p class="tag">{item.tag}</p>
+        <p class="result__num">{item.num}</p>
+        <p class="result__what">{item.what}</p>
+        {item.quote && <p class="result__quote">{item.quote}</p>}
+        <p class="result__who">{item.who}</p>
+      </article>
+    ))}
+  </div>
+</Section>
+
+<style>
+  .result { display: flex; flex-direction: column; min-height: 24rem; }
+  .result__num { font-size: var(--text-stat); line-height: 1; letter-spacing: -0.04em; font-weight: 450; color: var(--surface-fg); margin-top: var(--space-12); }
+  .result__what { margin-top: var(--space-4); font-size: var(--text-body); }
+  .result__quote { margin-top: var(--space-4); font-size: var(--text-sm); font-style: italic; color: var(--surface-muted); }
+  .result > :nth-last-child(2) { margin-bottom: var(--space-6); }
+  .result__who { margin-top: auto; padding-top: var(--space-5); border-top: 1px solid var(--surface-line); font-size: var(--text-sm); font-weight: var(--weight-strong); color: var(--surface-fg); }
+  @media (max-width: 1100px) { .result { min-height: 18rem; } }
+</style>

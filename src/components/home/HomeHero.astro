@@ -1,0 +1,43 @@
+---
+import Btn from '@components/ui/Btn.astro'
+import Icon from '@components/ui/Icon.astro'
+import HeroSlider from './HeroSlider.astro'
+import { hero, links } from '@/content/home'
+---
+
+<section class="hero surface-deep">
+  <div class="container hero__top">
+    <div>
+      <p class="eyebrow">{hero.eyebrow}</p>
+      <h1 class="t-display" set:html={hero.heading} />
+    </div>
+    <div class="hero__side">
+      <p>{hero.body}</p>
+      <div class="actions">
+        <Btn href={links.quiz} icon="arrow">{hero.primary}</Btn>
+        <Btn href={links.book} variant="secondary">{hero.secondary}</Btn>
+      </div>
+    </div>
+  </div>
+
+  <HeroSlider />
+
+  <div class="container">
+    <ul class="hero__trust">
+      {hero.trust.map((item) => (
+        <li><Icon name={item.icon} />{item.text}</li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .hero { padding-bottom: var(--space-10); overflow: hidden; }
+  .hero__top { display: grid; gap: var(--space-10); align-items: end; padding-block: var(--space-16) var(--space-14); }
+  .hero__side p { font-size: var(--text-body-lg); line-height: var(--leading-body); margin-bottom: var(--space-8); max-width: 42ch; }
+  .hero__trust { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3) var(--space-10); padding-top: var(--space-8); }
+  .hero__trust li { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-body); color: var(--surface-body); }
+  .hero__trust .icon { width: var(--icon-size); height: var(--icon-size); color: var(--color-accent); }
+  @media (min-width: 1101px) { .hero__top { grid-template-columns: 7fr 4fr; gap: var(--space-14); padding-block: var(--space-20) var(--space-16); } }
+  @media (max-width: 640px) { .hero__top { padding-block: var(--space-10); } .hero__trust { flex-direction: column; justify-content: flex-start; } }
+</style>

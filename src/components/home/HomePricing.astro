@@ -1,0 +1,86 @@
+---
+import Section from '@components/ui/Section.astro'
+import SectionHead from '@components/ui/SectionHead.astro'
+import Btn from '@components/ui/Btn.astro'
+import Icon from '@components/ui/Icon.astro'
+import { pricing, addons, links, hero } from '@/content/home'
+---
+
+<Section surface="cream" anchorId="pricing">
+  <SectionHead eyebrow={pricing.eyebrow} heading={pricing.heading} intro={pricing.intro} align="center" />
+
+  <div class="plan surface-deep">
+    <div class="plan__main">
+      <p class="tag">{pricing.tag} <span class="tag tag--accent">{pricing.save}</span></p>
+      <p class="plan__amount"><s>{pricing.was}</s>{pricing.now}<span>/ month</span></p>
+      <p class="plan__sub">{pricing.sub}</p>
+      <div class="plan__timeline">
+        {pricing.timeline.map((t, i) => (
+          <div class:list={[i === 0 && 'is-now']}><span>{t.label}</span><b>{t.price}<small>/mo</small></b></div>
+        ))}
+      </div>
+      <div class="actions plan__actions">
+        <Btn href={links.quiz} icon="arrow">{hero.primary}</Btn>
+        <Btn href={links.plan} variant="link" icon="arrow-ur">{pricing.planLink}</Btn>
+      </div>
+    </div>
+    <div class="card surface-white plan__incl">
+      <p class="t-h4">{pricing.includesTitle}</p>
+      <ul class="ticks">
+        {pricing.includes.map((item) => <li><Icon name="check" />{item}</li>)}
+      </ul>
+    </div>
+  </div>
+
+  <p class="plan__own"><Icon name="key" /><span><strong>{pricing.own.lead}</strong> {pricing.own.text}</span></p>
+
+  <div class="addons surface-tint">
+    <dl class="addons__table">
+      {addons.rows.map((row) => <div><dt>{row.name}</dt><dd>{row.price}</dd></div>)}
+      <p>{addons.note}</p>
+    </dl>
+    <div>
+      <h3 class="t-h3">{addons.heading}</h3>
+      <p class="addons__body">{addons.body}</p>
+      <Btn href={links.book}>{hero.secondary}</Btn>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .plan { display: grid; border-radius: var(--radius-xl); overflow: hidden; }
+  .plan__main { padding: clamp(var(--space-6), 4vw, var(--space-12)); display: flex; flex-direction: column; }
+  .plan__main > .tag { padding: 0.375rem 0.375rem 0.375rem 0.875rem; font-size: var(--text-sm); }
+  .plan__main > .tag .tag { padding: 0.375rem 0.625rem; }
+  .plan__amount { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-3); margin: var(--space-8) 0 var(--space-3); font-size: clamp(4rem, 3rem + 3.4vw, 5.75rem); line-height: 1; letter-spacing: -0.05em; font-weight: var(--weight-heading); color: var(--surface-fg); }
+  .plan__amount s { font-size: 1.875rem; letter-spacing: -0.02em; color: rgb(255 255 255 / 0.4); }
+  .plan__amount span { font-size: var(--text-body-lg); letter-spacing: 0; color: var(--surface-muted); }
+  .plan__sub { max-width: 42ch; }
+  .plan__timeline { display: grid; grid-template-columns: 12fr 7fr; gap: 0.375rem; margin: var(--space-8) 0; }
+  .plan__timeline div { display: grid; gap: var(--space-1); padding: var(--space-4) var(--space-5); border-radius: var(--radius-md); background: var(--surface-card); }
+  .plan__timeline .is-now { background: var(--color-accent); color: var(--color-green-950); }
+  .plan__timeline span { font-size: var(--text-sm); opacity: 0.8; }
+  .plan__timeline b { font-size: 1.75rem; font-weight: var(--weight-medium); letter-spacing: -0.03em; }
+  .plan__timeline small { font-size: var(--text-sm); font-weight: 400; }
+  .plan__actions { margin-top: auto; }
+  .plan__incl { margin: 0.625rem; border-radius: var(--radius-lg); }
+  .plan__incl .t-h4 { margin-bottom: var(--space-3); }
+  .plan__own { display: flex; gap: var(--space-4); align-items: flex-start; max-width: 58rem; margin: var(--space-8) auto 0; font-size: var(--text-body); color: var(--surface-muted); }
+  .plan__own :global(.icon) { width: var(--icon-size); height: var(--icon-size); color: var(--color-brand); margin-top: 0.2rem; }
+  .plan__own strong { color: var(--surface-fg); }
+  .addons { margin-top: var(--space-16); border-radius: var(--radius-xl); padding: clamp(var(--space-6), 4vw, var(--space-12)); display: grid; gap: var(--space-10); align-items: center; }
+  .addons .t-h3 { margin-bottom: var(--space-4); }
+  .addons__body { margin-bottom: var(--space-6); }
+  .addons__table { background: var(--color-white); border-radius: var(--radius-md); padding: var(--space-2) var(--space-6); }
+  .addons__table div { display: flex; justify-content: space-between; gap: var(--space-4); padding: var(--space-3) 0; font-size: var(--text-body); }
+  .addons__table div + div, .addons__table p { border-top: 1px solid var(--color-border); }
+  .addons__table dt { color: var(--color-text-muted); }
+  .addons__table dd { font-weight: var(--weight-strong); white-space: nowrap; }
+  .addons__table p { font-size: var(--text-xs); color: var(--color-text-muted); padding: var(--space-3) 0 var(--space-2); }
+  @media (min-width: 1101px) {
+    .plan { grid-template-columns: 1.1fr 1fr; }
+    .plan__incl { padding: var(--space-10); }
+    .addons { grid-template-columns: 5fr 7fr; gap: var(--space-12); }
+  }
+  @media (max-width: 640px) { .plan__timeline { grid-template-columns: 1fr 1fr; } .addons__table { padding: var(--space-2) var(--space-4); } }
+</style>

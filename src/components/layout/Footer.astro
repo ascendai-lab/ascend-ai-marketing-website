@@ -4,8 +4,10 @@ import { resolveLink } from '@cms/lib/links'
 import { routes } from '@cms/routes'
 import SocialIcon from '@components/ui/SocialIcon.astro'
 import SanityImage from '@components/ui/SanityImage.astro'
+import Btn from '@components/ui/Btn.astro'
 import ContactDetails from './ContactDetails.astro'
 import { stegaClean } from '@sanity/client/stega'
+import { brand, footer as fallback, links, hero } from '@/content/home'
 
 interface Props {
   layout: Layout
@@ -13,79 +15,110 @@ interface Props {
 
 const { settings, navigation, footerPages } = Astro.props.layout
 const year = new Date().getFullYear()
-const copyright = settings?.copyrightName || settings?.siteName
-const footerLogo = settings?.logoInverse?.asset ? settings.logoInverse : settings?.logo
+const name = stegaClean(settings?.siteName) || brand.name
+const copyright = settings?.copyrightName || name
+const columns = navigation?.footerColumns?.length
+  ? navigation.footerColumns.map((column) => ({
+      heading: column.heading ?? '',
+      links: (column.links ?? []).flatMap((item) => {
+        const link = resolveLink(item.link)
+        return link ? [{ label: item.label ?? '', href: link.href, target: link.target, rel: link.rel }] : []
+      }),
+    }))
+  : fallback.columns
 ---
 
-<footer class="site-footer">
-  <div class="container site-footer__grid">
-    <div class="site-footer__brand">
-      {footerLogo?.asset ? <SanityImage image={footerLogo} width={180} sizes="180px" /> : <strong>{settings?.siteName}</strong>}
-      {settings?.footerText && <p>{settings.footerText}</p>}
-      {
-        settings?.socialLinks?.length ? (
-          <ul class="site-footer__social">
-            {settings.socialLinks.map((social) => (
-              <li>
-                <a href={stegaClean(social.url) ?? '#'} target="_blank" rel="noopener noreferrer" aria-label={stegaClean(social.platform) ?? 'Social profile'}>
-                  <SocialIcon platform={social.platform} />
-                </a>
-              </li>
-            ))}
-          </ul>
-        ) : null
-      }
-    </div>
-
-    {
-      navigation?.footerColumns?.map((column) => (
-        <nav aria-label={column.heading ?? 'Footer'}>
-          {column.heading && <h2 class="site-footer__heading">{column.heading}</h2>}
-          <ul>
-            {column.links?.map((item) => {
-              const link = resolveLink(item.link)
-              return link ? (
+<footer class="site-footer surface-cream">
+  <div class="container">
+    <div class="site-footer__top">
+      <div class="site-footer__brand">
+        {settings?.logo?.asset ? <SanityImage image={settings.logo} width={210} sizes="210px" /> : <img src="/brand/logo.svg" alt={name} width="210" height="36" />}
+        <p>{settings?.footerText || brand.tagline}</p>
+        <Btn href={links.quiz} variant="secondary" icon="arrow">{hero.primary}</Btn>
+        {
+          settings?.socialLinks?.length ? (
+            <ul class="site-footer__social">
+              {settings.socialLinks.map((social) => (
                 <li>
-                  <a href={link.href} target={link.target} rel={link.rel}>
-                    {item.label}
+                  <a href={stegaClean(social.url) ?? '#'} target="_blank" rel="noopener noreferrer" aria-label={stegaClean(social.platform) ?? 'Social profile'}>
+                    <SocialIcon platform={social.platform} />
                   </a>
                 </li>
-              ) : null
-            })}
+              ))}
+            </ul>
+          ) : null
+        }
+      </div>
+
+      <div class="site-footer__cols">
+        {
+          columns.map((column) => (
+            <nav aria-label={column.heading || 'Footer'}>
+              {column.heading && <h2 class="site-footer__heading">{column.heading}</h2>}
+              <ul>
+                {column.links.map((link) => (
+                  <li><a href={link.href} target={'target' in link ? link.target : undefined} rel={'rel' in link ? link.rel : undefined}>{link.label}</a></li>
+                ))}
+              </ul>
+            </nav>
+          ))
+        }
+        {settings && <ContactDetails settings={settings} />}
+      </div>
+    </div>
+
+    <p class="site-footer__name" aria-hidden="true" data-fit><span>{brand.name}</span></p>
+
+    <div class="site-footer__bottom">
+      <p>© {year} {copyright}. All rights reserved.</p>
+      {
+        footerPages.length > 0 && (
+          <ul>
+            {footerPages.map((page) => page.slug && (
+              <li><a href={routes.page(page.slug)}>{page.title}</a></li>
+            ))}
           </ul>
-        </nav>
-      ))
-    }
-
-    {settings && <ContactDetails settings={settings} />}
-  </div>
-
-  <div class="container site-footer__bottom">
-    <p>© {year} {copyright}. All rights reserved.</p>
-    {
-      footerPages.length > 0 && (
-        <ul>
-          {footerPages.map((page) => page.slug && (
-            <li>
-              <a href={routes.page(page.slug)}>{page.title}</a>
-            </li>
-          ))}
-        </ul>
-      )
-    }
+        )
+      }
+    </div>
   </div>
 </footer>
 
+<script>
+  // The big name always spans the full container width, whatever the font or screen.
+  const fit = () => document.querySelectorAll<HTMLElement>('[data-fit]').forEach((el) => {
+    const span = el.firstElementChild as HTMLElement | null
+    if (!span) return
+    el.style.fontSize = '100px'
+    el.style.fontSize = `${Math.floor((100 * el.clientWidth) / span.offsetWidth) - 1}px`
+  })
+  fit()
+  document.fonts?.ready.then(fit)
+  window.addEventListener('resize', fit)
+</script>
+
 <style>
-  .site-footer { background: var(--color-bg-dark); color: var(--color-text-inverse); padding-top: 4rem; }
-  .site-footer p { color: inherit; opacity: 0.8; }
-  .site-footer__grid { display: grid; gap: 2.5rem; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); padding-bottom: 3rem; }
-  .site-footer__brand { display: grid; gap: 1rem; align-content: start; }
-  .site-footer__brand :global(img) { max-height: 3rem; width: auto; }
-  .site-footer__heading { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem; opacity: 0.75; }
-  .site-footer ul { list-style: none; display: grid; gap: 0.5rem; }
-  .site-footer a:hover { text-decoration: underline; }
-  .site-footer__social { display: flex !important; gap: 0.75rem; }
-  .site-footer__bottom { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; padding-block: 1.5rem; border-top: 1px solid rgb(255 255 255 / 0.15); font-size: 0.875rem; }
-  .site-footer__bottom ul { display: flex; flex-wrap: wrap; gap: 1.25rem; }
+  .site-footer { padding-top: var(--section-y); padding-bottom: var(--space-8); overflow: hidden; }
+  .site-footer__top { display: grid; gap: var(--space-12); }
+  .site-footer__brand { display: grid; gap: var(--space-5); justify-items: start; align-content: start; }
+  .site-footer__brand :global(img) { width: 13rem; height: auto; }
+  .site-footer__brand p { max-width: 36ch; }
+  .site-footer__cols { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-8) var(--space-6); }
+  .site-footer__heading { font-size: var(--text-sm); font-weight: var(--weight-medium); letter-spacing: 0; color: var(--surface-muted); margin-bottom: var(--space-3); }
+  .site-footer ul { display: grid; }
+  .site-footer__cols a { display: block; padding: 0.4375rem 0; font-size: var(--text-body); }
+  .site-footer a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .site-footer__social { display: flex !important; gap: var(--space-3); }
+  .site-footer__name {
+    margin: var(--space-20) 0 var(--space-8);
+    font-size: clamp(2.25rem, 8.6vw, 8rem); line-height: 0.85; letter-spacing: -0.055em; font-weight: var(--weight-medium);
+    color: var(--color-green-900); white-space: nowrap;
+  }
+  .site-footer__name span { display: inline-block;
+  }
+  .site-footer__bottom { display: flex; flex-wrap: wrap; gap: var(--space-4); justify-content: space-between; font-size: var(--text-sm); }
+  .site-footer__bottom p { color: var(--surface-muted); }
+  .site-footer__bottom ul { display: flex; flex-wrap: wrap; gap: var(--space-5); color: var(--surface-muted); }
+  @media (min-width: 641px) { .site-footer__cols { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 1101px) { .site-footer__top { grid-template-columns: 1fr 1.3fr; } }
 </style>

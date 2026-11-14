@@ -1,0 +1,37 @@
+---
+import Section from '@components/ui/Section.astro'
+import SectionHead from '@components/ui/SectionHead.astro'
+import Btn from '@components/ui/Btn.astro'
+import Icon from '@components/ui/Icon.astro'
+import { reviews, reviewSummary, links } from '@/content/home'
+---
+
+{
+  reviews.length > 0 && (
+    <Section surface="white" anchorId="reviews">
+      <SectionHead eyebrow="Google reviews" heading={`${reviewSummary.rating} stars on Google.`} align="split">
+        <Btn href={links.reviews} variant="link" icon="arrow-ur">See all reviews on Google</Btn>
+      </SectionHead>
+      <ul class="grid-2">
+        {reviews.map((review) => (
+          <li class="card review">
+            <p class="review__stars" aria-label="5 out of 5 stars">
+              {[0, 1, 2, 3, 4].map(() => <Icon name="star" fill />)}
+            </p>
+            <p class="review__text">{review.text}</p>
+            <p class="review__who"><strong>{review.name}</strong><span>{review.detail}</span></p>
+          </li>
+        ))}
+      </ul>
+    </Section>
+  )
+}
+
+<style>
+  .review { display: flex; flex-direction: column; gap: var(--space-5); }
+  .review__stars { display: flex; gap: 2px; color: var(--color-brand); }
+  .review__stars :global(.icon) { width: 1.125rem; height: 1.125rem; }
+  .review__text { font-size: var(--text-body); line-height: 1.55; color: var(--surface-fg); }
+  .review__who { margin-top: auto; padding-top: var(--space-5); border-top: 1px solid var(--surface-line); font-size: var(--text-sm); color: var(--surface-muted); display: flex; justify-content: space-between; gap: var(--space-3); }
+  .review__who strong { color: var(--surface-fg); font-weight: var(--weight-strong); }
+</style>

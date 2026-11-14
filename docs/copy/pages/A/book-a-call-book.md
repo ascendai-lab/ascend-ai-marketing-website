@@ -19,8 +19,8 @@ Prefer to call? [BUSINESS PHONE]
 Take the 60-second quiz before the call. We can skip the basics and get to your fixes.
 Not ready to book? That's fine. Get a free video teardown of your website first. Mark, our founder, records it himself. He looks at your site the way a homeowner does and finds 3 fixes. We send it as soon as it's ready. When you're ready to talk, this calendar will still be here.
 Real people who answer.
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
-Our founder, Mark Johnson, has more than 20 years of building websites. He has built hundreds of them. Ascend AI started in 2019. You'll talk to a real person, not a call center.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
+Our founder, Mark Johnson, has more than 20 years of building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. You'll talk to a real person, not a call center.
 Where this call fits.
 Take the 60-second quiz.
 Book a 15-minute call.

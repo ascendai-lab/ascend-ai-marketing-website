@@ -1,0 +1,29 @@
+---
+import Section from '@components/ui/Section.astro'
+import SectionHead from '@components/ui/SectionHead.astro'
+import Btn from '@components/ui/Btn.astro'
+import Icon from '@components/ui/Icon.astro'
+import { included, links, hero } from '@/content/home'
+---
+
+<Section surface="cream" anchorId="included">
+  <SectionHead eyebrow={included.eyebrow} heading={included.heading} align="center" />
+  <ul class="grid-3">
+    {included.items.map((item) => (
+      <li class="card card--feature">
+        <span class="icon-chip"><Icon name={item.icon} /></span>
+        <h3 class="t-h4">{item.title}</h3>
+        <p>{item.text}</p>
+      </li>
+    ))}
+    <li class="card surface-deep included__cta">
+      <p class="lead">{included.cta}</p>
+      <Btn href={links.quiz} icon="arrow">{hero.primary}</Btn>
+    </li>
+  </ul>
+</Section>
+
+<style>
+  .included__cta { display: flex; flex-direction: column; justify-content: space-between; gap: var(--space-6); }
+  .included__cta :global(.btn) { align-self: flex-start; }
+</style>

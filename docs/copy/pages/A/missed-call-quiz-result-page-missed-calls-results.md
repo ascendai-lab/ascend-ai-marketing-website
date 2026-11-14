@@ -11,10 +11,10 @@ Your 3 fixes (filled in from their answers, for example):
 Text back every missed call in seconds. A quick text keeps the homeowner talking to you, not the next shop.
 Call back web leads within 5 minutes. A homeowner with no heat wants an answer now.
 Ask for a review after every job. Reviews help homeowners pick you over the next shop.
-Hey, it's Mark Johnson, founder of Ascend AI. You just saw your numbers.
+Hey, it's Mark Johnson, founder of Ascend AI Marketing. You just saw your numbers.
 Here's the thing. You don't need more leads first. You need to stop losing the ones you already get.
 Book 15 minutes with our team. We'll show you where the leaks are and how to get those jobs back.
-We've watched good contractors lose jobs to slow callbacks. That's why Ascend AI exists.
+We've watched good contractors lose jobs to slow callbacks. That's why Ascend AI Marketing exists.
 Mark Johnson has built websites for more than 20 years. He has built hundreds of them.
 Here's how we fix it.
 Take the 60-second quiz. (Done.)

@@ -10,8 +10,8 @@ A slow or broken site on a 95-degree day sends calls to the next shop. So does a
 You add a new service, and the site doesn't say so for months. Your web person doesn't answer. And when the crew is on a job, calls go to voicemail.
 You're too busy to babysit a website. A good shop should not lose a job to a broken site or a voicemail.
 We take care of the site. You take care of customers.
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
-Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI started in 2019. When you need a change, you reach a real team, not a ticket system.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
+Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. When you need a change, you reach a real team, not a ticket system.
 Miracle Temple C.O.G.I.C. (past client, church website) has had us as its web partner for 12+ years. Their leaders send us a flyer, and we post it fast. They never touch the site. Over $750,000 has come in through the online giving system we built.
 Three steps to a site you don't have to worry about.
 Take the 60-second quiz. See what missed calls and a weak site may cost you.

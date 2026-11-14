@@ -1,4 +1,4 @@
-# Ascend AI website copy v2: category pages (Core 30 hubs)
+# Ascend AI Marketing website copy v2: category pages (Core 30 hubs)
 
 Five category pages. Each is a hub that links down to its service pages. Service slugs follow the v2 rule (no town names in slugs). Slugs for service pages not written yet are proposed and can change. Fix round 1 applied Nov 12: the lead hub moved from /hvac-lead-systems to /hvac-lead-management. The ### lines are section labels for the build. The **Heading:** fields are the headings that show on the page.
 
@@ -6,7 +6,7 @@ Five category pages. Each is a hub that links down to its service pages. Service
 
 ## HVAC Website Design (/hvac-website-design)
 
-**SEO title:** HVAC Website Design for HVAC Companies | Ascend AI
+**SEO title:** HVAC Website Design for HVAC Companies | Ascend AI Marketing
 **SEO description:** HVAC website design built to get the call and land the job. Fast on phones, live in 72 hours, and you own all of it. One simple monthly plan.
 
 ### 1. Hero
@@ -39,9 +39,9 @@ Maybe an agency built it in their name. You got a bill and a report, not calls. 
 
 **Heading:** We build HVAC websites around one goal: the call.
 
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
 
-Founder Mark Johnson has spent 20+ years building websites. He has built hundreds of them. We started Ascend AI in 2019. You reach a real team, not a ticket system.
+Founder Mark Johnson has spent 20+ years building websites. He has built hundreds of them. We started Ascend AI Marketing in 2019. You reach a real team, not a ticket system.
 
 Every page we build has one job: get the call.
 
@@ -159,7 +159,7 @@ It takes 60 seconds. You'll get a dollar range, a call handling score and 3 fixe
 
 ## HVAC Local SEO (/hvac-local-seo)
 
-**SEO title:** HVAC Local SEO for HVAC Contractors | Ascend AI
+**SEO title:** HVAC Local SEO for HVAC Contractors | Ascend AI Marketing
 **SEO description:** Local SEO for HVAC contractors in any city or state. Google profile, reviews, service area pages and AI search. Pricing starts at $597 a month.
 
 ### 1. Hero
@@ -194,9 +194,9 @@ Maybe you paid for SEO before. You got a report full of charts, not more calls. 
 
 **Heading:** We do the work Google looks for, and we explain it in plain words.
 
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
 
-Our founder, Mark Johnson, has built websites for more than 20 years. He has built hundreds of them. We started Ascend AI in 2019. You reach a real team, not a ticket system.
+Our founder, Mark Johnson, has built websites for more than 20 years. He has built hundreds of them. We started Ascend AI Marketing in 2019. You reach a real team, not a ticket system.
 
 We make your shop easier to find. Then we keep it fresh, so homeowners keep finding you.
 
@@ -304,7 +304,7 @@ It takes 60 seconds. You'll get a dollar range, a call handling score and 3 fixe
 
 ## HVAC Lead Management (/hvac-lead-management)
 
-**SEO title:** HVAC Lead Management for HVAC Contractors | Ascend AI
+**SEO title:** HVAC Lead Management for HVAC Contractors | Ascend AI Marketing
 **SEO description:** HVAC lead management that answers every lead. Missed call text back, fast follow-up and one inbox. Live in 72 hours. You own your contact list.
 
 ### 1. Hero
@@ -339,9 +339,9 @@ You feel money slipping away. But you shouldn't have to hire someone to watch th
 
 **Heading:** HVAC lead management that answers when you can't.
 
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
 
-Founder Mark Johnson has 20+ years of building websites. He has built hundreds of them. We started Ascend AI in 2019. When you need us, a real person answers.
+Founder Mark Johnson has 20+ years of building websites. He has built hundreds of them. We started Ascend AI Marketing in 2019. When you need us, a real person answers.
 
 **Proof:** Etheric Networks (past client): we built their site and set up their lead forms. Their sales team could follow up fast. 45 qualified leads in 60 days.
 
@@ -457,7 +457,7 @@ It takes 60 seconds. You'll get a dollar range, a call handling score and 3 fixe
 
 ## HVAC Ads (/hvac-ads)
 
-**SEO title:** HVAC Ads: Google Ads and Meta Ads | Ascend AI
+**SEO title:** HVAC Ads: Google Ads and Meta Ads | Ascend AI Marketing
 **SEO description:** Google Ads and Facebook and Instagram ads for HVAC contractors, paired with a lead system. You own every ad account and pay ad spend yourself.
 
 ### 1. Hero
@@ -490,9 +490,9 @@ Maybe an agency ran your ads before and kept the account in their name. You neve
 
 **Heading:** HVAC ads work best when someone answers.
 
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
 
-Mark Johnson founded Ascend AI in 2019. He has 20+ years of building websites and has built hundreds. You reach a real team, not a ticket system.
+Mark Johnson founded Ascend AI Marketing in 2019. He has 20+ years of building websites and has built hundreds. You reach a real team, not a ticket system.
 
 Our view: ads pay off when calls get a reply. If no one picks up, more ads mean more missed calls. So on the call, we look at how your shop answers leads before we talk about ads.
 
@@ -593,7 +593,7 @@ It takes 60 seconds. You'll get a dollar range, a call handling score and 3 fixe
 
 ## AI Agents and Automation for HVAC (/hvac-ai-automation)
 
-**SEO title:** AI Agents and Automation for HVAC Companies | Ascend AI
+**SEO title:** AI Agents and Automation for HVAC Companies | Ascend AI Marketing
 **SEO description:** AI agents, custom workflows and custom software for HVAC shops. Answer calls, follow up with leads, book jobs and cut software bills.
 
 ### 1. Hero
@@ -628,9 +628,9 @@ So you catch up at night, at the kitchen table. You're tired. And hiring another
 
 **Heading:** AI agents and automation for HVAC, built by people who answer.
 
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
 
-Founder Mark Johnson has 20+ years building websites. He has built hundreds of them. We started Ascend AI in 2019. You reach a real team, not a ticket system.
+Founder Mark Johnson has 20+ years building websites. He has built hundreds of them. We started Ascend AI Marketing in 2019. You reach a real team, not a ticket system.
 
 ### 4. What AI can and can't do
 

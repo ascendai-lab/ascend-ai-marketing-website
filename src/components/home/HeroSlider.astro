@@ -1,0 +1,128 @@
+---
+import Icon from '@components/ui/Icon.astro'
+import { slides, inbox } from '@/content/home'
+---
+
+<div class="slider" data-slider>
+  <ul class="slider__track" data-track aria-label="What the system does" tabindex="0">
+    {
+      slides.map((slide) => (
+        <li class:list={['slide', `slide--${slide.kind}`]}>
+          {slide.kind === 'photo' && (
+            <figure class="media slide__media">
+              <img src={slide.src} alt={slide.alt} width="1000" height="800" loading="lazy" />
+              {slide.caption && <figcaption class="slide__caption">{slide.caption}</figcaption>}
+            </figure>
+          )}
+          {slide.kind === 'booked' && (
+            <figure class="media slide__media">
+              <img src={slide.src} alt={slide.alt} width="1000" height="800" loading="lazy" />
+              <div class="float-note slide__note">
+                <span class="icon-chip icon-chip--ui"><Icon name="cal" /></span>
+                <div><strong>New job booked</strong><span>On your calendar by lunch</span></div>
+              </div>
+            </figure>
+          )}
+          {slide.kind === 'textback' && (
+            <div class="card slide__panel">
+              <div class="ui-panel">
+                <div class="ui-row"><span class="ui-missed"><Icon name="phone-missed" /></span><div><strong>Missed call</strong><span>2:14 PM · Homeowner</span></div></div>
+                <p class="bubble">Sorry we missed you! This is your HVAC team. What can we help with today?</p>
+                <p class="bubble bubble--in">AC stopped cooling. Can someone come today?</p>
+                <p class="ui-meta"><Icon name="check" />Missed call text back</p>
+              </div>
+            </div>
+          )}
+          {slide.kind === 'inbox' && (
+            <div class="card slide__panel">
+              <div class="ui-panel">
+                <p class="ui-title"><Icon name="inbox" />One inbox for every lead</p>
+                {inbox.slice(0, 3).map((row) => (
+                  <div class="ui-row"><span class="avatar">{row.initials}</span><div><strong>{row.title}</strong><span>{row.detail}</span></div></div>
+                ))}
+              </div>
+            </div>
+          )}
+          {slide.kind === 'quote' && (
+            <blockquote class="card slide__quote">
+              <span class="slide__avatar" aria-hidden="true">{slide.name.charAt(0)}</span>
+              <p>{slide.quote}</p>
+              <footer><strong>{slide.name}</strong><span>{slide.detail}</span></footer>
+            </blockquote>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+  <div class="container slider__controls">
+    <button type="button" class="slider__btn" data-prev aria-label="Previous slide"><Icon name="chevron-left" /></button>
+    <button type="button" class="slider__btn" data-next aria-label="Next slide"><Icon name="chevron-right" /></button>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-slider]').forEach((slider) => {
+    const track = slider.querySelector<HTMLElement>('[data-track]')
+    const prev = slider.querySelector<HTMLButtonElement>('[data-prev]')
+    const next = slider.querySelector<HTMLButtonElement>('[data-next]')
+    if (!track || !prev || !next) return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const step = () => {
+      const first = track.querySelector<HTMLElement>('.slide')
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 16
+      return (first?.offsetWidth ?? 300) + gap
+    }
+    const update = () => {
+      const max = track.scrollWidth - track.clientWidth - 2
+      prev.disabled = track.scrollLeft <= 2
+      next.disabled = track.scrollLeft >= max
+    }
+    const go = (dir: number) => track.scrollBy({ left: dir * step(), behavior: reduce ? 'auto' : 'smooth' })
+    prev.addEventListener('click', () => go(-1))
+    next.addEventListener('click', () => go(1))
+    track.addEventListener('scroll', update, { passive: true })
+    track.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight') { event.preventDefault(); go(1) }
+      if (event.key === 'ArrowLeft') { event.preventDefault(); go(-1) }
+    })
+    window.addEventListener('resize', update)
+    update()
+  })
+</script>
+
+<style>
+  .slider__track {
+    --slide-h: 18rem;
+    display: flex; gap: var(--grid-gap);
+    overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+    padding-inline: max(var(--container-padding-x), calc((100vw - var(--container-max)) / 2));
+    scroll-padding-inline: max(var(--container-padding-x), calc((100vw - var(--container-max)) / 2));
+  }
+  .slider__track::-webkit-scrollbar { display: none; }
+  .slide { flex: none; height: var(--slide-h); scroll-snap-align: start; }
+  .slide--photo, .slide--booked { width: 26rem; }
+  .slide--textback, .slide--inbox { width: 19rem; }
+  .slide--quote { width: 22rem; }
+  .slide__media { height: 100%; margin: 0; }
+  .slide__caption { position: absolute; left: var(--space-4); bottom: var(--space-4); background: var(--color-white); color: var(--color-text); font-size: var(--text-sm); font-weight: var(--weight-medium); padding: var(--space-2) var(--space-3); border-radius: var(--radius-full); }
+  .slide__note { position: absolute; left: var(--space-4); bottom: var(--space-4); }
+  .slide__panel { height: 100%; display: flex; padding: var(--space-5); --surface-card: var(--color-surface-muted); }
+  .slide__panel .ui-panel { width: 100%; }
+  .ui-title { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); font-weight: var(--weight-strong); color: var(--color-text); }
+  .ui-title .icon { color: var(--color-brand); }
+  .slide__quote { height: 100%; margin: 0; display: grid; grid-template-columns: 3.5rem 1fr; grid-template-rows: 1fr auto; gap: var(--space-4); background: var(--color-white); color: var(--color-text); }
+  .slide__avatar { width: 3.5rem; height: 3.5rem; border-radius: var(--radius-md); background: var(--color-accent); color: var(--color-green-900); display: grid; place-items: center; font-size: 1.5rem; font-weight: var(--weight-strong); }
+  .slide__quote p { font-size: 1.25rem; line-height: 1.4; letter-spacing: var(--tracking-snug); color: var(--color-text); }
+  .slide__quote footer { grid-column: 1 / -1; font-size: var(--text-xs); color: var(--color-text-muted); line-height: 1.45; }
+  .slide__quote footer strong { display: block; font-size: var(--text-sm); color: var(--color-text); font-weight: var(--weight-strong); }
+  .slider__controls { display: flex; justify-content: flex-end; gap: var(--space-2); padding-top: var(--space-5); }
+  .slider__btn { width: var(--icon-chip); height: var(--icon-chip); border-radius: var(--radius-full); border: 0; display: grid; place-items: center; background: rgb(255 255 255 / 0.1); color: var(--color-white); }
+  .slider__btn:hover:not(:disabled) { background: var(--color-accent); color: var(--color-green-950); }
+  .slider__btn:disabled { opacity: 0.35; cursor: default; }
+  .slider__btn .icon { width: var(--icon-size); height: var(--icon-size); }
+  @media (max-width: 640px) {
+    .slider__track { --slide-h: 16rem; gap: var(--space-3); }
+    .slide--photo, .slide--booked { width: 80vw; }
+    .slide--textback, .slide--inbox, .slide--quote { width: 80vw; }
+  }
+</style>

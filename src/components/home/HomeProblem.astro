@@ -1,0 +1,48 @@
+---
+import Section from '@components/ui/Section.astro'
+import Icon from '@components/ui/Icon.astro'
+import { problem } from '@/content/home'
+---
+
+<Section surface="cream" class="problem">
+  <div class="split split--top">
+    <div>
+      <p class="eyebrow">{problem.eyebrow}</p>
+      <h2 class="t-h2">{problem.heading}</h2>
+      <p class="lead problem__statement">{problem.statement} <strong>{problem.turn}</strong></p>
+    </div>
+    <div class="problem__phone" aria-hidden="true">
+      <p class="problem__day">Today</p>
+      <ul class="ui-panel">
+        <li class="ui-row"><span class="ui-missed"><Icon name="phone-missed" /></span><div><strong>Missed call</strong><span>9:12 AM · No voicemail</span></div></li>
+        <li class="ui-row"><span class="ui-missed"><Icon name="phone-missed" /></span><div><strong>Missed call</strong><span>11:40 AM · No voicemail</span></div></li>
+        <li class="ui-row"><span class="ui-missed"><Icon name="phone-missed" /></span><div><strong>Missed call</strong><span>2:14 PM · No voicemail</span></div></li>
+      </ul>
+    </div>
+  </div>
+
+  <ul class="grid-2 problem__pains">
+    {problem.pains.map((pain) => (
+      <li class="card card--row"><span class="icon-chip"><Icon name={pain.icon} /></span><p>{pain.text}</p></li>
+    ))}
+  </ul>
+
+  <div class="problem__feel">
+    <p class="body-lg">{problem.feel}</p>
+    <p class="lead strong">{problem.close}</p>
+  </div>
+</Section>
+
+<style>
+  .problem__statement { margin-top: var(--space-8); }
+  .problem__statement strong { display: block; margin-top: var(--space-3); color: var(--color-brand); font-weight: var(--weight-medium); }
+  .problem__phone { background: var(--color-green-900); border-radius: var(--radius-xl); padding: var(--space-6); max-width: 26rem; justify-self: end; width: 100%; }
+  .problem__day { color: var(--color-text-inverse-muted); font-size: var(--text-xs); letter-spacing: var(--tracking-label); text-transform: uppercase; margin-bottom: var(--space-3); }
+  .problem__phone .ui-panel { gap: 0; padding: var(--space-2) var(--space-4); }
+  .problem__phone .ui-row { padding: var(--space-3) 0; }
+  .problem__phone .ui-row + .ui-row { border-top: 1px solid var(--color-border); }
+  .problem__pains { margin-top: var(--section-head-gap); }
+  .problem__feel { margin-top: var(--space-14); max-width: 46rem; }
+  .problem__feel .lead { margin-top: var(--space-5); max-width: none; }
+  @media (max-width: 1100px) { .problem__phone { justify-self: start; } }
+</style>

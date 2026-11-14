@@ -10,8 +10,8 @@ Most of these tools try to fit every kind of business. So your team works around
 Prices tend to climb. And leaving is hard, because your data lives inside.
 It's frustrating to pay more every year for tools that don't fit. A good shop should not pay for tools it doesn't use.
 We build tools that fit how your shop works
-We've watched good contractors lose jobs to slow callbacks. We've watched them pay too much for tools that don't fit. That's why Ascend AI exists. We build websites, apps and custom tools.
-Mark Johnson founded Ascend AI in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
+We've watched good contractors lose jobs to slow callbacks. We've watched them pay too much for tools that don't fit. That's why Ascend AI Marketing exists. We build websites, apps and custom tools.
+Mark Johnson founded Ascend AI Marketing in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
 Custom software in three steps
 Take the 60-second quiz. See what missed calls may cost your shop.
 Book a 15-minute call. We look at the tools you pay for and how your shop runs.

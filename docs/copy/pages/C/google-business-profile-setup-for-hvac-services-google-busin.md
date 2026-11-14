@@ -10,8 +10,8 @@ Many HVAC profiles are half done. Wrong category. No services. Old photos. Hours
 Every gap makes it harder for Google to show you. And when a homeowner does call, the crew is on a job. The call goes to voicemail.
 It's frustrating to watch shops that do worse work show up above you. A good shop should not lose a job to a voicemail.
 Your best free ad, set up right.
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
-Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI started in 2019. We set up your profile the way Google asks. We match it to your website.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
+Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. We set up your profile the way Google asks. We match it to your website.
 Etheric Networks (past client): local SEO and a custom website. 45 qualified leads in 60 days.
 "Within just two months, we saw incredible results." Camille, Etheric Networks
 A fence and tree company (past client) made over $100,000 from our local SEO and Google Ads. They hit #1 on Google Maps for "fence company," "fence contractor" and "fence installation."

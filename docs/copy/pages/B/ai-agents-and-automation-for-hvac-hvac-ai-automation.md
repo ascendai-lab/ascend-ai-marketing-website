@@ -10,8 +10,8 @@ The same small tasks pile up every week. No one has time for them.
 So you catch up at night, at the kitchen table. You're tired. And hiring another office person costs a lot.
 A good shop should not lose a job because no one had time to reply.
 AI agents and automation for HVAC, built by people who answer.
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
-Founder Mark Johnson has 20+ years building websites. He has built hundreds of them. We started Ascend AI in 2019. You reach a real team, not a ticket system.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
+Founder Mark Johnson has 20+ years building websites. He has built hundreds of them. We started Ascend AI Marketing in 2019. You reach a real team, not a ticket system.
 Plain talk about AI for HVAC shops.
 Answer calls and reply to texts.
 Follow up with leads who haven't booked.

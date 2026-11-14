@@ -1,0 +1,27 @@
+---
+import Section from '@components/ui/Section.astro'
+import Icon from '@components/ui/Icon.astro'
+import { nationwide } from '@/content/home'
+---
+
+<Section surface="deep">
+  <div class="split">
+    <div>
+      <p class="eyebrow">{nationwide.eyebrow}</p>
+      <h2 class="t-h2">{nationwide.heading}</h2>
+      <p class="body-lg nation__body">{nationwide.body}</p>
+    </div>
+    <ul class="nation__list">
+      {nationwide.climates.map((c) => (
+        <li class="card card--row"><span class="icon-chip"><Icon name={c.icon} /></span><div><strong>{c.title}</strong><span>{c.text}</span></div></li>
+      ))}
+    </ul>
+  </div>
+</Section>
+
+<style>
+  .nation__body { margin-top: var(--space-6); }
+  .nation__list { display: grid; gap: var(--space-3); }
+  .nation__list strong { display: block; font-size: var(--text-h4); font-weight: var(--weight-medium); letter-spacing: -0.01em; line-height: var(--leading-snug); }
+  .nation__list span:not(.icon-chip) { font-size: var(--text-body); color: var(--surface-muted); }
+</style>
