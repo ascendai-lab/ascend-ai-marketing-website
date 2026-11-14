@@ -165,6 +165,9 @@ prev/next buttons. It autoplays one slide every 3.5 seconds and loops. It waits 
 focuses or touches it, while it's off screen, and never plays for reduced-motion users. No quiz card
 and no testimonial in the slider.
 
+### Video button (`VideoButton.astro`)
+A secondary pill with a round play icon ("Watch the video"). It opens a pop-up player (a `<dialog>`, 16:9, radius `lg`) that loads the YouTube or Vimeo video only when opened and stops it on close. The hero's video link lives in `hero.video.url` in `src/content/home.ts`; while it's empty, the pop-up says the video is coming soon and offers "Book a 15-minute call".
+
 ### More services (`HomeServices.astro`)
 Standalone services on a `surface-deeper` band: heading left (sticky on desktop), an accordion of
 large numbered rows right. The open row turns white and shows one short line plus a "Learn more

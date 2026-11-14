@@ -2,6 +2,7 @@
 import Btn from '@components/ui/Btn.astro'
 import Icon from '@components/ui/Icon.astro'
 import HeroSlider from './HeroSlider.astro'
+import VideoButton from '@components/ui/VideoButton.astro'
 import { hero, links } from '@/content/home'
 ---
 
@@ -15,7 +16,7 @@ import { hero, links } from '@/content/home'
       <p>{hero.body}</p>
       <div class="actions">
         <Btn href={links.quiz} icon="arrow">{hero.primary}</Btn>
-        <Btn href={links.book} variant="secondary">{hero.secondary}</Btn>
+        <VideoButton url={hero.video.url} label={hero.video.label} title={hero.video.title} fallbackHref={links.book} fallbackLabel={hero.secondary} />
       </div>
     </div>
   </div>

@@ -36,6 +36,12 @@ export const hero = {
   body: 'We build your HVAC website and lead system. It answers every lead and follows up for you, so more jobs land on your calendar. You own all of it.',
   primary: 'Take the 60-second quiz',
   secondary: 'Book a 15-minute call',
+  /** The hero video. Paste the YouTube (or Vimeo) link into `url` once it's uploaded. */
+  video: {
+    url: '',
+    label: 'Watch the video',
+    title: 'How Ascend AI Marketing works',
+  },
   trust: [
     { icon: 'clock', text: 'Live in 72 hours.' },
     { icon: 'key', text: 'You own your site.' },
