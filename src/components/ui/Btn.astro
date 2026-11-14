@@ -29,10 +29,10 @@ const external = href?.startsWith('http')
   href ? (
     <a href={href} class:list={classes} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined} {...rest}>
       {variant === 'link' ? (
-        <span><slot />{icon && <Icon name={icon} />}</span>
+        <span><slot />{icon && <Icon name={icon} />}{external && <span class="sr-only"> (opens in a new tab)</span>}</span>
       ) : (
         <>
-          <span><slot /></span>
+          <span><slot />{external && <span class="sr-only"> (opens in a new tab)</span>}</span>
           {icon && <Icon name={icon} />}
         </>
       )}

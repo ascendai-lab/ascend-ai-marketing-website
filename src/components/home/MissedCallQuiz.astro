@@ -8,9 +8,13 @@ interface Props {
   id: string
 }
 const { id } = Astro.props
+import { links } from '@/content/home'
 ---
 
-<div class="quiz" id={id} data-quiz></div>
+<div class="quiz surface-white" id={id} data-quiz data-book={links.book}>
+  <!-- Shown until the quiz script builds the questions (and if it can't run). -->
+  <p class="quiz__fallback">Want to know what missed calls cost your shop? <a href={links.book}>Book a 15-minute call</a> and we'll walk through it with you.</p>
+</div>
 
 <script>
   const QUESTIONS = [
@@ -45,7 +49,7 @@ const { id } = Astro.props
     return '$' + (Math.round(n / step) * step).toLocaleString('en-US')
   }
   const field = (id: string, name: string, label: string, type: string, auto: string, req: boolean) =>
-    `<label class="field"><span>${label}</span><input name="${name}" type="${type}" autocomplete="${auto}"${req ? ' required' : ''} id="${id}-${name}"></label>`
+    `<label class="field"><span>${label}</span><input name="${name}" type="${type}" autocomplete="${auto}"${req ? ' required' : ''} id="${id}-${name}" aria-describedby="${id}-${name}-error"><span class="field__error" id="${id}-${name}-error"></span></label>`
 
   function build(root: HTMLElement) {
     const id = root.id
@@ -79,7 +83,7 @@ const { id } = Astro.props
       '<div class="quiz__score"><span class="quiz__grade"></span><span><strong>Your call handling score</strong><span class="quiz__grade-line"></span></span></div>' +
       '<p class="quiz__fix-title">Your 3 fixes</p><ol class="quiz__fixes">' +
       FIXES.map((f) => `<li><span><strong>${f[0]}</strong> ${f[1]}</span></li>`).join('') +
-      `</ol><a class="btn btn--primary" href="/book">Book a 15-minute call ${ARROW}</a></div>`
+      `</ol><a class="btn btn--primary" href="${root.dataset.book ?? '/book'}">Book a 15-minute call ${ARROW}</a></div>`
     html += '<button type="button" class="quiz__back" hidden>Back</button>'
     root.innerHTML = html
 
@@ -90,6 +94,11 @@ const { id } = Astro.props
       root.querySelector('.quiz__count')!.textContent = step < 5 ? `Question ${step + 1} of 5` : step === 5 ? 'Last step' : 'Your results'
       root.querySelector<HTMLElement>('.quiz__back')!.hidden = step === 0 || step === 6
     }
+    // Moves keyboard focus to the step on screen, so it never drops to the page when a button hides.
+    const focusStep = (step: number) => {
+      const el = root.querySelector<HTMLElement>(`[data-step="${step}"] :is([aria-pressed="true"], .quiz__option, input)`)
+      el?.focus({ preventScroll: true })
+    }
 
     root.addEventListener('click', (event) => {
       const target = event.target as Element
@@ -99,10 +108,12 @@ const { id } = Astro.props
         answers[step] = Number(opt.dataset.answer)
         opt.parentElement!.querySelectorAll('.quiz__option').forEach((b) => b.setAttribute('aria-pressed', b === opt ? 'true' : 'false'))
         show(step + 1)
-        const next = root.querySelector<HTMLElement>(`[data-step="${step + 1}"] :is(.quiz__option, input)`)
-        next?.focus({ preventScroll: true })
+        focusStep(step + 1)
       }
-      if (target.closest('.quiz__back')) show(Math.max(0, current - 1))
+      if (target.closest('.quiz__back')) {
+        show(Math.max(0, current - 1))
+        focusStep(current)
+      }
     })
 
     const form = root.querySelector<HTMLFormElement>('.quiz__form')!
@@ -110,8 +121,11 @@ const { id } = Astro.props
       event.preventDefault()
       let ok = true
       form.querySelectorAll<HTMLInputElement>('input[required]').forEach((input) => {
-        const bad = !input.value.trim() || (input.type === 'email' && !/^\S+@\S+\.\S+$/.test(input.value))
+        const empty = !input.value.trim()
+        const bad = empty || (input.type === 'email' && !/^\S+@\S+\.\S+$/.test(input.value))
         input.setAttribute('aria-invalid', bad ? 'true' : 'false')
+        const error = document.getElementById(`${input.id}-error`)
+        if (error) error.textContent = !bad ? '' : input.type === 'email' && !empty ? 'Please enter a valid email.' : 'Please fill this in.'
         if (bad && ok) { input.focus(); ok = false }
       })
       if (!ok) return
@@ -169,7 +183,7 @@ const { id } = Astro.props
   .quiz :global(.quiz__bar li) { width: 1.375rem; height: 5px; border-radius: 3px; background: var(--color-border); }
   .quiz :global(.quiz__bar li.done), .quiz :global(.quiz__bar li.now) { background: var(--color-brand-deep); }
   .quiz :global(.quiz__step) { border: 0; min-width: 0; }
-  .quiz :global(.quiz__q) { display: block; padding: 0; font-size: clamp(1.3125rem, 1.15rem + 0.6vw, 1.5rem); line-height: 1.25; letter-spacing: -0.01em; font-weight: var(--weight-medium); margin-bottom: var(--space-5); }
+  .quiz :global(.quiz__q) { display: block; color: var(--color-text); padding: 0; font-size: clamp(1.3125rem, 1.15rem + 0.6vw, 1.5rem); line-height: 1.25; letter-spacing: -0.01em; font-weight: var(--weight-medium); margin-bottom: var(--space-5); }
   .quiz :global(.quiz__options) { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
   .quiz :global(.quiz__option) { display: flex; align-items: center; gap: var(--space-3); min-height: 3.625rem; padding: var(--space-3) var(--space-4); text-align: left; font-size: var(--text-body); line-height: 1.3; background: var(--color-surface-muted); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
   .quiz :global(.quiz__option:hover) { border-color: var(--color-brand-deep); }
@@ -179,6 +193,10 @@ const { id } = Astro.props
   .quiz :global(.quiz__ready) { font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-2); }
   .quiz :global(.quiz__fields) { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-5); }
   .quiz :global(.field) { display: grid; gap: var(--space-2); font-size: var(--text-sm); font-weight: var(--weight-medium); }
+  .quiz :global(.field__error) { font-size: var(--text-xs); font-weight: var(--weight-medium); color: var(--color-error); }
+  .quiz :global(.field__error:empty) { display: none; }
+  .quiz__fallback { font-size: var(--text-body-lg); }
+  .quiz__fallback a { color: var(--color-brand); text-decoration: underline; text-underline-offset: 4px; }
   .quiz :global(.field input[aria-invalid='true']) { border-color: var(--color-error); box-shadow: 0 0 0 1px var(--color-error); }
   .quiz :global(.quiz__small) { margin-top: var(--space-3); font-size: var(--text-xs); color: var(--color-text-muted); }
   .quiz :global(.quiz__headline) { font-size: clamp(1.3125rem, 1.15rem + 0.6vw, 1.5rem); line-height: 1.3; letter-spacing: -0.01em; font-weight: var(--weight-medium); color: var(--color-text); margin-bottom: var(--space-5); }

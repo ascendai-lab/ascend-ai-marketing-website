@@ -20,8 +20,13 @@ if (root.classList.contains('motion')) {
   const reveal = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return
-      entry.target.classList.add('is-in')
-      reveal.unobserve(entry.target)
+      const el = entry.target as HTMLElement
+      el.classList.add('is-in')
+      reveal.unobserve(el)
+      // Once it has arrived, hand transitions back to the element's own hover effects.
+      const done = () => el.classList.add('is-done')
+      el.addEventListener('transitionend', (e) => { if (e.target === el && e.propertyName === 'opacity') done() }, { once: false })
+      window.setTimeout(done, 1600)
     })
   }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 })
   targets.forEach((el) => reveal.observe(el))

@@ -12,7 +12,7 @@ import { pricing, links, hero } from '@/content/home'
   <div class="plan surface-deep">
     <div class="plan__main">
       <p class="tag">{pricing.tag} <span class="tag tag--accent">{pricing.save}</span></p>
-      <p class="plan__amount"><s>{pricing.was}</s>{pricing.now}</p>
+      <p class="plan__amount"><s><span class="sr-only">Was </span>{pricing.was}</s><span class="sr-only">Now </span>{pricing.now}</p>
       <p class="plan__term">{pricing.term}</p>
       <div class="actions plan__actions">
         <Btn href={links.quiz} icon="arrow">{hero.primary}</Btn>
@@ -20,7 +20,7 @@ import { pricing, links, hero } from '@/content/home'
       </div>
     </div>
     <div class="card surface-white plan__incl">
-      <p class="t-h4">{pricing.includesTitle}</p>
+      <h3 class="t-h4">{pricing.includesTitle}</h3>
       <ul class="ticks">
         {pricing.includes.map((item) => <li><Icon name="check" />{item}</li>)}
       </ul>

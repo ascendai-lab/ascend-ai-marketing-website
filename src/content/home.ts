@@ -48,7 +48,6 @@ export type Slide =
   | { kind: 'photo'; src: string; alt: string; caption?: string }
   | { kind: 'textback' }
   | { kind: 'inbox' }
-  | { kind: 'quote'; quote: string; name: string; detail: string }
   | { kind: 'booked'; src: string; alt: string }
 
 export const slides: Slide[] = [

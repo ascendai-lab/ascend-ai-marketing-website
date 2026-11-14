@@ -37,9 +37,16 @@ import { reviews, reviewSummary, links } from '@/content/home'
     const text = document.getElementById(button.getAttribute('aria-controls') ?? '')
     const label = button.querySelector('span')
     if (!text || !label) return
-    const fits = () => text.scrollHeight <= text.clientHeight + 2
-    if (fits()) { text.classList.add('is-short'); return }
-    button.hidden = false
+    const check = () => {
+      if (button.getAttribute('aria-expanded') === 'true') return
+      text.classList.remove('is-short')
+      const short = text.scrollHeight <= text.clientHeight + 2
+      text.classList.toggle('is-short', short)
+      button.hidden = short
+    }
+    check()
+    window.addEventListener('resize', check)
+    document.fonts?.ready.then(check)
     button.addEventListener('click', () => {
       const open = button.getAttribute('aria-expanded') !== 'true'
       const from = text.offsetHeight
@@ -48,7 +55,8 @@ import { reviews, reviewSummary, links } from '@/content/home'
       button.setAttribute('aria-expanded', String(open))
       label.textContent = open ? 'Show less' : 'Read more'
       if (reduce) return
-      text.animate([{ height: `${from}px` }, { height: `${to}px` }], { duration: 360, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' })
+      const css = getComputedStyle(document.documentElement)
+      text.animate([{ height: `${from}px` }, { height: `${to}px` }], { duration: parseFloat(css.getPropertyValue('--dur-reveal')) * 0.45 || 360, easing: css.getPropertyValue('--ease-out').trim() || 'ease-out' })
     })
   })
 </script>

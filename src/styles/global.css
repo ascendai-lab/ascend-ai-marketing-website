@@ -152,6 +152,7 @@
     --dur-fast: 160ms;
     --dur-base: 260ms;
     --dur-reveal: 800ms;
+    --dur-menu: 500ms;
     --reveal-shift: 1.5rem;
     --reveal-step: 90ms;
 
@@ -536,7 +537,7 @@
   .motion :is(.section .section-head, .section .split > *, .section .grid-2 > *, .section .grid-3 > *, .section .grid-4 > *, .section .plan, .section .plan__own, .section .accordion > details, [data-reveal]):not(.is-in) {
     opacity: 0; transform: translateY(var(--reveal-shift));
   }
-  .motion .is-in {
+  .motion .is-in:not(.is-done) {
     transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-reveal) var(--ease-out);
     transition-delay: var(--reveal-delay, 0ms);
   }
