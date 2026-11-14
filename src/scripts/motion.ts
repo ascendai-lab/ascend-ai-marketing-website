@@ -3,6 +3,7 @@
  * which BaseLayout sets in <head> unless the visitor asked for reduced motion.
  */
 const root = document.documentElement
+// Keep in step with the matching list under "Entrance" in global.css, which hides these before they arrive.
 const SELECTOR = [
   '.section .section-head', '.section .split > *', '.section .grid-2 > *', '.section .grid-3 > *',
   '.section .grid-4 > *', '.section .plan', '.section .plan__own', '.section .accordion > details', '[data-reveal]',
@@ -25,7 +26,7 @@ if (root.classList.contains('motion')) {
       reveal.unobserve(el)
       // Once it has arrived, hand transitions back to the element's own hover effects.
       const done = () => el.classList.add('is-done')
-      el.addEventListener('transitionend', (e) => { if (e.target === el && e.propertyName === 'opacity') done() }, { once: false })
+      el.addEventListener('transitionend', (e) => { if (e.target === el && e.propertyName === 'opacity') done() })
       window.setTimeout(done, 1600)
     })
   }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 })
@@ -45,6 +46,12 @@ if (root.classList.contains('motion')) {
       const match = el.textContent?.match(/^(\D*)([\d,]+)(.*)$/)
       if (!match) return
       const [, prefix, digits, suffix] = match
+      // Screen readers get the final number once, not every step of the count.
+      const final = document.createElement('span')
+      final.className = 'sr-only'
+      final.textContent = el.textContent ?? ''
+      el.setAttribute('aria-hidden', 'true')
+      el.after(final)
       const target = Number(digits.replace(/,/g, ''))
       const start = performance.now()
       const duration = 1400

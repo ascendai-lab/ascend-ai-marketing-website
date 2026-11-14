@@ -48,9 +48,13 @@ selling, not decoration. One soft sage accent marks the thing to look at.
 | `ink` | `#1e1e1e` | Headings and strong text |
 | `stone-600` | `#474d49` | Body text |
 | `stone-500` | `#5f6661` | Muted text, labels |
+| `stone-100` | `#ebeee9` | Incoming text bubble, muted status pill |
 | `line` | `#e4ddd0` | Dividers |
-| `blue-500` | `#2d9ffe` | Product UI only (text bubbles, UI icons) |
+| `blue-500` | `#2d9ffe` | Product UI only (UI icons) |
+| `blue-600` | `#0d6cc4` | Product UI only: outgoing text bubble (white text passes contrast), "new" status text |
 | `red-600` / `red-100` | `#c9412b` / `#fde9e6` | Missed-call icon in product UI, form errors |
+
+On dark surfaces, translucent white comes from tokens too: `--color-control-inverse` (round buttons, nav pill), `--color-text-inverse-faint` (struck-through price), and `--color-overlay` behind pop-ups.
 
 Tailwind's default palette is switched off, so off-brand colors can't be used by accident.
 
@@ -81,14 +85,20 @@ Google Sans and the system font.
 | Display (H1) | `.t-display` | 40 → 70px | 400 | 1.04 |
 | H2 | `.t-h2` | 32 → 52px | 420 | 1.1 |
 | H3 | `.t-h3` | 22 → 26px | 420 | 1.2 |
-| H4 / card title | `.t-h4` | 18px | 550 | 1.3 |
-| Stat | `--text-stat` | 48 → 64px | 450 | 1 |
+| H4 / card title | `.t-h4` | 18px | 560 (`--weight-ui`) | 1.3 |
+| Price | `--text-price` | 64 → 92px | 400 | 1 |
+| Final call to action | `--text-cta` | 38 → 62px | 400 | 1.04 |
+| Stat | `--text-stat` | 48 → 64px | 450 (`--weight-stat`) | 1 |
+| Figure | `--text-figure` | 30px | — | 1 |
+| Quiz question | `--text-question` | 21 → 24px | 420 | 1.2 |
 | Lead | `.lead` | 19 → 24px | 400 | 1.45 |
 | Body large | `.body-lg` | 18px | 400 | 1.65 |
 | Body | — | 16px | 400 | 1.6 |
+| UI text | `--text-ui` | 15px | — | 1.45 |
 | Small | `.text-sm` | 14px | 400 | 1.5 |
 | Label / eyebrow | `.eyebrow` | 13px, caps, +0.16em | 500 | — |
-| Button | `.btn` | 16px (14px small) | 560 | 1 |
+| Product UI / badge | `--text-2xs` | 12px | — | — |
+| Button | `.btn` | 16px (14px small) | 560 (`--weight-ui`) | 1 |
 
 - Headings are light and large, with tight negative tracking. Wrap one phrase in `<em>` to color it (sage on dark, green on light).
 - Every section opens with an eyebrow: a small square dot and an uppercase label.

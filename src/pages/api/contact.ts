@@ -14,14 +14,19 @@ const ContactSchema = z.object({
 })
 
 /* ── Rate Limit (simple in-memory) ───────────────────────────────────────── */
-// For production, replace with Netlify Edge rate limiting or Upstash Redis
-const submissions = new Map<string, number>()
-const RATE_LIMIT_MS = 60_000 // 1 submission per IP per minute
+// For production, replace with Netlify Edge rate limiting or Upstash Redis.
+// Allows a few sends per visitor per minute, so a retry or a typo fix still goes through.
+const submissions = new Map<string, number[]>()
+const RATE_WINDOW_MS = 60_000
+const RATE_MAX = 3
 
-function isRateLimited(ip: string): boolean {
-  const last = submissions.get(ip)
-  if (last && Date.now() - last < RATE_LIMIT_MS) return true
-  submissions.set(ip, Date.now())
+function isRateLimited(ip: string | null): boolean {
+  if (!ip) return false // Without a visitor address, don't lump everyone into one bucket.
+  const now = Date.now()
+  const recent = (submissions.get(ip) ?? []).filter((t) => now - t < RATE_WINDOW_MS)
+  if (recent.length >= RATE_MAX) return true
+  recent.push(now)
+  submissions.set(ip, recent)
   return false
 }
 
@@ -29,7 +34,10 @@ function isRateLimited(ip: string): boolean {
 
 export const POST: APIRoute = async ({ request, site }) => {
   // Rate limit
-  const ip = request.headers.get('x-forwarded-for') ?? 'unknown'
+  const ip =
+    request.headers.get('x-nf-client-connection-ip') ??
+    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+    null
   if (isRateLimited(ip)) {
     return new Response(
       JSON.stringify({ error: 'Too many submissions. Please wait a minute and try again.' }),

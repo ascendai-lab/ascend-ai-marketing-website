@@ -24,7 +24,7 @@ const photo = (id: string, w = 1200) => `https://images.unsplash.com/photo-${id}
 
 export const nav = [
   { label: 'Home', href: '/' },
-  { label: 'Services', href: '/#included' },
+  { label: 'Services', href: '/#services' },
   { label: 'How it works', href: '/#steps' },
   { label: 'Pricing', href: '/#pricing' },
   { label: 'FAQ', href: '/#faq' },
@@ -75,7 +75,7 @@ export const problem = {
     { icon: 'search', text: "Your website doesn't show up on Google or AI search. Or it shows up and doesn't get the call." },
     { icon: 'file', text: 'You paid an agency before. You got a monthly bill and a report no one reads.' },
   ] satisfies { icon: IconName; text: string }[],
-  feel: "It's frustrating. You know your work is good. But you can't be on a roof and at the phone at the same time. And there's a nagging feeling that money slips away every week.",
+  feel: "Your work is good. But you can't be on a roof and at the phone at the same time, and money slips away every week.",
   close: 'A good shop should not lose a job to a voicemail.',
 }
 
@@ -84,8 +84,8 @@ export const results = {
   heading: 'Past clients.',
   link: 'See our work',
   items: [
-    { tag: 'Local SEO and a custom website', num: '45', what: 'qualified leads in 60 days', quote: '"Within just two months, we saw incredible results." Camille, Etheric Networks', who: 'Etheric Networks', dark: false },
-    { tag: 'Local SEO and Google Ads', num: '$100,000+', what: 'in revenue, and the #1 spot on Google Maps for "fence company," "fence contractor" and "fence installation."', who: 'A fence and tree company', dark: true },
+    { tag: 'Local SEO and a custom website', num: '45', what: 'qualified leads in 60 days', quote: '"Within just two months, we saw incredible results."', who: 'Camille H., Etheric Networks', dark: false },
+    { tag: 'Local SEO and Google Ads', num: '$100,000+', what: 'in revenue, and the #1 spot on Google Maps.', who: 'A fence and tree company', dark: true },
     { tag: 'Online giving system', num: '$750,000+', what: 'in online revenue.', who: 'Miracle Temple C.O.G.I.C.', dark: false },
   ],
 }
@@ -180,7 +180,7 @@ export const pricing = {
     'One inbox for every lead, on GoHighLevel',
   ],
   planLink: 'See the full plan',
-  own: { lead: 'You own everything:', text: 'your website, domain, Google profile, ad accounts and contact list. You can log in to your lead dashboard any time. Care means hosting, updates, backups, security and keeping your site running. Need a change? Ask, and we handle it.' },
+  own: { lead: 'You own everything:', text: 'your website, domain, Google profile, ad accounts and contact list. Need a change? Ask, and we handle it.' },
 }
 
 /** Standalone services. Each one gets its own page from the shared service template. */
@@ -213,8 +213,8 @@ export const nationwide = {
 
 export const faq = {
   eyebrow: 'FAQ',
-  heading: 'Every week you wait, the phone keeps ringing.',
-  body: 'Some of those calls are new system installs. Some are customers for life. If no one picks up, the next shop gets the job, the review and the customer.',
+  heading: 'Questions shop owners ask.',
+  body: "Don't see yours? Book a quick call and ask us.",
   items: [
     { q: 'What do you need from me to start?', a: 'Access to your domain and Google profile, plus your logo and a few photos. We send a simple checklist for the rest.' },
     { q: 'How fast can my site go live?', a: 'Your site goes live 72 hours after we have everything we need.' },
@@ -233,7 +233,7 @@ export const finalCta = {
 }
 
 /** Google reviews of Ascend AI Marketing, copied word for word from the Business Profile. */
-export const reviewSummary = { rating: '5.0', count: 4 }
+export const reviewSummary = { rating: '5.0' }
 
 export const reviews: { name: string; detail: string; text: string }[] = [
   {

@@ -2,10 +2,9 @@
  * Accordions (.accordion > details) open and close with a smooth height animation.
  * Groups marked [data-one-open] keep one item open at a time. No animation for reduced motion.
  */
+import { animateHeight } from './animate-height'
+
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-const css = getComputedStyle(document.documentElement)
-const duration = parseFloat(css.getPropertyValue('--dur-accordion')) || 420
-const easing = css.getPropertyValue('--ease-out').trim() || 'ease-out'
 
 function setOpen(details: HTMLDetailsElement, open: boolean) {
   const summary = details.querySelector('summary')
@@ -20,7 +19,8 @@ function setOpen(details: HTMLDetailsElement, open: boolean) {
   details.open = true
   const to = open ? details.getBoundingClientRect().height : summary.getBoundingClientRect().height
   details.style.overflow = 'hidden'
-  const animation = details.animate([{ height: `${from}px` }, { height: `${to}px` }], { duration, easing })
+  const animation = animateHeight(details, from, to)
+  if (!animation) return
   animation.onfinish = () => {
     details.open = open
     details.classList.remove('is-closing')

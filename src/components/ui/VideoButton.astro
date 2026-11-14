@@ -28,7 +28,7 @@ const src = embed ? `${embed}${embed.includes('?') ? '&' : '?'}autoplay=1&rel=0&
 
   <dialog class="video-modal" aria-label={title} data-video-dialog>
     <div class="video-modal__inner">
-      <button type="button" class="video-modal__close" data-video-close aria-label="Close video"><Icon name="x" /></button>
+      <button type="button" class="video-modal__close" data-video-close aria-label={src ? 'Close video' : 'Close'}><Icon name="x" /></button>
       {
         src ? (
           <div class="video-modal__frame">
@@ -36,7 +36,6 @@ const src = embed ? `${embed}${embed.includes('?') ? '&' : '?'}autoplay=1&rel=0&
           </div>
         ) : (
           <div class="video-modal__soon surface-deep">
-            <span class="icon-chip"><Icon name="play" fill /></span>
             <p class="t-h3">Our video is coming soon.</p>
             <p>In the meantime, we're happy to walk you through it ourselves.</p>
             <a class="btn btn--primary" href={fallbackHref}><span>{fallbackLabel}</span><Icon name="arrow" /></a>
@@ -81,7 +80,7 @@ const src = embed ? `${embed}${embed.includes('?') ? '&' : '?'}autoplay=1&rel=0&
   .video-btn__open:hover :global(.video-btn__play .icon) { transform: none; }
 
   .video-modal { margin: auto; inset: 0; max-height: none; width: min(64rem, calc(100vw - 2 * var(--container-padding-x))); max-width: none; padding: var(--space-16) 0 0; border: 0; background: transparent; overflow: visible; }
-  .video-modal::backdrop { background: rgb(13 38 22 / 0.86); }
+  .video-modal::backdrop { background: var(--color-overlay); }
   .video-modal[open] { animation: video-in var(--dur-base) var(--ease-out); }
   @keyframes video-in { from { opacity: 0; transform: scale(0.96); } }
   .video-modal__inner { position: relative; }

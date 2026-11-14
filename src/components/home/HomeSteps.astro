@@ -1,4 +1,5 @@
 ---
+import { twoDigit } from '@/lib/format'
 import Section from '@components/ui/Section.astro'
 import SectionHead from '@components/ui/SectionHead.astro'
 import Btn from '@components/ui/Btn.astro'
@@ -12,7 +13,7 @@ import { steps, inbox, links, hero } from '@/content/home'
     <ol class="steps__list">
       {steps.items.map((step, i) => (
         <li>
-          <div class="steps__head"><span class="icon-chip"><Icon name={step.icon} /></span><h3 class="t-h3">{step.title}</h3><span class="steps__num">0{i + 1}</span></div>
+          <div class="steps__head"><span class="icon-chip"><Icon name={step.icon} /></span><h3 class="t-h3">{step.title}</h3><span class="steps__num">{twoDigit(i)}</span></div>
           <p>{step.text}</p>
           {i === 0 && <div class="steps__cta"><Btn href={links.quiz} icon="arrow">{hero.primary}</Btn></div>}
         </li>
@@ -45,7 +46,7 @@ import { steps, inbox, links, hero } from '@/content/home'
   .steps__scene { margin: 0; min-height: 32rem; display: flex; align-items: flex-end; justify-content: center; padding: var(--space-6); }
   .steps__scene > img { position: absolute; inset: 0; }
   .steps__inbox { position: relative; width: min(25rem, 100%); padding: var(--space-4); box-shadow: var(--shadow-lg); }
-  .steps__inbox-title { display: flex; align-items: center; gap: var(--space-2); font-size: 0.9375rem; font-weight: var(--weight-strong); color: var(--color-text); }
+  .steps__inbox-title { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-ui); font-weight: var(--weight-strong); color: var(--color-text); }
   .steps__inbox-title :global(.icon) { color: var(--color-brand); }
   .steps__inbox ul { display: grid; gap: 0.375rem; }
   .steps__inbox li { padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); background: var(--color-surface-muted); }

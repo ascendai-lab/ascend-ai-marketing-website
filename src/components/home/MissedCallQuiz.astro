@@ -30,17 +30,26 @@ import { links } from '@/content/home'
   const MISS = [0.03, 0.1, 0.2, 0.33]
   const VALUE = [220, 600, 2200, 6500]
   const SPEED = [0.55, 0.8, 1, 1.15]
+  /** Share of calls that are new paying work (the rest are existing customers, vendors, spam). */
+  const NEW_WORK = 0.4
+  /** Share of new-work calls a shop books when it does answer: low and high end of the range. */
+  const CLOSE = [0.25, 0.45]
+  /** Estimates above this read as "more than", so the number stays believable. */
+  const CAP = 50000
   const GRADES: [string, string][] = [
     ['A', 'You catch almost every call. A few small fixes can still add jobs.'],
-    ['B', 'You catch almost every call. A few small fixes can still add jobs.'],
+    ['B', 'You catch most calls. Faster follow-up would win a few more jobs.'],
     ['C', 'You catch most calls. The leak is in follow-up speed.'],
     ['D', 'Jobs are slipping through every week. A few changes can stop the leak.'],
     ['F', 'The phone is costing you real money. The good news: you can fix this.'],
   ]
-  const FIXES: [string, string][] = [
-    ['Text back every missed call in seconds.', 'A quick text keeps the homeowner talking to you, not the next shop.'],
-    ['Call back web leads within 5 minutes.', 'A homeowner with no heat wants an answer now.'],
-    ['Ask for a review after every job.', 'Reviews help homeowners pick you over the next shop.'],
+  /** Fixes in priority order. The first 3 that fit the answers are shown. */
+  const FIXES: { when: (a: number[]) => boolean; fix: [string, string] }[] = [
+    { when: (a) => a[1] === 0 || a[1] === 3, fix: ['Get every call answered, day or night.', 'Voicemail sends homeowners to the next shop on the list.'] },
+    { when: (a) => a[2] > 0, fix: ['Text back every missed call in seconds.', 'A quick text keeps the homeowner talking to you, not the next shop.'] },
+    { when: (a) => a[4] > 0, fix: ['Call back web leads within 5 minutes.', 'A homeowner with no heat wants an answer now.'] },
+    { when: () => true, fix: ['Follow up on every quote.', 'A short check-in a few days later wins jobs that would go quiet.'] },
+    { when: () => true, fix: ['Ask for a review after every job.', 'Reviews help homeowners pick you over the next shop.'] },
   ]
   const ARROW = '<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>'
 
@@ -76,13 +85,13 @@ import { links } from '@/content/home'
       field(id, 'mobile', 'Mobile (optional)', 'tel', 'tel', false) +
       '</div><input type="text" name="website" tabindex="-1" autocomplete="off" class="sr-only" aria-hidden="true">' +
       `<button type="submit" class="btn btn--primary">Show my results ${ARROW}</button>` +
+      '<p class="quiz__form-error field__error" role="alert"></p>' +
       '<p class="quiz__small">You\'ll get your report and a few short emails from our team.</p></form>'
     html +=
       '<div class="quiz__step quiz__result" data-step="6" hidden tabindex="-1">' +
       '<p class="quiz__headline"></p>' +
       '<div class="quiz__score"><span class="quiz__grade"></span><span><strong>Your call handling score</strong><span class="quiz__grade-line"></span></span></div>' +
       '<p class="quiz__fix-title">Your 3 fixes</p><ol class="quiz__fixes">' +
-      FIXES.map((f) => `<li><span><strong>${f[0]}</strong> ${f[1]}</span></li>`).join('') +
       `</ol><a class="btn btn--primary" href="${root.dataset.book ?? '/book'}">Book a 15-minute call ${ARROW}</a></div>`
     html += '<button type="button" class="quiz__back" hidden>Back</button>'
     root.innerHTML = html
@@ -134,34 +143,47 @@ import { links } from '@/content/home'
       const shop = String(data.get('shop')).trim()
 
       const missed = CALLS[answers[0]] * 4.33 * MISS[answers[2]]
-      const lost = missed * LOST_SHARE[answers[1]] * SPEED[answers[4]]
-      const low = Math.max(150, lost * 0.3 * VALUE[answers[3]])
-      const high = Math.max(400, lost * 0.55 * VALUE[answers[3]])
+      const lostJobs = missed * LOST_SHARE[answers[1]] * SPEED[answers[4]] * NEW_WORK
+      const low = Math.max(150, lostJobs * CLOSE[0] * VALUE[answers[3]])
+      const high = Math.max(400, lostJobs * CLOSE[1] * VALUE[answers[3]])
+      const range = low >= CAP ? `more than ${money(CAP)}` : high > CAP ? `about ${money(low)} to ${money(CAP)} or more` : `about ${money(low)} to ${money(high)}`
       const points = answers[2] + LOST_POINTS[answers[1]] + answers[4]
       const grade = GRADES[Math.min(4, Math.floor(points / 2))]
 
       const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]')!
       submit.disabled = true
       const summary = QUESTIONS.map((item, i) => `${item.q} ${item.a[answers[i]]}`).join('\n')
+      const formError = form.querySelector<HTMLElement>('.quiz__form-error')!
+      formError.textContent = ''
+      let saved = false
       try {
-        await fetch('/api/contact', {
+        const res = await fetch('/api/contact', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             name: first.length > 1 ? first : `${first} (${shop})`,
             email: String(data.get('email')).trim(),
             phone: String(data.get('mobile') || '').trim() || undefined,
-            message: `Missed call quiz. Shop: ${shop}. Estimate: ${money(low)} to ${money(high)} a month. Score: ${grade[0]}.\n${summary}`,
+            message: `Missed call quiz. Shop: ${shop}. Estimate: ${range} a month. Score: ${grade[0]}.\n${summary}`,
             page: window.location.pathname,
             website: String(data.get('website') || ''),
           }),
         })
+        saved = res.ok
       } catch {
-        // The results still show if the network fails.
+        saved = false
       }
       submit.disabled = false
+      // Only show results once the lead is saved, so nobody walks away thinking we have their details.
+      if (!saved) {
+        formError.innerHTML = `We couldn't send that just now. Please try again in a moment, or <a href="${root.dataset.book ?? '/book'}">book a 15-minute call</a>.`
+        submit.focus()
+        return
+      }
 
-      root.querySelector('.quiz__headline')!.textContent = `${first}, missed calls may be costing ${shop} about ${money(low)} to ${money(high)} a month.`
+      root.querySelector('.quiz__headline')!.textContent = `${first}, missed calls may be costing ${shop} ${range} a month.`
+      root.querySelector('.quiz__fixes')!.innerHTML = FIXES.filter((f) => f.when(answers)).slice(0, 3)
+        .map(({ fix }) => `<li><span><strong>${fix[0]}</strong> ${fix[1]}</span></li>`).join('')
       root.querySelector('.quiz__grade')!.textContent = grade[0]
       root.querySelector('.quiz__grade-line')!.textContent = grade[1]
       show(6)
@@ -183,12 +205,12 @@ import { links } from '@/content/home'
   .quiz :global(.quiz__bar li) { width: 1.375rem; height: 5px; border-radius: 3px; background: var(--color-border); }
   .quiz :global(.quiz__bar li.done), .quiz :global(.quiz__bar li.now) { background: var(--color-brand-deep); }
   .quiz :global(.quiz__step) { border: 0; min-width: 0; }
-  .quiz :global(.quiz__q) { display: block; color: var(--color-text); padding: 0; font-size: clamp(1.3125rem, 1.15rem + 0.6vw, 1.5rem); line-height: 1.25; letter-spacing: -0.01em; font-weight: var(--weight-medium); margin-bottom: var(--space-5); }
+  .quiz :global(.quiz__q) { display: block; color: var(--color-text); padding: 0; font-size: var(--text-question); line-height: 1.25; letter-spacing: -0.01em; font-weight: var(--weight-medium); margin-bottom: var(--space-5); }
   .quiz :global(.quiz__options) { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
   .quiz :global(.quiz__option) { display: flex; align-items: center; gap: var(--space-3); min-height: 3.625rem; padding: var(--space-3) var(--space-4); text-align: left; font-size: var(--text-body); line-height: 1.3; background: var(--color-surface-muted); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
   .quiz :global(.quiz__option:hover) { border-color: var(--color-brand-deep); }
   .quiz :global(.quiz__option[aria-pressed='true']) { background: var(--color-brand-deep); color: var(--color-white); border-color: var(--color-brand-deep); }
-  .quiz :global(.quiz__key) { flex: none; width: 1.625rem; height: 1.625rem; border-radius: var(--radius-full); display: grid; place-items: center; font-size: 0.75rem; font-weight: var(--weight-strong); background: var(--color-white); color: var(--color-green-900); }
+  .quiz :global(.quiz__key) { flex: none; width: 1.625rem; height: 1.625rem; border-radius: var(--radius-full); display: grid; place-items: center; font-size: var(--text-2xs); font-weight: var(--weight-strong); background: var(--color-white); color: var(--color-green-900); }
   .quiz :global(.quiz__back) { margin-top: var(--space-4); min-height: 44px; background: none; border: 0; font-size: var(--text-sm); text-decoration: underline; text-underline-offset: 3px; color: var(--color-text-muted); }
   .quiz :global(.quiz__ready) { font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-2); }
   .quiz :global(.quiz__fields) { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-5); }
@@ -199,14 +221,14 @@ import { links } from '@/content/home'
   .quiz__fallback a { color: var(--color-brand); text-decoration: underline; text-underline-offset: 4px; }
   .quiz :global(.field input[aria-invalid='true']) { border-color: var(--color-error); box-shadow: 0 0 0 1px var(--color-error); }
   .quiz :global(.quiz__small) { margin-top: var(--space-3); font-size: var(--text-xs); color: var(--color-text-muted); }
-  .quiz :global(.quiz__headline) { font-size: clamp(1.3125rem, 1.15rem + 0.6vw, 1.5rem); line-height: 1.3; letter-spacing: -0.01em; font-weight: var(--weight-medium); color: var(--color-text); margin-bottom: var(--space-5); }
+  .quiz :global(.quiz__headline) { font-size: var(--text-question); line-height: 1.3; letter-spacing: -0.01em; font-weight: var(--weight-medium); color: var(--color-text); margin-bottom: var(--space-5); }
   .quiz :global(.quiz__score) { display: flex; gap: var(--space-4); align-items: center; padding: var(--space-4); border-radius: var(--radius-md); background: var(--color-sage-100); margin-bottom: var(--space-5); }
-  .quiz :global(.quiz__score > span:last-child) { display: grid; gap: 2px; font-size: 0.9375rem; line-height: 1.4; }
-  .quiz :global(.quiz__grade) { flex: none; width: 3.5rem; height: 3.5rem; border-radius: var(--radius-full); display: grid; place-items: center; font-size: 1.875rem; font-weight: var(--weight-strong); background: var(--color-brand-deep); color: var(--color-white); }
+  .quiz :global(.quiz__score > span:last-child) { display: grid; gap: 2px; font-size: var(--text-ui); line-height: 1.4; }
+  .quiz :global(.quiz__grade) { flex: none; width: 3.5rem; height: 3.5rem; border-radius: var(--radius-full); display: grid; place-items: center; font-size: var(--text-figure); font-weight: var(--weight-strong); background: var(--color-brand-deep); color: var(--color-white); }
   .quiz :global(.quiz__fix-title) { font-size: var(--text-sm); font-weight: var(--weight-strong); color: var(--color-text); margin-bottom: var(--space-3); }
   .quiz :global(.quiz__fixes) { counter-reset: fx; display: grid; gap: var(--space-3); margin-bottom: var(--space-6); }
-  .quiz :global(.quiz__fixes li) { counter-increment: fx; display: grid; grid-template-columns: 1.625rem 1fr; gap: var(--space-2); font-size: 0.9375rem; line-height: 1.45; color: var(--color-text-body); }
-  .quiz :global(.quiz__fixes li::before) { content: counter(fx); width: 1.375rem; height: 1.375rem; border-radius: var(--radius-full); display: grid; place-items: center; font-size: 0.75rem; font-weight: var(--weight-strong); background: var(--color-ui); color: var(--color-white); margin-top: 1px; }
+  .quiz :global(.quiz__fixes li) { counter-increment: fx; display: grid; grid-template-columns: 1.625rem 1fr; gap: var(--space-2); font-size: var(--text-ui); line-height: 1.45; color: var(--color-text-body); }
+  .quiz :global(.quiz__fixes li::before) { content: counter(fx); width: 1.375rem; height: 1.375rem; border-radius: var(--radius-full); display: grid; place-items: center; font-size: var(--text-2xs); font-weight: var(--weight-strong); background: var(--color-brand); color: var(--color-white); margin-top: 1px; }
   .quiz :global(.quiz__fixes strong) { color: var(--color-text); font-weight: var(--weight-strong); }
   @media (max-width: 640px) { .quiz :global(:is(.quiz__options, .quiz__fields)) { grid-template-columns: 1fr; } }
 </style>

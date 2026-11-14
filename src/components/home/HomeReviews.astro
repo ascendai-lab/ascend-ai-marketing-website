@@ -29,8 +29,8 @@ import { reviews, reviewSummary, links } from '@/content/home'
 }
 
 <script>
-  // Long reviews start collapsed: the last lines fade out under a gradient. "Read more" opens the whole review in place.
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  // Long reviews start collapsed: the last lines fade out under a gradient. "Show more" opens the whole review in place.
+  import { animateHeight } from '@/scripts/animate-height'
   document.querySelectorAll<HTMLButtonElement>('.review__more').forEach((button) => {
     const text = document.getElementById(button.getAttribute('aria-controls') ?? '')
     if (!text) return
@@ -51,9 +51,7 @@ import { reviews, reviewSummary, links } from '@/content/home'
       const to = text.offsetHeight
       button.setAttribute('aria-expanded', String(open))
       button.textContent = open ? 'Show less' : 'Show more'
-      if (reduce) return
-      const css = getComputedStyle(document.documentElement)
-      text.animate([{ height: `${from}px` }, { height: `${to}px` }], { duration: parseFloat(css.getPropertyValue('--dur-accordion')) || 420, easing: css.getPropertyValue('--ease-out').trim() || 'ease-out' })
+      animateHeight(text, from, to)
     })
   })
 </script>
