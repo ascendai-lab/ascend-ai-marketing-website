@@ -1,0 +1,22 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro'
+import PageBuilder from '@components/blocks/PageBuilder.astro'
+import DetailHeader from '@components/layout/DetailHeader.astro'
+import PortableText from '@components/ui/PortableText'
+import { loadQuery } from '@cms/lib/load'
+import { editAttr } from '@cms/lib/visualEditing'
+import { layoutQuery, serviceAreaQuery } from '@cms/queries'
+
+const slug = Astro.params.slug!
+const { draftMode } = Astro.locals
+const [layout, area] = await Promise.all([loadQuery(draftMode, layoutQuery), loadQuery(draftMode, serviceAreaQuery, { slug })])
+if (!area) return Astro.rewrite('/404')
+---
+
+<BaseLayout layout={layout} title={area.title} seo={area.seo} description={area.excerpt} image={area.image}>
+  <DetailHeader title={area.title} intro={area.excerpt} image={area.image} document={area} introField="excerpt" backHref="/areas" backLabel="All areas" />
+  {area.body?.length ? (
+    <section class="section"><div class="container" data-sanity={editAttr(draftMode, area, 'body')}><PortableText value={area.body} className="prose detail-body" /></div></section>
+  ) : null}
+  <PageBuilder blocks={area.pageBuilder} document={area} settings={layout.settings} firstHeroIsH1={false} />
+</BaseLayout>

@@ -1,0 +1,41 @@
+---
+import type { BlockOf } from '@cms/lib/types'
+import { routes } from '@cms/routes'
+import Section from '@components/ui/Section.astro'
+import SectionHeader from '@components/ui/SectionHeader.astro'
+
+interface Props {
+  block: BlockOf<'serviceAreasBlock'>
+  'data-sanity'?: string
+}
+
+const { block, 'data-sanity': dataSanity } = Astro.props
+const items = (block.items ?? []).filter((item) => item !== null)
+---
+
+<Section anchorId={block.anchorId} background={block.background} data-sanity={dataSanity}>
+  <SectionHeader heading={block.heading} intro={block.intro} />
+  <ul class="areas">
+    {
+      items.map((area) => (
+        <li>
+          {area.slug ? (
+            <a href={routes.serviceArea(area.slug)} class="card area">
+              <strong>{[area.city, area.state].filter(Boolean).join(', ')}</strong>
+              {area.excerpt && <span>{area.excerpt}</span>}
+            </a>
+          ) : (
+            <span class="card area">{area.city}</span>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</Section>
+
+<style>
+  .areas { list-style: none; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+  .area { display: grid; gap: 0.35rem; padding: 1.25rem 1.5rem; height: 100%; }
+  .area span { color: var(--color-text-muted); font-size: 0.95rem; }
+  a.area:hover { border-color: var(--color-brand); }
+</style>

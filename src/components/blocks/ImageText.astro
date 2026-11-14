@@ -1,0 +1,40 @@
+---
+import { stegaClean } from '@sanity/client/stega'
+import type { BlockOf } from '@cms/lib/types'
+import Section from '@components/ui/Section.astro'
+import Button from '@components/ui/Button.astro'
+import SanityImage from '@components/ui/SanityImage.astro'
+import PortableText from '@components/ui/PortableText'
+
+interface Props {
+  block: BlockOf<'imageText'>
+  'data-sanity'?: string
+}
+
+const { block, 'data-sanity': dataSanity } = Astro.props
+const position = stegaClean(block.imagePosition) || 'right'
+---
+
+<Section anchorId={block.anchorId} background={block.background} data-sanity={dataSanity}>
+  <div class:list={['image-text', `image-text--${position}`]}>
+    <div class="image-text__media">
+      <SanityImage image={block.image} width={640} aspectRatio={4 / 3} />
+    </div>
+    <div class="image-text__content">
+      {block.eyebrow && <span class="eyebrow">{block.eyebrow}</span>}
+      {block.heading && <h2 class="section-heading">{block.heading}</h2>}
+      <PortableText value={block.body} />
+      {block.buttons?.length ? <div class="btn-row">{block.buttons.map((button) => <Button button={button} />)}</div> : null}
+    </div>
+  </div>
+</Section>
+
+<style>
+  .image-text { display: grid; gap: 3rem; align-items: center; }
+  .image-text__media :global(img) { width: 100%; border-radius: var(--radius-2xl); }
+  .image-text__content :global(.prose) { margin-top: 1.25rem; }
+  @media (min-width: 768px) {
+    .image-text { grid-template-columns: 1fr 1fr; }
+    .image-text--right .image-text__media { order: 2; }
+  }
+</style>

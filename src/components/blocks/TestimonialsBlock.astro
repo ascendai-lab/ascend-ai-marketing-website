@@ -1,0 +1,54 @@
+---
+import type { BlockOf } from '@cms/lib/types'
+import Section from '@components/ui/Section.astro'
+import SectionHeader from '@components/ui/SectionHeader.astro'
+import SanityImage from '@components/ui/SanityImage.astro'
+
+interface Props {
+  block: BlockOf<'testimonialsBlock'>
+  'data-sanity'?: string
+}
+
+const { block, 'data-sanity': dataSanity } = Astro.props
+const items = (block.items ?? []).filter((item) => item !== null)
+---
+
+<Section anchorId={block.anchorId} background={block.background} data-sanity={dataSanity}>
+  <SectionHeader heading={block.heading} intro={block.intro} />
+  <div class="grid-cards" data-columns="3">
+    {
+      items.map((item) => (
+        <figure class="card testimonial">
+          {item.rating ? (
+            <div class="testimonial__stars" aria-label={`${item.rating} out of 5 stars`}>
+              {'★'.repeat(item.rating)}
+              <span aria-hidden="true" class="testimonial__stars-off">{'★'.repeat(5 - item.rating)}</span>
+            </div>
+          ) : null}
+          <blockquote>
+            <p>“{item.quote}”</p>
+          </blockquote>
+          <figcaption>
+            {item.photo?.asset && <SanityImage image={item.photo} width={48} aspectRatio={1} class="testimonial__photo" />}
+            <span>
+              <strong>{item.name}</strong>
+              {item.context && <span class="testimonial__context">{item.context}</span>}
+              {item.source && <span class="testimonial__context">via {item.source}</span>}
+            </span>
+          </figcaption>
+        </figure>
+      ))
+    }
+  </div>
+</Section>
+
+<style>
+  .testimonial { padding: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+  .testimonial__stars { color: var(--color-warning); letter-spacing: 0.1em; }
+  .testimonial__stars-off { opacity: 0.25; }
+  blockquote p { color: var(--color-text); font-size: 1.05rem; }
+  figcaption { margin-top: auto; display: flex; gap: 0.75rem; align-items: center; }
+  figcaption > span { display: grid; }
+  .testimonial__context { font-size: 0.875rem; color: var(--color-text-muted); }
+  .testimonial :global(.testimonial__photo) { width: 3rem; height: 3rem; border-radius: var(--radius-full); }
+</style>

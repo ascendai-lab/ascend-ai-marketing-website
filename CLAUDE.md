@@ -11,8 +11,8 @@ Read this before touching any file.
 |---|---|---|
 | Framework | Astro 5 | `output: 'server'` — full SSR required for Sanity visual editing |
 | Styling | Tailwind CSS 4 | No config file — all via `@import "tailwindcss"` in global.css |
-| UI Components | shadcn/ui + Lucide icons | React components inside `.tsx` files |
-| CMS | Sanity v3 | Studio hosted separately, embedded via `/studio` route |
+| UI Components | Astro components + plain CSS tokens | React only for interactive islands (`.tsx`) |
+| CMS | Sanity v6 | Studio embedded at `/studio` (can also be deployed with `npm run sanity:deploy`) |
 | Visual Editing | Sanity Presentation Tool + Stega | Requires SSR — do NOT switch to static output |
 | Hosting | Netlify | SSR via Netlify adapter. NOT Cloudflare Pages |
 | Forms | Custom API route → n8n | See `src/pages/api/contact.ts` |
@@ -37,40 +37,52 @@ Tailwind utility classes map to those properties wherever possible.
 
 ### Astro components (`.astro`)
 - Used for layouts, pages, and non-interactive UI sections
-- Fetch Sanity data at the top using `useSanityClient()` from `@sanity/astro`
-- Always type the data with the schema types from `src/sanity/types.ts`
+- Fetch Sanity data at the top of a page with `loadQuery(Astro.locals.draftMode, query, params)` from `@cms/lib/load`
+- Load `layoutQuery` alongside the page query (`Promise.all`) and pass it to `BaseLayout`
+- Query results are typed automatically by Sanity TypeGen (`src/sanity/types.ts`). Run `npm run typegen` after changing a schema or a query
+- Values that end up in classes, ids, hrefs or `<head>` must go through `stegaClean()` (or `resolveLink()` for links)
 
 ### React components (`.tsx`)
 - Used for interactive UI only (forms, modals, carousels, portable text renderer)
-- All shadcn/ui components live in `src/components/ui/`
-- Portable text renderer is always a React component
+- UI components live in `src/components/ui/`
+- Portable text renderer is always a React component (`src/components/ui/PortableText.tsx`)
 
 ### Pages
-- `src/pages/index.astro` — homepage, fetches `homePage` singleton
-- `src/pages/[...slug].astro` — catches all other CMS pages
+- `src/pages/index.astro` — home page, renders the `homePage` singleton's page builder
+- `src/pages/[...slug].astro` — every `page` document
+- `src/pages/services/`, `areas/`, `blog/` — listings + detail pages for those document types
+- `src/pages/sitemap.xml.ts`, `robots.txt.ts` — generated from the CMS on request
 - `src/pages/api/contact.ts` — form submission API route
+- `src/pages/api/draft-mode/{enable,disable}.ts` — visual editing preview on/off
+- `src/middleware.ts` — draft-mode detection, CDN cache headers, CMS redirects on 404
+
+### Routes
+`src/sanity/routes.ts` is the single map from document type → URL. The site, sitemap, links
+and the Presentation tool all use it. Add a new routable type there first.
 
 ---
 
 ## Sanity Schema Rules
 
-- **Singletons** go in `src/sanity/schemas/singletons/` — one document, no list
+- **Singletons** go in `src/sanity/schemas/singletons/` — one document, no list (add the name to `singletonTypes` in `schemas/index.ts`)
 - **Repeatable documents** go in `src/sanity/schemas/documents/`
 - **Reusable field objects** go in `src/sanity/schemas/objects/`
-- Every page schema MUST include the `seoFields` object
-- Every page schema MUST have `studioUrl` set for visual editing
+- **Page-builder sections** go in `src/sanity/schemas/objects/blocks/` — register in `blockTypes`, add a projection in `pageBuilderFields` (queries.ts) and a component in `src/components/blocks/` + `PageBuilder.astro`
+- Every page schema MUST include `seoField` (from `schemas/shared.ts`) and be listed in `routes.ts` + `src/sanity/presentation.ts` for visual editing
+- Every image uses the `imageWithAlt` type (alt text is required unless marked decorative)
+- Every link uses the `link` type (internal reference / URL / email / phone) — never a free-text href
+- Rich text uses the `richText` type
 - Video embeds use the `videoEmbed` object schema — supports YouTube + Vimeo
+- Icons: import from subpaths, e.g. `import { HomeIcon } from '@sanity/icons/Home'` (the root export is removed in @sanity/icons v5)
 
 ### Singleton pattern (always use this for fixed pages)
-```ts
-// In sanity.config.ts structure builder:
-function singletonListItem(S, typeName, title, icon) {
-  return S.listItem()
-    .title(title)
-    .icon(icon)
-    .child(S.document().schemaType(typeName).documentId(typeName))
-}
-```
+See `src/sanity/structure.ts` (`singletonListItem`). Singletons are also hidden from
+"Create new" and can't be duplicated or deleted (see `sanity.config.ts`).
+
+### Visual editing
+- Studio is embedded at `/studio`; the Presentation tool opens the site via `/api/draft-mode/enable`
+- Draft mode needs `SANITY_API_READ_TOKEN` (Viewer). The cookie value is derived from the token, so it can't be forged
+- Page-builder sections get `data-sanity` attributes (`editAttr`) so editors can click and drag-reorder them
 
 ---
 
@@ -83,8 +95,8 @@ All env vars are documented in `.env.example`.
 |---|---|
 | `PUBLIC_SANITY_PROJECT_ID` | astro.config.mjs, sanity.config.ts |
 | `PUBLIC_SANITY_DATASET` | astro.config.mjs, sanity.config.ts |
-| `SANITY_STUDIO_URL` | astro.config.mjs (stega) |
-| `SANITY_API_READ_TOKEN` | src/sanity/client.ts |
+| `SANITY_STUDIO_URL` | astro.config.mjs (stega) — optional, defaults to `/studio` |
+| `SANITY_API_READ_TOKEN` | src/sanity/lib/load.ts, api/draft-mode (server only) |
 | `N8N_CONTACT_WEBHOOK_URL` | src/pages/api/contact.ts |
 | `SITE_URL` | astro.config.mjs |
 
@@ -105,7 +117,8 @@ The payload sent to n8n:
   "message": "string",
   "source": "website-contact-form",
   "timestamp": "ISO 8601",
-  "siteUrl": "string"
+  "siteUrl": "string",
+  "page": "string (path the form was sent from)"
 }
 ```
 
@@ -121,8 +134,10 @@ If visual editing breaks, this header is the first thing to check.
 
 ## What NOT to Do
 
+- Do NOT use colored border lines in any design (no colored border-top/bottom/left accents on cards, stats, steps or sections). See the house rules in `.stitch/DESIGN.md`
+
 - Do NOT switch `output` to `static` — visual editing breaks
-- Do NOT use `useCdn: true` in the Sanity client — drafts won't load
+- Do NOT use `useCdn: true` in the Sanity client — drafts won't load (published pages are cached at Netlify's CDN instead, see middleware.ts)
 - Do NOT add `X-Frame-Options: DENY` — it overrides the CSP and breaks visual editing
 - Do NOT store API tokens in the frontend — use server-side routes
 - Do NOT create Tailwind config files — Tailwind 4 is config-free

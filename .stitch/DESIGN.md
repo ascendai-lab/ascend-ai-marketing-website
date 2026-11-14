@@ -199,6 +199,13 @@ project photography and clear social proof."]
 
 ## 7. Do's and Don'ts
 
+### House rules (apply to every Ascend AI site, keep them when filling in this file)
+- NEVER use colored border lines: no colored top/bottom/left accent stripes on cards, stats, steps, quotes or sections. Separate things with space, a background or a soft shadow. Neutral hairlines on inputs and dividers are fine.
+- Give every element breathing room. Never jam a button under text in a tight box.
+- White (or near-white) page background; use tints sparingly so accent colors blend instead of clashing.
+- Hero fact lists (hours, ages, address) are plain icon text, not chips, so the main CTA stands out. Keep buttons slim.
+- Nothing that looks AI-generated: no generic bordered stat strips, gimmicky doodles or repeated filler sections.
+
 ### Do
 - [DO 1 — e.g. "Use Brand Primary only for CTAs and key interactive elements"]
 - [DO 2 — e.g. "Alternate section backgrounds between Background and Background Muted"]

@@ -1,0 +1,33 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro'
+import { loadQuery } from '@cms/lib/load'
+import { routes } from '@cms/routes'
+import { areasIndexQuery, layoutQuery } from '@cms/queries'
+
+const { draftMode } = Astro.locals
+const [layout, areas] = await Promise.all([loadQuery(draftMode, layoutQuery), loadQuery(draftMode, areasIndexQuery)])
+---
+
+<BaseLayout layout={layout} title="Areas we serve">
+  <section class="section bg-muted">
+    <div class="container">
+      <header class="section-header"><h1 class="section-heading">Areas we serve</h1></header>
+      <div class="grid-cards" data-columns="3">
+        {
+          areas.map((area) => (
+            <a href={area.slug ? routes.serviceArea(area.slug) : '#'} class="card area-card">
+              <h2>{[area.city, area.state].filter(Boolean).join(', ')}</h2>
+              {area.excerpt && <p>{area.excerpt}</p>}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .area-card { padding: 1.75rem; display: grid; gap: 0.5rem; }
+  .area-card h2 { font-size: 1.25rem; }
+  .area-card:hover { border-color: var(--color-brand); }
+</style>

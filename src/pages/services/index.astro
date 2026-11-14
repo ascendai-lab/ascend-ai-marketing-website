@@ -1,0 +1,20 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro'
+import ServiceCard from '@components/cards/ServiceCard.astro'
+import { loadQuery } from '@cms/lib/load'
+import { layoutQuery, servicesIndexQuery } from '@cms/queries'
+
+const { draftMode } = Astro.locals
+const [layout, services] = await Promise.all([loadQuery(draftMode, layoutQuery), loadQuery(draftMode, servicesIndexQuery)])
+---
+
+<BaseLayout layout={layout} title="Services">
+  <section class="section bg-muted">
+    <div class="container">
+      <header class="section-header"><h1 class="section-heading">Our services</h1></header>
+      <div class="grid-cards" data-columns="3">
+        {services.map((service) => <ServiceCard service={service} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

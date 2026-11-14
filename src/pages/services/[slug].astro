@@ -1,0 +1,31 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro'
+import PageBuilder from '@components/blocks/PageBuilder.astro'
+import DetailHeader from '@components/layout/DetailHeader.astro'
+import PortableText from '@components/ui/PortableText'
+import { loadQuery } from '@cms/lib/load'
+import { editAttr } from '@cms/lib/visualEditing'
+import { layoutQuery, serviceQuery } from '@cms/queries'
+import { stegaClean } from '@sanity/client/stega'
+
+const slug = Astro.params.slug!
+const { draftMode } = Astro.locals
+const [layout, service] = await Promise.all([loadQuery(draftMode, layoutQuery), loadQuery(draftMode, serviceQuery, { slug })])
+if (!service) return Astro.rewrite('/404')
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: stegaClean(service.title),
+  description: stegaClean(service.excerpt) || undefined,
+  provider: { '@type': stegaClean(layout.settings?.businessType) || 'LocalBusiness', name: stegaClean(layout.settings?.siteName) },
+}
+---
+
+<BaseLayout layout={layout} title={service.title} seo={service.seo} description={service.excerpt} image={service.image} jsonLd={[jsonLd]}>
+  <DetailHeader title={service.title} intro={service.excerpt} image={service.image} document={service} introField="excerpt" backHref="/services" backLabel="All services" />
+  {service.body?.length ? (
+    <section class="section"><div class="container" data-sanity={editAttr(draftMode, service, 'body')}><PortableText value={service.body} className="prose detail-body" /></div></section>
+  ) : null}
+  <PageBuilder blocks={service.pageBuilder} document={service} settings={layout.settings} firstHeroIsH1={false} />
+</BaseLayout>

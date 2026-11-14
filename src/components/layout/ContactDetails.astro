@@ -1,0 +1,71 @@
+---
+import { stegaClean } from '@sanity/client/stega'
+import type { SiteSettings } from '@cms/lib/types'
+import { telHref } from '@cms/lib/links'
+import { formatHours } from '@/lib/hours'
+
+interface Props {
+  settings: SiteSettings
+}
+
+const { settings } = Astro.props
+const address = settings.address
+const addressLine = [address?.street, [address?.city, address?.state].filter(Boolean).join(', '), address?.zip]
+  .filter(Boolean)
+  .join(' ')
+---
+
+<aside class="contact-details">
+  {
+    settings.phone && (
+      <div>
+        <h3>Call</h3>
+        <a href={telHref(settings.phone)}>{settings.phone}</a>
+      </div>
+    )
+  }
+  {
+    settings.email && (
+      <div>
+        <h3>Email</h3>
+        <a href={`mailto:${stegaClean(settings.email)}`}>{settings.email}</a>
+      </div>
+    )
+  }
+  {
+    addressLine && (
+      <div>
+        <h3>Visit</h3>
+        <address>
+          {settings.mapUrl ? (
+            <a href={stegaClean(settings.mapUrl)} target="_blank" rel="noopener noreferrer">
+              {addressLine}
+            </a>
+          ) : (
+            addressLine
+          )}
+        </address>
+      </div>
+    )
+  }
+  {
+    settings.hours?.length ? (
+      <div>
+        <h3>Hours</h3>
+        <ul>
+          {settings.hours.map((row) => (
+            <li>{formatHours(row)}</li>
+          ))}
+        </ul>
+      </div>
+    ) : null
+  }
+</aside>
+
+<style>
+  .contact-details { display: grid; gap: 1.5rem; }
+  h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem; opacity: 0.75; }
+  a { text-decoration: underline; text-underline-offset: 3px; }
+  address { font-style: normal; }
+  ul { list-style: none; display: grid; gap: 0.25rem; }
+</style>

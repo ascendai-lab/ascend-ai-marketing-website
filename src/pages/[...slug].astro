@@ -1,78 +1,22 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro'
-import PortableText from '@components/ui/PortableText'
-import { getClient } from '@cms/client'
-import { pageBySlugQuery } from '@cms/queries'
+import PageBuilder from '@components/blocks/PageBuilder.astro'
+import { loadQuery } from '@cms/lib/load'
+import { layoutQuery, pageQuery } from '@cms/queries'
 
-const { slug } = Astro.params
+const slug = Astro.params.slug?.replace(/\/$/, '')
+if (!slug) return Astro.rewrite('/404')
 
-// Don't let the catch-all handle API routes
-if (slug?.startsWith('api/')) {
-  return new Response('Not Found', { status: 404 })
-}
+const { draftMode } = Astro.locals
+const [layout, page] = await Promise.all([loadQuery(draftMode, layoutQuery), loadQuery(draftMode, pageQuery, { slug })])
+if (!page) return Astro.rewrite('/404')
 
-const isPreview = Astro.cookies.has('sanity-preview-secret')
-const client    = getClient(isPreview)
-
-const page = await client.fetch(pageBySlugQuery, { slug })
-
-// 404 if no page found in Sanity
-if (!page) {
-  return Astro.redirect('/404')
-}
+const startsWithHero = page.pageBuilder?.[0]?._type === 'hero'
 ---
 
-<BaseLayout
-  title={page.seo?.metaTitle ?? page.title}
-  description={page.seo?.metaDescription}
-  ogImage={page.seo?.ogImage?.asset?.url}
-  noIndex={page.seo?.noIndex}
->
-
-  <!-- Page Hero -->
-  {(page.heroHeadline || page.heroSubheadline) && (
-    <section class="page-hero section">
-      <div class="container page-hero-inner">
-        {page.heroHeadline    && <h1 class="page-hero-headline">{page.heroHeadline}</h1>}
-        {page.heroSubheadline && <p  class="page-hero-sub">{page.heroSubheadline}</p>}
-      </div>
-    </section>
+<BaseLayout layout={layout} title={page.title} seo={page.seo}>
+  {!startsWithHero && (
+    <header class="section bg-muted"><div class="container"><h1 class="section-heading">{page.title}</h1></div></header>
   )}
-
-  <!-- Page Body -->
-  {page.body && (
-    <section class="page-body section">
-      <div class="container page-body-inner">
-        <PortableText value={page.body} client:load />
-      </div>
-    </section>
-  )}
-
+  <PageBuilder blocks={page.pageBuilder} document={page} settings={layout.settings} firstHeroIsH1={startsWithHero} />
 </BaseLayout>
-
-<style>
-  .page-hero {
-    background: var(--color-bg-muted);
-    padding-block: 4rem;
-  }
-
-  .page-hero-inner { max-width: 64ch; }
-
-  .page-hero-headline {
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 800;
-    color: var(--color-text);
-    letter-spacing: -0.02em;
-  }
-
-  .page-hero-sub {
-    margin-top: 1rem;
-    font-size: 1.125rem;
-    color: var(--color-text-muted);
-    line-height: 1.6;
-  }
-
-  .page-body-inner {
-    max-width: 72ch;
-  }
-</style>

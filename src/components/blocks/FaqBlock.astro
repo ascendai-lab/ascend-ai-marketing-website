@@ -1,0 +1,52 @@
+---
+import { toPlainText } from '@portabletext/react'
+import { stegaClean } from '@sanity/client/stega'
+import type { BlockOf } from '@cms/lib/types'
+import Section from '@components/ui/Section.astro'
+import SectionHeader from '@components/ui/SectionHeader.astro'
+import PortableText from '@components/ui/PortableText'
+
+interface Props {
+  block: BlockOf<'faqBlock'>
+  'data-sanity'?: string
+}
+
+const { block, 'data-sanity': dataSanity } = Astro.props
+const items = (block.items ?? []).filter((item) => item !== null)
+
+// FAQPage structured data can earn rich results in Google.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: items.map((item) => ({
+    '@type': 'Question',
+    name: stegaClean(item.question),
+    acceptedAnswer: { '@type': 'Answer', text: stegaClean(toPlainText(item.answer ?? [])) },
+  })),
+}
+---
+
+<Section anchorId={block.anchorId} background={block.background} data-sanity={dataSanity}>
+  <SectionHeader heading={block.heading} intro={block.intro} />
+  <div class="faqs">
+    {
+      items.map((item) => (
+        <details class="faq">
+          <summary>{item.question}</summary>
+          <PortableText value={item.answer} />
+        </details>
+      ))
+    }
+  </div>
+  {items.length > 0 && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+</Section>
+
+<style>
+  .faqs { max-width: 48rem; margin-inline: auto; display: grid; gap: 0.75rem; }
+  .faq { border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-bg); color: var(--color-text); }
+  summary { cursor: pointer; padding: 1.1rem 1.25rem; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 1rem; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '+'; font-size: 1.25rem; line-height: 1; }
+  .faq[open] summary::after { content: '–'; }
+  .faq :global(.prose) { padding: 0 1.25rem 1.1rem; }
+</style>

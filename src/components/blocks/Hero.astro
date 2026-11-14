@@ -1,0 +1,64 @@
+---
+import { stegaClean } from '@sanity/client/stega'
+import type { BlockOf } from '@cms/lib/types'
+import Section from '@components/ui/Section.astro'
+import Button from '@components/ui/Button.astro'
+import SanityImage from '@components/ui/SanityImage.astro'
+
+interface Props {
+  block: BlockOf<'hero'>
+  isFirst?: boolean
+  'data-sanity'?: string
+}
+
+const { block, isFirst = false, 'data-sanity': dataSanity } = Astro.props
+const layout = stegaClean(block.layout) || 'split'
+const Heading = isFirst ? 'h1' : 'h2'
+const hasImage = Boolean(block.image?.asset)
+---
+
+<Section anchorId={block.anchorId} background={block.background} class={`hero hero--${layout}`} data-sanity={dataSanity}>
+  {layout === 'background' && hasImage && (
+    <SanityImage image={block.image} width={1920} class="hero__bg" loading={isFirst ? 'eager' : 'lazy'} fetchpriority={isFirst ? 'high' : undefined} />
+  )}
+  <div class="hero__inner">
+    <div class="hero__content">
+      {block.eyebrow && <span class="eyebrow">{block.eyebrow}</span>}
+      <Heading class="hero__heading">{block.heading}</Heading>
+      {block.subheading && <p class="hero__subheading">{block.subheading}</p>}
+      {block.buttons?.length ? (
+        <div class="btn-row">{block.buttons.map((button) => <Button button={button} />)}</div>
+      ) : null}
+    </div>
+    {layout === 'split' && hasImage && (
+      <div class="hero__media">
+        <SanityImage image={block.image} width={720} aspectRatio={4 / 3} loading={isFirst ? 'eager' : 'lazy'} fetchpriority={isFirst ? 'high' : undefined} />
+      </div>
+    )}
+  </div>
+</Section>
+
+<style>
+  .hero { position: relative; overflow: hidden; }
+  .hero__inner { position: relative; display: grid; gap: 3rem; align-items: center; }
+  .hero__heading { font-size: clamp(2.25rem, 5vw, 3.75rem); line-height: 1.1; letter-spacing: -0.02em; }
+  .hero__subheading { margin-top: 1.25rem; font-size: clamp(1.05rem, 2vw, 1.25rem); max-width: 55ch; }
+  .hero__media :global(img) { width: 100%; border-radius: var(--radius-2xl); box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.15); }
+
+  @media (min-width: 768px) {
+    .hero--split .hero__inner { grid-template-columns: 1fr 1fr; }
+  }
+
+  .hero--centered .hero__content,
+  .hero--background .hero__content { max-width: 48rem; margin-inline: auto; text-align: center; }
+  .hero--centered .hero__subheading,
+  .hero--background .hero__subheading { margin-inline: auto; }
+  .hero--centered :global(.btn-row),
+  .hero--background :global(.btn-row) { justify-content: center; }
+
+  .hero--background { min-height: 70vh; display: grid; align-items: center; color: var(--color-text-inverse); }
+  .hero--background :is(h1, h2, p) { color: inherit; }
+  .hero :global(.hero__bg) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .hero--background::after { content: ''; position: absolute; inset: 0; background: rgb(0 0 0 / 0.45); }
+  .hero--background .hero__inner { z-index: 1; }
+</style>

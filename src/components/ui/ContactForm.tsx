@@ -1,150 +1,81 @@
-import { useState } from 'react'
+import { useState, type SubmitEvent } from 'react'
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
 
 interface Props {
-  heading?: string
-  subheading?: string
+  successMessage?: string | null
 }
 
-export default function ContactForm({ heading = 'Get in Touch', subheading }: Props) {
+/** Posts to /api/contact, which validates and forwards to n8n. */
+export default function ContactForm({ successMessage }: Props) {
   const [state, setState] = useState<FormState>('idle')
   const [errorMsg, setErrorMsg] = useState('')
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
     setState('submitting')
     setErrorMsg('')
 
     const form = e.currentTarget
-    const data = {
-      name:    (form.elements.namedItem('name')    as HTMLInputElement).value,
-      email:   (form.elements.namedItem('email')   as HTMLInputElement).value,
-      phone:   (form.elements.namedItem('phone')   as HTMLInputElement).value,
-      message: (form.elements.namedItem('message') as HTMLTextAreaElement).value,
-    }
+    const data = Object.fromEntries(new FormData(form).entries())
 
     try {
       const res = await fetch('/api/contact', {
-        method:  'POST',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(data),
+        body: JSON.stringify({ ...data, page: window.location.pathname }),
       })
 
       if (!res.ok) {
-        const json = await res.json().catch(() => ({}))
-        throw new Error(json?.error ?? 'Something went wrong. Please try again.')
+        const json: { error?: string } = await res.json().catch(() => ({}))
+        throw new Error(json.error ?? 'Something went wrong. Please try again.')
       }
 
       setState('success')
       form.reset()
-    } catch (err: any) {
-      setErrorMsg(err.message ?? 'Something went wrong. Please try again.')
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
       setState('error')
     }
   }
 
-  return (
-    <section style={{ padding: '5rem 0', background: 'var(--color-bg-muted)' }}>
-      <div style={{ maxWidth: '640px', margin: '0 auto', padding: '0 1.5rem' }}>
-
-        <div style={{ marginBottom: '2.5rem', textAlign: 'center' }}>
-          <h2 style={{ fontSize: 'clamp(1.75rem, 3vw, 2.25rem)', fontWeight: 700, color: 'var(--color-text)' }}>
-            {heading}
-          </h2>
-          {subheading && (
-            <p style={{ marginTop: '0.75rem', color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
-              {subheading}
-            </p>
-          )}
-        </div>
-
-        {state === 'success' ? (
-          <div style={{
-            padding: '2rem',
-            background: '#f0fdf4',
-            border: '1px solid #bbf7d0',
-            borderRadius: 'var(--radius-xl)',
-            textAlign: 'center',
-          }}>
-            <p style={{ fontWeight: 600, color: '#15803d', fontSize: '1.125rem' }}>
-              Message received!
-            </p>
-            <p style={{ color: '#166534', marginTop: '0.5rem' }}>
-              We'll get back to you within 1 business day.
-            </p>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} noValidate style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-              <Field label="Name *" name="name" type="text" required placeholder="Jane Smith" />
-              <Field label="Email *" name="email" type="email" required placeholder="jane@example.com" />
-            </div>
-
-            <Field label="Phone" name="phone" type="tel" placeholder="(555) 000-0000" />
-
-            <div>
-              <label htmlFor="message" style={labelStyle}>Message *</label>
-              <textarea
-                id="message"
-                name="message"
-                required
-                rows={5}
-                placeholder="Tell us how we can help..."
-                style={{ ...inputStyle, resize: 'vertical' }}
-              />
-            </div>
-
-            {state === 'error' && (
-              <p style={{ color: 'var(--color-error)', fontSize: '0.875rem' }}>{errorMsg}</p>
-            )}
-
-            <button
-              type="submit"
-              disabled={state === 'submitting'}
-              style={{
-                padding: '0.875rem 2rem',
-                background: state === 'submitting' ? '#94a3b8' : 'var(--color-brand)',
-                color: '#fff',
-                border: 'none',
-                borderRadius: 'var(--radius-md)',
-                fontWeight: 700,
-                fontSize: '1rem',
-                cursor: state === 'submitting' ? 'not-allowed' : 'pointer',
-                transition: 'background 0.15s',
-              }}
-            >
-              {state === 'submitting' ? 'Sending...' : 'Send Message'}
-            </button>
-
-          </form>
-        )}
+  if (state === 'success') {
+    return (
+      <div className="contact-form__success" role="status">
+        <p>{successMessage || "Thanks! We'll get back to you within one business day."}</p>
       </div>
-    </section>
+    )
+  }
+
+  return (
+    <form className="contact-form" onSubmit={handleSubmit} noValidate={false}>
+      <div className="contact-form__row">
+        <Field label="Name" name="name" type="text" autoComplete="name" required />
+        <Field label="Email" name="email" type="email" autoComplete="email" required />
+      </div>
+      <Field label="Phone" name="phone" type="tel" autoComplete="tel" />
+      <div className="contact-form__field">
+        <label htmlFor="cf-message">Message *</label>
+        <textarea id="cf-message" name="message" required minLength={10} rows={5} />
+      </div>
+
+      {/* Honeypot: hidden from people, bots fill it in. */}
+      <div className="sr-only" aria-hidden="true">
+        <label htmlFor="cf-website">Website</label>
+        <input id="cf-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+      </div>
+
+      {state === 'error' && (
+        <p className="contact-form__error" role="alert">
+          {errorMsg}
+        </p>
+      )}
+
+      <button type="submit" className="btn btn--primary" disabled={state === 'submitting'}>
+        {state === 'submitting' ? 'Sending…' : 'Send message'}
+      </button>
+    </form>
   )
-}
-
-/* ── Field Helper ──────────────────────────────────────────────────────────── */
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: '0.875rem',
-  fontWeight: 600,
-  color: 'var(--color-text)',
-  marginBottom: '0.375rem',
-}
-
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '0.625rem 0.875rem',
-  border: '1px solid var(--color-border)',
-  borderRadius: 'var(--radius-md)',
-  fontSize: '1rem',
-  color: 'var(--color-text)',
-  background: 'var(--color-bg)',
-  outline: 'none',
-  fontFamily: 'inherit',
 }
 
 function Field({
@@ -152,25 +83,21 @@ function Field({
   name,
   type,
   required,
-  placeholder,
+  autoComplete,
 }: {
   label: string
   name: string
   type: string
   required?: boolean
-  placeholder?: string
+  autoComplete?: string
 }) {
   return (
-    <div>
-      <label htmlFor={name} style={labelStyle}>{label}</label>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        required={required}
-        placeholder={placeholder}
-        style={inputStyle}
-      />
+    <div className="contact-form__field">
+      <label htmlFor={`cf-${name}`}>
+        {label}
+        {required && ' *'}
+      </label>
+      <input id={`cf-${name}`} name={name} type={type} required={required} autoComplete={autoComplete} />
     </div>
   )
 }

@@ -3,23 +3,26 @@
   publish = "dist"
 
 [build.environment]
-  NODE_VERSION = "20"
+  NODE_VERSION = "22"
+  # These are public by design (they ship in the page code), so the secret scan should skip them.
+  SECRETS_SCAN_OMIT_KEYS = "PUBLIC_SANITY_PROJECT_ID,PUBLIC_SANITY_DATASET,SITE_URL,SANITY_STUDIO_URL"
 
 # ─── Security Headers ───────────────────────────────────────────────────────
 # IMPORTANT: The Content-Security-Policy frame-ancestors directive is what
-# allows Sanity Studio to embed this site in an iframe for visual editing.
-# Without this, you'll get the "Refused to display in a frame" error.
+# allows Sanity Studio (embedded at /studio or hosted on *.sanity.studio) to
+# show this site in its Presentation iframe for visual editing.
+# Do NOT add X-Frame-Options: DENY — it overrides this and breaks visual editing.
+# The full Content-Security-Policy for pages is set in src/middleware.ts (it has to skip /studio).
 [[headers]]
   for = "/*"
   [headers.values]
     X-Content-Type-Options = "nosniff"
-    X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    # Browsers only ever use https for this site (1 year). Netlify serves every page over https.
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    Cross-Origin-Opener-Policy = "same-origin-allow-popups"
     Content-Security-Policy = "frame-ancestors 'self' https://*.sanity.studio https://sanity.studio"
 
-# ─── Netlify Functions (SSR) ─────────────────────────────────────────────────
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
+# Astro's Netlify adapter routes /api/* and every page to its SSR function
+# automatically. No manual redirects needed.

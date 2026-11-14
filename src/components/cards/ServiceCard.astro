@@ -1,0 +1,31 @@
+---
+import { routes } from '@cms/routes'
+import SanityImage from '@components/ui/SanityImage.astro'
+
+interface Props {
+  service: {
+    title: string | null
+    excerpt: string | null
+    slug: string | null
+    image: Parameters<typeof SanityImage>[0]['image']
+  }
+}
+
+const { service } = Astro.props
+---
+
+<article class="card service-card">
+  {service.image?.asset && <SanityImage image={service.image} width={480} aspectRatio={3 / 2} />}
+  <div class="service-card__body">
+    <h3>{service.slug ? <a href={routes.service(service.slug)} class="stretched">{service.title}</a> : service.title}</h3>
+    {service.excerpt && <p>{service.excerpt}</p>}
+  </div>
+</article>
+
+<style>
+  .service-card { position: relative; transition: box-shadow 0.15s; }
+  .service-card:hover { box-shadow: 0 12px 30px -12px rgb(0 0 0 / 0.2); }
+  .service-card :global(img) { width: 100%; }
+  .service-card__body { padding: 1.5rem; display: grid; gap: 0.5rem; }
+  .stretched::after { content: ''; position: absolute; inset: 0; }
+</style>

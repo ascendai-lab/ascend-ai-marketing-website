@@ -1,0 +1,35 @@
+---
+import type { BlockOf, SiteSettings } from '@cms/lib/types'
+import Section from '@components/ui/Section.astro'
+import SectionHeader from '@components/ui/SectionHeader.astro'
+import ContactDetails from '@components/layout/ContactDetails.astro'
+import ContactForm from '@components/ui/ContactForm'
+
+interface Props {
+  block: BlockOf<'contactFormBlock'>
+  settings?: SiteSettings | null
+  'data-sanity'?: string
+}
+
+const { block, settings, 'data-sanity': dataSanity } = Astro.props
+const showDetails = block.showContactDetails !== false && settings
+---
+
+<Section anchorId={block.anchorId} background={block.background} data-sanity={dataSanity}>
+  <SectionHeader heading={block.heading} intro={block.intro} />
+  <div class:list={['contact', showDetails && 'contact--split']}>
+    <div class="card contact__form">
+      <ContactForm client:visible successMessage={block.successMessage} />
+    </div>
+    {showDetails && <ContactDetails settings={settings} />}
+  </div>
+</Section>
+
+<style>
+  .contact { display: grid; gap: 2.5rem; max-width: 40rem; margin-inline: auto; }
+  .contact--split { max-width: none; }
+  .contact__form { padding: 2rem; }
+  @media (min-width: 900px) {
+    .contact--split { grid-template-columns: 3fr 2fr; align-items: start; }
+  }
+</style>

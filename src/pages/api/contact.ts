@@ -8,6 +8,9 @@ const ContactSchema = z.object({
   email:   z.string().email('Please enter a valid email address'),
   phone:   z.string().optional(),
   message: z.string().min(10, 'Message must be at least 10 characters'),
+  page:    z.string().max(200).optional(),
+  // Honeypot — real people never see or fill this field.
+  website: z.string().max(0).optional(),
 })
 
 /* ── Rate Limit (simple in-memory) ───────────────────────────────────────── */
@@ -50,12 +53,12 @@ export const POST: APIRoute = async ({ request, site }) => {
   if (!result.success) {
     const errors = result.error.flatten().fieldErrors
     return new Response(
-      JSON.stringify({ error: 'Validation failed.', fields: errors }),
+      JSON.stringify({ error: Object.values(errors).flat()[0] ?? 'Please check the form and try again.', fields: errors }),
       { status: 422, headers: { 'Content-Type': 'application/json' } }
     )
   }
 
-  const { name, email, phone, message } = result.data
+  const { name, email, phone, message, page } = result.data
 
   // Build n8n payload
   const payload = {
@@ -66,20 +69,30 @@ export const POST: APIRoute = async ({ request, site }) => {
     source:    'website-contact-form',
     timestamp: new Date().toISOString(),
     siteUrl:   site?.href ?? request.headers.get('origin') ?? '',
+    page:      page ?? '',
   }
 
-  // Send to n8n (fire-and-forget — never block the user response)
+  // Send to n8n. Awaited: serverless functions can stop as soon as we respond,
+  // which would silently drop a fire-and-forget request (and the lead).
   const webhookUrl = import.meta.env.N8N_CONTACT_WEBHOOK_URL
   if (webhookUrl) {
-    fetch(webhookUrl, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(payload),
-    })
-      .then((r) => { if (!r.ok) console.error('[contact] n8n webhook returned', r.status) })
-      .catch((err: unknown) => console.error('[contact] n8n webhook error:', err))
+    try {
+      const res = await fetch(webhookUrl, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(payload),
+        signal:  AbortSignal.timeout(8000),
+      })
+      if (!res.ok) throw new Error(`n8n webhook returned ${res.status}`)
+    } catch (err) {
+      console.error('[contact] n8n webhook error:', err)
+      return new Response(
+        JSON.stringify({ error: 'We could not send your message. Please call or email us instead.' }),
+        { status: 502, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
   } else {
-    console.log('[contact] No webhook URL configured, skipping n8n. Payload:', JSON.stringify(payload))
+    console.warn('[contact] N8N_CONTACT_WEBHOOK_URL is not set; submission was not forwarded.')
   }
 
   return new Response(

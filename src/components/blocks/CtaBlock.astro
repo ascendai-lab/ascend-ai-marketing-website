@@ -1,0 +1,25 @@
+---
+import type { BlockOf } from '@cms/lib/types'
+import Section from '@components/ui/Section.astro'
+import Button from '@components/ui/Button.astro'
+
+interface Props {
+  block: BlockOf<'ctaBlock'>
+  'data-sanity'?: string
+}
+
+const { block, 'data-sanity': dataSanity } = Astro.props
+---
+
+<Section anchorId={block.anchorId} background={block.background} data-sanity={dataSanity}>
+  <div class="cta">
+    <h2 class="section-heading">{block.heading}</h2>
+    {block.body && <p class="section-intro">{block.body}</p>}
+    {block.buttons?.length ? <div class="btn-row">{block.buttons.map((button) => <Button button={button} />)}</div> : null}
+  </div>
+</Section>
+
+<style>
+  .cta { max-width: 44rem; margin-inline: auto; text-align: center; }
+  .cta :global(.btn-row) { justify-content: center; }
+</style>

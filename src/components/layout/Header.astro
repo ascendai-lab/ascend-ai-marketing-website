@@ -1,0 +1,220 @@
+---
+import type { Layout } from '@cms/lib/types'
+import { resolveLink } from '@cms/lib/links'
+import { editAttr } from '@cms/lib/visualEditing'
+import Button from '@components/ui/Button.astro'
+import SanityImage from '@components/ui/SanityImage.astro'
+
+interface Props {
+  layout: Layout
+}
+
+const { layout } = Astro.props
+const { settings, navigation } = layout
+const { draftMode } = Astro.locals
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/'
+const announcement = settings?.announcement
+const announcementLink = resolveLink(announcement?.link)
+const isCurrent = (href: string | undefined) => href !== undefined && (href.replace(/\/$/, '') || '/') === currentPath
+---
+
+{
+  announcement?.enabled && announcement.text && (
+    <div class="announcement">
+      {announcementLink ? (
+        <a href={announcementLink.href} target={announcementLink.target} rel={announcementLink.rel}>
+          {announcement.text}
+        </a>
+      ) : (
+        <span>{announcement.text}</span>
+      )}
+    </div>
+  )
+}
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a href="/" class="site-header__logo" aria-label={`${settings?.siteName ?? 'Home'} home`}>
+      {
+        settings?.logo?.asset ? (
+          <SanityImage image={settings.logo} width={180} loading="eager" sizes="180px" />
+        ) : (
+          <span class="site-header__name">{settings?.siteName ?? 'Site name'}</span>
+        )
+      }
+    </a>
+
+    <nav aria-label="Main" class="site-nav" id="site-nav" data-sanity={editAttr(draftMode, { _id: 'navigation', _type: 'navigation' }, 'headerLinks')}>
+      <ul class="site-nav__list">
+        {
+          navigation?.headerLinks?.map((item, index) => {
+            const link = resolveLink(item.link)
+            const children = item.children?.filter((child) => resolveLink(child.link)) ?? []
+            if (children.length) {
+              return (
+                <li class="site-nav__item" style={`--i:${index}`}>
+                  <details class="site-nav__dropdown">
+                    <summary>{item.label}</summary>
+                    <ul>
+                      {link && (
+                        <li>
+                          <a href={link.href}>{item.label} overview</a>
+                        </li>
+                      )}
+                      {children.map((child) => {
+                        const childLink = resolveLink(child.link)!
+                        return (
+                          <li>
+                            <a href={childLink.href} target={childLink.target} rel={childLink.rel} aria-current={isCurrent(childLink.href) ? 'page' : undefined}>
+                              {child.label}
+                            </a>
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  </details>
+                </li>
+              )
+            }
+            return (
+              <li class="site-nav__item" style={`--i:${index}`}>
+                {link ? (
+                  <a href={link.href} target={link.target} rel={link.rel} aria-current={isCurrent(link.href) ? 'page' : undefined}>
+                    {item.label}
+                  </a>
+                ) : (
+                  <span>{item.label}</span>
+                )}
+              </li>
+            )
+          })
+        }
+      </ul>
+      {navigation?.headerCta && <div class="site-nav__cta" style={`--i:${navigation.headerLinks?.length ?? 0}`}><Button button={navigation.headerCta} /></div>}
+    </nav>
+
+    <button class="site-header__toggle" type="button" aria-controls="site-nav" aria-expanded="false">
+      <span class="sr-only">Menu</span>
+      <span aria-hidden="true" class="bars"></span>
+    </button>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('.site-header')
+  const toggle = document.querySelector<HTMLButtonElement>('.site-header__toggle')
+  const nav = document.getElementById('site-nav')
+  const desktop = window.matchMedia('(min-width: 960px)')
+
+  // The mobile menu is a full-screen panel that starts right under the header and covers the page.
+  const placeMenu = () => header && nav?.style.setProperty('--nav-top', `${Math.max(0, header.getBoundingClientRect().bottom)}px`)
+  const setMenu = (open: boolean) => {
+    if (!toggle || !nav) return
+    if (open) placeMenu()
+    toggle.setAttribute('aria-expanded', String(open))
+    nav.classList.toggle('is-open', open)
+    document.documentElement.classList.toggle('menu-open', open)
+  }
+  toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'))
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && nav?.classList.contains('is-open')) {
+      setMenu(false)
+      toggle?.focus()
+    }
+  })
+  // Following a link (including #anchors on the same page) closes the menu.
+  nav?.addEventListener('click', (event) => {
+    if ((event.target as Element).closest('a') && !desktop.matches) setMenu(false)
+  })
+  desktop.addEventListener('change', () => setMenu(false))
+  window.addEventListener('resize', () => nav?.classList.contains('is-open') && placeMenu())
+  // Close dropdowns when clicking elsewhere.
+  document.addEventListener('click', (event) => {
+    document.querySelectorAll<HTMLDetailsElement>('.site-nav__dropdown[open]').forEach((el) => {
+      if (!el.contains(event.target as Node)) el.open = false
+    })
+  })
+</script>
+
+<style>
+  .announcement { background: var(--color-bg-dark); color: var(--color-text-inverse); text-align: center; font-size: 0.9rem; padding: 0.5rem 1rem; }
+  .announcement a { text-decoration: underline; text-underline-offset: 3px; }
+
+  .site-header { position: sticky; top: 0; z-index: 50; background: var(--color-bg); border-bottom: 1px solid var(--color-border); }
+  .site-header__inner { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; min-height: 4.5rem; }
+  .site-header__logo :global(img) { max-height: 3rem; width: auto; }
+  .site-header__name { font-family: var(--font-heading); font-weight: 700; font-size: 1.25rem; }
+
+  /* Mobile menu: a full-screen panel over the page. It unrolls from the header,
+     then the items slide down one after another. */
+  .site-nav {
+    position: fixed;
+    inset: var(--nav-top, 4.5rem) 0 0 0;
+    z-index: 49;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--color-bg);
+    padding: 1.25rem var(--container-padding-x) 2.5rem;
+    visibility: hidden;
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 0.5s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.5s;
+  }
+  .site-nav.is-open {
+    visibility: visible;
+    clip-path: inset(0 0 0 0);
+    transition: clip-path 0.5s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
+  }
+  .site-nav__item, .site-nav__cta { opacity: 0; transform: translateY(-14px); transition: opacity 0.2s ease, transform 0.2s ease; }
+  .site-nav.is-open .site-nav__item, .site-nav.is-open .site-nav__cta {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.45s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(0.12s + var(--i, 0) * 0.06s);
+  }
+  :global(html.menu-open body) { overflow: hidden; }
+  @media (prefers-reduced-motion: reduce) {
+    .site-nav, .site-nav.is-open { clip-path: none; opacity: 0; transition: opacity 0.15s, visibility 0s linear 0.15s; }
+    .site-nav.is-open { opacity: 1; transition: opacity 0.15s, visibility 0s; }
+    .site-nav__item, .site-nav__cta, .site-nav.is-open .site-nav__item, .site-nav.is-open .site-nav__cta { opacity: 1; transform: none; transition: none; }
+  }
+  .site-nav__list { list-style: none; display: grid; gap: 0.25rem; }
+  .site-nav__item > a, .site-nav__item summary, .site-nav__item > span { display: block; padding: 0.9rem 0; font-weight: 500; font-size: 1.25rem; cursor: pointer; }
+  .site-nav__list > .site-nav__item + .site-nav__item { border-top: 1px solid var(--color-border); }
+  .site-nav a[aria-current='page'] { color: var(--color-brand); }
+  .site-nav__dropdown summary { list-style: none; }
+  .site-nav__dropdown summary::-webkit-details-marker { display: none; }
+  .site-nav__dropdown summary::after { content: ' ▾'; font-size: 0.8em; }
+  .site-nav__dropdown ul { list-style: none; padding-left: 1rem; }
+  .site-nav__dropdown ul a { display: block; padding: 0.45rem 0; }
+  .site-nav__cta { margin-top: 1.5rem; }
+
+  .site-header__toggle { display: inline-flex; padding: 0.75rem; background: none; border: 0; cursor: pointer; color: inherit; }
+  .bars, .bars::before, .bars::after { display: block; width: 1.5rem; height: 2px; background: currentColor; position: relative; }
+  .bars::before, .bars::after { content: ''; position: absolute; }
+  .bars::before { top: -7px; }
+  .bars::after { top: 7px; }
+  /* The three bars fold into an X while the menu is open. */
+  .bars, .bars::before, .bars::after { transition: transform 0.3s ease, top 0.3s ease, background-color 0.2s; }
+  .site-header__toggle[aria-expanded='true'] .bars { background-color: transparent; }
+  .site-header__toggle[aria-expanded='true'] .bars::before { top: 0; transform: rotate(45deg); }
+  .site-header__toggle[aria-expanded='true'] .bars::after { top: 0; transform: rotate(-45deg); }
+
+  @media (min-width: 960px) {
+    .site-header__toggle { display: none; }
+    .site-nav, .site-nav.is-open {
+      display: flex; position: static; align-items: center; gap: 1.5rem; padding: 0; border: 0;
+      background: none; overflow: visible; visibility: visible; clip-path: none; transition: none;
+    }
+    .site-nav__item, .site-nav__cta, .site-nav.is-open .site-nav__item, .site-nav.is-open .site-nav__cta { opacity: 1; transform: none; transition: none; }
+    .site-nav__list > .site-nav__item + .site-nav__item { border-top: 0; }
+    .site-nav__item > a, .site-nav__item summary, .site-nav__item > span { padding: 0.6rem 0; font-size: 1rem; }
+    .site-nav__list { display: flex; gap: 1.5rem; }
+    .site-nav__dropdown { position: relative; }
+    .site-nav__dropdown ul {
+      position: absolute; top: 100%; left: -1rem; min-width: 14rem; padding: 0.5rem 1rem;
+      background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+      box-shadow: 0 12px 30px -12px rgb(0 0 0 / 0.2);
+    }
+    .site-nav__cta { margin-top: 0; }
+  }
+</style>

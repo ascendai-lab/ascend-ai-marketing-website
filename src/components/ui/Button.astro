@@ -1,0 +1,21 @@
+---
+import { stegaClean } from '@sanity/client/stega'
+import { resolveLink, type LinkValue } from '@cms/lib/links'
+
+interface Props {
+  button: { label?: string | null; variant?: string | null; link?: LinkValue | null } | null | undefined
+  size?: 'md' | 'lg'
+}
+
+const { button, size = 'md' } = Astro.props
+const link = resolveLink(button?.link)
+const variant = stegaClean(button?.variant) || 'primary'
+---
+
+{
+  button?.label && link && (
+    <a href={link.href} target={link.target} rel={link.rel} class:list={['btn', `btn--${variant}`, size === 'lg' && 'btn--lg']}>
+      {button.label}
+    </a>
+  )
+}
