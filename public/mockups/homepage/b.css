@@ -1,5 +1,5 @@
 /* ═══ Mockup B · Evergreen (Corevia hero + card strip, Fusion features, Machina process, Winrate pricing and footer) ═══ */
-.mB { --b-deep: #11301c; --b-deep-2: #173d25; --b-ink: #1E1E1E; --b-coal: #161917; --b-cream: #F2F3EE; --b-card: #F6F6F3; --b-muted: #5f6661; --b-line: #e2e4de; --b-sage-tint: #DCE8DD; background: var(--b-cream); color: var(--b-ink); font-variation-settings: "ROND" 20; }
+.mB { --b-deep: #11301c; --b-deep-2: #173d25; --b-ink: #1E1E1E; --b-coal: #161917; --b-cream: #EEE8DD; --b-card: #F7F3EC; --b-muted: #5f6661; --b-line: #e4ddd0; --b-sage-tint: #DCE8DD; background: var(--b-cream); color: var(--b-ink); font-variation-settings: "ROND" 20; }
 .mB .b-wrap { max-width: 1280px; margin: 0 auto; padding: 0 40px; }
 .mB .b-sec { padding: 120px 0; }
 .mB .b-center { text-align: center; margin-left: auto; margin-right: auto; }
@@ -339,7 +339,7 @@
 /* compact problem cards */
 .mB .b-pains li { display: grid; grid-template-columns: 46px 1fr; gap: 16px; align-items: center; padding: 22px; }
 .mB .b-pains .b-dot { margin-bottom: 0; }
-.mB .b-pains { grid-template-columns: repeat(2, 1fr); max-width: 980px; margin: 0 auto; }
+@media (min-width: 641px) { .mB .b-pains { grid-template-columns: repeat(2, 1fr); max-width: 980px; margin: 0 auto; } }
 @media (max-width: 1100px) { .mB .b-plan { grid-template-columns: 1fr; } }
 @media (max-width: 640px) {
   .mB .b-plan-main { padding: 28px 22px; } .mB .b-plan-incl { padding: 24px 20px; }
@@ -347,4 +347,19 @@
   .mB .b-plan-tl { grid-template-columns: 1fr 1fr; }
   .mB .b-pains li { padding: 16px; }
 }
-@media (min-width: 821px) { .mB .b-strip { justify-content: flex-start; padding-left: max(40px, calc((100% - 1280px) / 2 + 40px)); } }
+
+
+/* Round 4 */
+.mB .b-card-photo { width: 440px; }
+.mB .b-card-quiz { justify-content: flex-start; }
+.mB .b-card-quiz .b-q-opts { margin-top: 6px; }
+.mB .b-card-quiz .b-q { font-size: 21px; margin: 10px 0 18px; }
+@media (max-width: 640px) { .mB .b-plan-intro { text-align: left; margin-left: 0; } .mB .b-card-photo { width: 300px; } }
+.mB .b-scene { display: flex; align-items: flex-end; justify-content: center; padding: 28px; }
+.mB .b-inbox { position: relative; left: auto; bottom: auto; transform: none; }
+@media (max-width: 640px) { .mB .b-scene { padding: 16px; min-height: 0; padding-top: 180px; } }
+
+/* Round 5 */
+.mB .b-band-table { order: -1; }
+.mB .b-band { grid-template-columns: 5fr 7fr; }
+@media (max-width: 1100px) { .mB .b-band { grid-template-columns: 1fr; } }

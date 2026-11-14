@@ -1,5 +1,5 @@
 /* ═══ Mockup A · Photo-led (Startply hero, Advera body) ═══ */
-.mA { --a-ink: #111311; --a-grey: #6b706c; --a-soft: #f2f3f1; --a-line: #e3e5e2; --a-dark: #10301c; background: #fff; color: var(--a-ink); font-variation-settings: "ROND" 0; }
+.mA { --a-ink: #111311; --a-grey: #6b706c; --a-soft: #f2f3f1; --a-line: #e3e5e2; --a-dark: #141614; background: #fff; color: var(--a-ink); font-variation-settings: "ROND" 0; }
 .mA .a-wrap { max-width: 1320px; margin: 0 auto; padding: 0 40px; }
 .mA .a-sec { padding: 128px 0; }
 .mA .a-label { font-size: 13px; letter-spacing: .02em; color: var(--a-grey); font-stretch: 85%; margin-bottom: 18px; }
@@ -295,3 +295,37 @@
   .mA .a-notes { margin: 0 12px 16px; }
   .mA .a-hero { min-height: 0; }
 }
+
+/* Round 4 */
+.mA .a-hero-quiz { top: auto !important; bottom: 40px !important; translate: none !important; right: 40px; width: 440px; padding: 28px; }
+.mA .a-hq-bar { display: flex; gap: 4px; margin: 0 0 14px; }
+.mA .a-hq-bar li { flex: 1; height: 4px; border-radius: 2px; background: var(--a-line); }
+.mA .a-hq-bar li.on { background: var(--green); }
+.mA .a-trust { padding-right: 520px; }
+.mA .a-trust-video { margin-left: 0 !important; }
+.mA .a-hero-img { object-position: 60% 30%; }
+.mA .a-problem-photo { position: relative; margin: 0; }
+.mA .a-problem-grid img { height: 440px; }
+.mA .a-calls { position: absolute; right: 24px; top: 24px; width: 290px; display: grid; gap: 8px; }
+.mA .a-lead-card { padding: 36px; }
+.mA .a-price-list { display: flex; flex-direction: column; }
+.mA .a-price-book { margin-top: auto; align-self: flex-start; }
+.mA .a-price-list .a-fine { margin-bottom: 24px; }
+/* Editorial black-and-white photo treatment below the hero (Advera) */
+.mA .a-problem-photo img, .mA .a-work img, .mA .a-steps-grid img, .mA .a-guide img { filter: grayscale(1) contrast(1.05); }
+@media (max-width: 1100px) { .mA .a-trust { padding-right: 28px; } .mA .a-hero-quiz { width: auto; right: auto; bottom: auto !important; } }
+@media (max-width: 820px) {
+  .mA .a-final-grid { display: flex; flex-direction: column-reverse; }
+  .mA .a-calls { width: auto; left: 12px; right: 12px; top: 12px; }
+  .mA .a-success-body { padding-top: 36px; }
+}
+@media (max-width: 640px) { .mA .a-problem-grid img { height: 280px !important; } .mA .a-calls .a-note:nth-child(2) { display: none; } }
+
+/* Round 5 */
+.mA .a-trust { padding-right: 64px; }
+.mA .a-trust-video { margin-left: auto !important; }
+.mA .a-hero-quiz { bottom: 128px !important; }
+.mA .a-hero-body { padding-bottom: 40px; }
+.mA .a-addons-grid > div:first-child { position: sticky; top: 40px; }
+.mA .a-lead-card, .mA .a-feat-cta { background: var(--green); }
+@media (max-width: 1100px) { .mA .a-trust { padding-right: 28px; } .mA .a-hero-quiz { bottom: auto !important; } .mA .a-trust-video { margin-left: 0 !important; } }
