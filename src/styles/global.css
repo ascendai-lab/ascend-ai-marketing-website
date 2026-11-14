@@ -153,6 +153,7 @@
     --dur-base: 260ms;
     --dur-reveal: 800ms;
     --dur-menu: 500ms;
+    --dur-accordion: 420ms;
     --reveal-shift: 1.5rem;
     --reveal-step: 90ms;
 
@@ -567,9 +568,12 @@
   .accordion .plus { transition: transform var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out); }
   .accordion summary:hover .plus { transform: scale(1.08); }
   .accordion details[open] summary:hover .plus { transform: rotate(45deg) scale(1.08); }
+  /* While an item animates closed it is still [open]; turn its plus back straight away. */
+  .accordion details.is-closing .plus { transform: none; background: var(--color-bg); color: inherit; }
+  .accordion details.is-closing > :not(summary) { opacity: 0; transition: opacity var(--dur-fast) var(--ease-out); }
   .accordion details { transition: background-color var(--dur-base) var(--ease-out); }
   @keyframes open-in { from { opacity: 0; transform: translateY(-0.5rem); } }
-  .motion .accordion details[open] > :not(summary) { animation: open-in var(--dur-base) var(--ease-out); }
+  .motion .accordion details[open]:not(.is-closing) > :not(summary) { animation: open-in var(--dur-accordion) var(--ease-out); }
 
   .media img { transition: transform 1.2s var(--ease-out); }
   .media:hover img { transform: scale(1.04); }

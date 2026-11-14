@@ -154,10 +154,10 @@ Eyebrow, H2, optional intro. `align`: `left` (default), `center` (left on phones
 (heading left, intro or link right).
 
 ### Reviews (`HomeReviews.astro`)
-Three cards. Long reviews show about 7 lines that fade out under a gradient, with a "Read more" pill that opens the full review in place.
+Three cards. Long reviews show about 6 lines; the last line is cut through the middle and fades into the card, with a plain "Show more" text link right under it that opens the full review in place (animated).
 
 ### Accordion (`.accordion`)
-White items, radius `md`, a round plus that turns into a dark x when open. One open at a time.
+White items, radius `md`, a round plus that turns into a dark x when open. One open at a time. Items open and close with a smooth height animation (`src/scripts/accordion.ts`, `--dur-accordion`).
 
 ### Hero slider (`HeroSlider.astro`)
 A row of photo and product-UI cards that scrolls sideways, with snap points, a pause button and

@@ -19,9 +19,7 @@ import { reviews, reviewSummary, links } from '@/content/home'
               {[0, 1, 2, 3, 4].map(() => <Icon name="star" fill />)}
             </p>
             <div class="review__text" id={`review-${i}`}><p>{review.text}</p></div>
-            <button type="button" class="review__more" aria-controls={`review-${i}`} aria-expanded="false" hidden>
-              <span>Read more</span><Icon name="chevron-right" />
-            </button>
+            <button type="button" class="review__more" aria-controls={`review-${i}`} aria-expanded="false" hidden>Show more</button>
             <p class="review__who"><strong>{review.name}</strong><span>{review.detail}</span></p>
           </li>
         ))}
@@ -35,8 +33,7 @@ import { reviews, reviewSummary, links } from '@/content/home'
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   document.querySelectorAll<HTMLButtonElement>('.review__more').forEach((button) => {
     const text = document.getElementById(button.getAttribute('aria-controls') ?? '')
-    const label = button.querySelector('span')
-    if (!text || !label) return
+    if (!text) return
     const check = () => {
       if (button.getAttribute('aria-expanded') === 'true') return
       text.classList.remove('is-short')
@@ -53,10 +50,10 @@ import { reviews, reviewSummary, links } from '@/content/home'
       text.classList.toggle('is-open', open)
       const to = text.offsetHeight
       button.setAttribute('aria-expanded', String(open))
-      label.textContent = open ? 'Show less' : 'Read more'
+      button.textContent = open ? 'Show less' : 'Show more'
       if (reduce) return
       const css = getComputedStyle(document.documentElement)
-      text.animate([{ height: `${from}px` }, { height: `${to}px` }], { duration: parseFloat(css.getPropertyValue('--dur-reveal')) * 0.45 || 360, easing: css.getPropertyValue('--ease-out').trim() || 'ease-out' })
+      text.animate([{ height: `${from}px` }, { height: `${to}px` }], { duration: parseFloat(css.getPropertyValue('--dur-accordion')) || 420, easing: css.getPropertyValue('--ease-out').trim() || 'ease-out' })
     })
   })
 </script>
@@ -65,25 +62,23 @@ import { reviews, reviewSummary, links } from '@/content/home'
   .review { display: flex; flex-direction: column; gap: var(--space-5); align-self: start; }
   .review__stars { display: flex; gap: 2px; color: var(--color-brand); }
   .review__stars :global(.icon) { width: 1.125rem; height: 1.125rem; }
+  /* Shows about 6 lines. The last line is cut through the middle and fades into the card,
+     with a plain "Show more" link right under it. */
   .review__text {
-    --clamp: 10.5em;
-    max-height: var(--clamp); overflow: hidden;
-    -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent);
-    mask-image: linear-gradient(to bottom, #000 45%, transparent);
+    --line: 1.55em;
+    max-height: calc(var(--line) * 6.6); overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - var(--line) * 1.1), transparent);
+    mask-image: linear-gradient(to bottom, #000 calc(100% - var(--line) * 1.1), transparent);
   }
   .review__text p { font-size: var(--text-body); line-height: 1.55; color: var(--surface-fg); }
   .review__text.is-open, .review__text.is-short { max-height: none; -webkit-mask-image: none; mask-image: none; }
   .review__more {
-    align-self: flex-start; display: inline-flex; align-items: center; gap: var(--space-2);
-    margin-top: calc(var(--space-3) * -1); min-height: 44px; padding: 0 var(--space-4);
-    border: 0; border-radius: var(--radius-full); background: var(--surface-bg, var(--color-surface)); cursor: pointer;
-    font: inherit; font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--surface-fg);
-    box-shadow: inset 0 0 0 1px var(--surface-line);
+    align-self: flex-start; margin-top: calc(var(--space-5) * -1 + var(--space-1)); min-height: 44px; padding: 0;
+    border: 0; background: none; cursor: pointer;
+    font: inherit; font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--surface-muted);
   }
   .review__more[hidden] { display: none; }
-  .review__more:hover { box-shadow: inset 0 0 0 1.5px var(--surface-fg); }
-  .review__more :global(.icon) { width: 1rem; height: 1rem; transform: rotate(90deg); transition: transform var(--dur-base) var(--ease-out); }
-  .review__more[aria-expanded='true'] :global(.icon) { transform: rotate(-90deg); }
+  .review__more:hover { color: var(--surface-fg); text-decoration: underline; text-underline-offset: 4px; }
   .review__who { margin-top: auto; padding-top: var(--space-5); border-top: 1px solid var(--surface-line); font-size: var(--text-sm); color: var(--surface-muted); display: grid; gap: var(--space-1); }
   .review__who strong { color: var(--surface-fg); font-weight: var(--weight-strong); }
 </style>
