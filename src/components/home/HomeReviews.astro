@@ -19,7 +19,7 @@ import { reviews, reviewSummary, links } from '@/content/home'
               {[0, 1, 2, 3, 4].map(() => <Icon name="star" fill />)}
             </p>
             <div class="review__text" id={`review-${i}`}><p>{review.text}</p></div>
-            <button type="button" class="review__more" aria-controls={`review-${i}`} aria-expanded="false" hidden>Show more</button>
+            <button type="button" class="link review__more" aria-controls={`review-${i}`} aria-expanded="false" hidden>Show more</button>
             <p class="review__who"><strong>{review.name}</strong><span>{review.detail}</span></p>
           </li>
         ))}
@@ -72,13 +72,10 @@ import { reviews, reviewSummary, links } from '@/content/home'
   }
   .review__text p { font-size: var(--text-body); line-height: 1.55; color: var(--surface-fg); }
   .review__text.is-open, .review__text.is-short { max-height: none; -webkit-mask-image: none; mask-image: none; }
-  .review__more {
-    align-self: flex-start; margin-top: calc(var(--space-5) * -1 + var(--space-1)); min-height: 44px; padding: 0;
-    border: 0; background: none; cursor: pointer;
-    font: inherit; font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--surface-muted);
-  }
+  /* The shared .link text style (underlined, no background), just smaller and quieter. */
+  .review__more { align-self: flex-start; margin-top: calc(var(--space-5) * -1 + var(--space-1)); padding: 0; border: 0; background: none; cursor: pointer; font-family: inherit; font-size: var(--text-sm); color: var(--surface-muted); }
   .review__more[hidden] { display: none; }
-  .review__more:hover { color: var(--surface-fg); text-decoration: underline; text-underline-offset: 4px; }
+  .review__more:hover { color: var(--surface-fg); }
   .review__who { margin-top: auto; padding-top: var(--space-5); border-top: 1px solid var(--surface-line); font-size: var(--text-sm); color: var(--surface-muted); display: grid; gap: var(--space-1); }
   .review__who strong { color: var(--surface-fg); font-weight: var(--weight-strong); }
 </style>
