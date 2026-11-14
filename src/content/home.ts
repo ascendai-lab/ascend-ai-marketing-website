@@ -54,8 +54,6 @@ export type Slide =
 export const slides: Slide[] = [
   { kind: 'photo', src: photo('1791395534168-af200f472f93', 1000), alt: 'An HVAC technician and a homeowner look over a job on a phone', caption: 'Real people who answer.' },
   { kind: 'textback' },
-  { kind: 'photo', src: photo('1707897283701-40d6f55b8738', 1000), alt: 'A smiling HVAC technician in a blue polo and cap' },
-  { kind: 'quote', quote: '"Within just two months, we saw incredible results."', name: 'Camille', detail: 'Etheric Networks · 45 qualified leads in 60 days' },
   { kind: 'booked', src: photo('1792799888905-8696bd32a11a', 1000), alt: 'An HVAC technician services an outdoor unit' },
   { kind: 'inbox' },
   { kind: 'photo', src: photo('1758598497049-da3b63569529', 1000), alt: 'A contractor smiles while he takes a call' },
@@ -83,7 +81,7 @@ export const results = {
   items: [
     { tag: 'Local SEO and a custom website', num: '45', what: 'qualified leads in 60 days', quote: '"Within just two months, we saw incredible results." Camille, Etheric Networks', who: 'Etheric Networks', dark: false },
     { tag: 'Local SEO and Google Ads', num: '$100,000+', what: 'in revenue, and the #1 spot on Google Maps for "fence company," "fence contractor" and "fence installation."', who: 'A fence and tree company', dark: true },
-    { tag: 'Online giving system', num: '$750,000+', what: 'given online. We have been their web partner for 12+ years.', who: 'Miracle Temple C.O.G.I.C.', dark: false },
+    { tag: 'Online giving system', num: '$750,000+', what: 'in online revenue.', who: 'Miracle Temple C.O.G.I.C.', dark: false },
   ],
 }
 
@@ -157,17 +155,13 @@ export const success = {
 
 export const pricing = {
   eyebrow: 'Pricing',
-  heading: 'One plan. One simple price.',
-  intro: 'One plan. $698 a month for the first 12 months. It covers your website, your lead system, hosting and care. After 12 months, it drops to $199 a month. You have paid off your site by then, so $199 covers hosting and care.',
+  heading: 'Simple pricing.',
+  intro: 'Your website, your lead system, hosting and care. One monthly price.',
   tag: 'Limited time',
   save: 'Save $1,200',
   was: '$698',
   now: '$598',
-  sub: 'For a limited time, save $1,200 on your first year: $598 a month instead of $698.',
-  timeline: [
-    { label: 'Months 1 to 12', price: '$598' },
-    { label: 'Month 13 on', price: '$199' },
-  ],
+  term: 'a month for 12 months',
   includesTitle: 'Every plan includes',
   includes: [
     'Your website, with hosting and care',
@@ -184,16 +178,21 @@ export const pricing = {
   own: { lead: 'You own everything:', text: 'your website, domain, Google profile, ad accounts and contact list. You can log in to your lead dashboard any time. Care means hosting, updates, backups, security and keeping your site running. Need a change? Ask, and we handle it.' },
 }
 
-export const addons = {
-  heading: 'Want more calls coming in? We do that too.',
-  body: 'Want more leads? Get these on their own, or add them to your plan: AI agents, such as an AI receptionist, that answer calls, reply to texts, follow up with leads and book jobs. Custom workflows that go past the built-in follow-up. Custom software, such as a CRM built for your shop. We quote AI agents, workflows and custom software to fit your shop.',
-  rows: [
-    { name: 'Meta ads on Facebook and Instagram', price: 'from $595/mo' },
-    { name: 'Ongoing local SEO', price: 'from $597/mo' },
-    { name: 'Google Ads management', price: 'from $895/mo' },
-    { name: 'AI agents, workflows, software', price: 'Quoted' },
-  ],
-  note: 'You pay Google or Meta for ad spend, in your own account.',
+/** Standalone services. Each one gets its own page from the shared service template. */
+export const services = {
+  eyebrow: 'More services',
+  heading: 'Want more calls coming in? <em>We do that too.</em>',
+  intro: 'Each of these stands on its own. Get one by itself, or add it to your plan.',
+  allLabel: 'View all services',
+  allHref: '/services',
+  items: [
+    { icon: 'map', name: 'Local SEO', short: 'local SEO', text: 'Show up first on Google Maps and local search.', href: '/services/local-seo' },
+    { icon: 'search', name: 'Google Ads management', short: 'Google Ads', text: 'Ads that bring calls from people ready to book.', href: '/services/google-ads' },
+    { icon: 'megaphone', name: 'Meta ads on Facebook and Instagram', short: 'Meta ads', text: 'Reach homeowners near you before they need you.', href: '/services/meta-ads' },
+    { icon: 'bot', name: 'AI agents', short: 'AI agents', text: 'An AI receptionist that answers, follows up and books.', href: '/services/ai-agents' },
+    { icon: 'flow', name: 'Custom workflows', short: 'custom workflows', text: 'Automations built around how your shop really works.', href: '/services/custom-workflows' },
+    { icon: 'code', name: 'Custom software', short: 'custom software', text: 'Tools like a CRM built just for your shop.', href: '/services/custom-software' },
+  ] satisfies { icon: IconName; name: string; short: string; text: string; href: string }[],
 }
 
 export const nationwide = {

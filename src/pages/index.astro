@@ -5,11 +5,10 @@ import EvergreenHome from '@components/home/EvergreenHome.astro'
 import { loadQuery } from '@cms/lib/load'
 import { homePageQuery, layoutQuery } from '@cms/queries'
 import { brand, hero } from '@/content/home'
-import type { Layout } from '@cms/lib/types'
+import { emptyLayout } from '@cms/lib/types'
 
 const { draftMode } = Astro.locals
 // If the CMS can't be reached, the homepage still renders from src/content/home.ts.
-const emptyLayout: Layout = { settings: null, navigation: null, footerPages: [] }
 const [layout, page] = await Promise.all([
   loadQuery(draftMode, layoutQuery).catch(() => emptyLayout),
   loadQuery(draftMode, homePageQuery).catch(() => null),

@@ -6,4 +6,11 @@ export type BlockOf<T extends PageBuilderBlock['_type']> = Extract<PageBuilderBl
 
 export type SiteSettings = NonNullable<LayoutQueryResult['settings']>
 export type Navigation = NonNullable<LayoutQueryResult['navigation']>
-export type Layout = LayoutQueryResult
+/** Layout data. Settings and navigation can be missing (empty dataset, or the CMS can't be reached). */
+export type Layout = Omit<LayoutQueryResult, 'settings' | 'navigation'> & {
+  settings: LayoutQueryResult['settings'] | null
+  navigation: LayoutQueryResult['navigation'] | null
+}
+
+/** Used when the layout query fails, so pages still render with their built-in fallbacks. */
+export const emptyLayout: Layout = { settings: null, navigation: null, footerPages: [] }

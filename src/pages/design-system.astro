@@ -7,9 +7,8 @@ import Btn from '@components/ui/Btn.astro'
 import Icon from '@components/ui/Icon.astro'
 import { loadQuery } from '@cms/lib/load'
 import { layoutQuery } from '@cms/queries'
-import type { Layout } from '@cms/lib/types'
+import { emptyLayout } from '@cms/lib/types'
 
-const emptyLayout: Layout = { settings: null, navigation: null, footerPages: [] }
 const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => emptyLayout)
 
 const colors = [

@@ -1,0 +1,70 @@
+---
+/** Standalone services, featured on a dark band. Each row opens to a short line and a link to its page. */
+import Section from '@components/ui/Section.astro'
+import Btn from '@components/ui/Btn.astro'
+import Icon from '@components/ui/Icon.astro'
+import { services, links, hero } from '@/content/home'
+---
+
+<Section surface="deeper" anchorId="services">
+  <div class="split split--top services">
+    <div class="services__head">
+      <p class="eyebrow">{services.eyebrow}</p>
+      <h2 class="t-h2" set:html={services.heading} />
+      <p class="body-lg services__intro">{services.intro}</p>
+      <div class="actions services__actions">
+        <Btn href={links.book} icon="arrow">{hero.secondary}</Btn>
+        <Btn href={services.allHref} variant="link" icon="arrow">{services.allLabel}</Btn>
+      </div>
+    </div>
+
+    <div class="accordion services__list" data-one-open>
+      {services.items.map((item, i) => (
+        <details open={i === 0}>
+          <summary>
+            <span class="services__num">{String(i + 1).padStart(2, '0')}</span>
+            <span class="icon-chip"><Icon name={item.icon} /></span>
+            <span class="services__name">{item.name}</span>
+            <span class="plus"><Icon name="plus" /></span>
+          </summary>
+          <div class="services__body">
+            <p>{item.text}</p>
+            <Btn href={item.href} variant="link" icon="arrow">{`Learn more about ${item.short}`}</Btn>
+          </div>
+        </details>
+      ))}
+    </div>
+  </div>
+</Section>
+
+<script>
+  import '@/scripts/one-open'
+</script>
+
+<style>
+  .services__intro { margin-top: var(--space-6); }
+  .services__actions { margin-top: var(--space-8); }
+  .services__list { gap: var(--space-2); }
+  .services__list details { border-radius: var(--radius-lg); }
+  .services__list details[open] { background: var(--color-white); color: var(--color-text); }
+  .services__list summary { gap: var(--space-4); justify-content: flex-start; padding: var(--space-5) var(--space-6); }
+  .services__num { font-size: var(--text-sm); color: var(--surface-muted); font-variant-numeric: tabular-nums; width: 1.5rem; flex: none; }
+  .services__name { flex: 1; font-size: var(--text-h3); font-weight: var(--weight-heading); letter-spacing: var(--tracking-snug); line-height: 1.2; }
+  .services__list .plus { background: rgb(255 255 255 / 0.1); color: var(--color-white); }
+  .services__list details[open] .services__num { color: var(--color-text-muted); }
+  .services__list details[open] .icon-chip { background: var(--color-brand-deep); color: var(--color-white); }
+  .services__list details[open] .plus { background: var(--color-brand-deep); color: var(--color-white); }
+  .services__list .services__body { display: grid; gap: var(--space-4); justify-items: start; padding: 0 var(--space-6) var(--space-6) calc(var(--space-6) + 1.5rem + var(--space-4) + var(--icon-chip) + var(--space-4)); max-width: none; color: var(--color-text-muted); }
+  .services__body p { font-size: var(--text-body-lg); color: var(--color-text-muted); }
+  .services__body :global(.link) { color: var(--color-brand); }
+  @media (min-width: 1101px) {
+    .services { grid-template-columns: 5fr 7fr; }
+    .services__head { position: sticky; top: 7rem; }
+  }
+  @media (max-width: 640px) {
+    .services__num { display: none; }
+    .services__list summary { padding: var(--space-4); gap: var(--space-3); }
+    .services__name { font-size: 1.125rem; }
+    .services__list .services__body { padding: 0 var(--space-4) var(--space-5) calc(var(--space-4) + var(--icon-chip) + var(--space-3)); }
+  }
+</style>

@@ -17,7 +17,8 @@ const { settings, navigation, footerPages } = Astro.props.layout
 const year = new Date().getFullYear()
 const name = stegaClean(settings?.siteName) || brand.name
 const copyright = settings?.copyrightName || name
-const columns = navigation?.footerColumns?.length
+type FooterColumn = { heading: string; links: { label: string; href: string; target?: string; rel?: string }[] }
+const columns: FooterColumn[] = navigation?.footerColumns?.length
   ? navigation.footerColumns.map((column) => ({
       heading: column.heading ?? '',
       links: (column.links ?? []).flatMap((item) => {
@@ -57,7 +58,7 @@ const columns = navigation?.footerColumns?.length
               {column.heading && <h2 class="site-footer__heading">{column.heading}</h2>}
               <ul>
                 {column.links.map((link) => (
-                  <li><a href={link.href} target={'target' in link ? link.target : undefined} rel={'rel' in link ? link.rel : undefined}>{link.label}</a></li>
+                  <li><a href={link.href} target={link.target} rel={link.rel}>{link.label}</a></li>
                 ))}
               </ul>
             </nav>
@@ -66,8 +67,6 @@ const columns = navigation?.footerColumns?.length
         {settings && <ContactDetails settings={settings} />}
       </div>
     </div>
-
-    <p class="site-footer__name" aria-hidden="true" data-fit><span>{brand.name}</span></p>
 
     <div class="site-footer__bottom">
       <p>© {year} {copyright}. All rights reserved.</p>
@@ -81,6 +80,8 @@ const columns = navigation?.footerColumns?.length
         )
       }
     </div>
+
+    <p class="site-footer__name" aria-hidden="true" data-fit><span>{brand.name}</span></p>
   </div>
 </footer>
 
@@ -98,7 +99,7 @@ const columns = navigation?.footerColumns?.length
 </script>
 
 <style>
-  .site-footer { padding-top: var(--section-y); padding-bottom: var(--space-8); overflow: hidden; }
+  .site-footer { padding-top: var(--section-y); overflow: hidden; }
   .site-footer__top { display: grid; gap: var(--space-12); }
   .site-footer__brand { display: grid; gap: var(--space-5); justify-items: start; align-content: start; }
   .site-footer__brand :global(img) { width: 13rem; height: auto; }
@@ -109,14 +110,19 @@ const columns = navigation?.footerColumns?.length
   .site-footer__cols a { display: block; padding: 0.4375rem 0; font-size: var(--text-body); }
   .site-footer a:hover { text-decoration: underline; text-underline-offset: 4px; }
   .site-footer__social { display: flex !important; gap: var(--space-3); }
+  /* The name sits in the cream like a watermark: wide, light, fading into the bottom edge. */
   .site-footer__name {
-    margin: var(--space-20) 0 var(--space-8);
-    font-size: clamp(2.25rem, 8.6vw, 8rem); line-height: 0.85; letter-spacing: -0.055em; font-weight: var(--weight-medium);
-    color: var(--color-green-900); white-space: nowrap;
+    --wordmark-top: color-mix(in oklab, var(--color-green-900) 20%, transparent);
+    --wordmark-bottom: color-mix(in oklab, var(--color-green-900) 0%, transparent);
+    margin: var(--space-12) 0 -0.16em;
+    font-size: clamp(2.25rem, 8.6vw, 8rem); line-height: 1; letter-spacing: 0.045em; font-weight: var(--weight-display);
+    white-space: nowrap; user-select: none;
+    color: transparent;
+    background: linear-gradient(180deg, var(--wordmark-top) 15%, var(--wordmark-bottom) 92%);
+    -webkit-background-clip: text; background-clip: text;
   }
-  .site-footer__name span { display: inline-block;
-  }
-  .site-footer__bottom { display: flex; flex-wrap: wrap; gap: var(--space-4); justify-content: space-between; font-size: var(--text-sm); }
+  .site-footer__name span { display: inline-block; }
+  .site-footer__bottom { margin-top: var(--space-16); padding-top: var(--space-6); border-top: 1px solid var(--surface-line); display: flex; flex-wrap: wrap; gap: var(--space-4); justify-content: space-between; font-size: var(--text-sm); }
   .site-footer__bottom p { color: var(--surface-muted); }
   .site-footer__bottom ul { display: flex; flex-wrap: wrap; gap: var(--space-5); color: var(--surface-muted); }
   @media (min-width: 641px) { .site-footer__cols { grid-template-columns: repeat(3, 1fr); } }

@@ -24,7 +24,8 @@ selling, not decoration. One soft sage accent marks the thing to look at.
 
 **House rules**
 - No colored border lines anywhere (no colored top, bottom or left accents on cards, stats, steps or sections). Neutral 1px dividers inside a card are fine.
-- No animation beyond the mobile menu and the hero slider's scroll.
+- No animation beyond the mobile menu and the hero slider (autoplay, one slide every 3.5s).
+- Keep homepage copy short. Details (price after month 12, add-on prices) live on their own pages.
 - Only the colors, sizes and spacing below. If something new is needed, add a token here first.
 
 ---
@@ -152,8 +153,15 @@ Eyebrow, H2, optional intro. `align`: `left` (default), `center` (left on phones
 White items, radius `md`, a round plus that turns into a dark x when open. One open at a time.
 
 ### Hero slider (`HeroSlider.astro`)
-A row of photo and product-UI cards that scrolls sideways, with snap points and prev/next
-buttons. No quiz card in the slider, and no autoplay.
+A row of photo and product-UI cards that scrolls sideways, with snap points, a pause button and
+prev/next buttons. It autoplays one slide every 3.5 seconds and loops. It waits while someone hovers,
+focuses or touches it, while it's off screen, and never plays for reduced-motion users. No quiz card
+and no testimonial in the slider.
+
+### More services (`HomeServices.astro`)
+Standalone services on a `surface-deeper` band: heading left (sticky on desktop), an accordion of
+large numbered rows right. The open row turns white and shows one short line plus a "Learn more
+about …" link to its service page. No prices. Ends with a "View all services" link.
 
 ### Missed-call quiz (`MissedCallQuiz.astro`)
 White panel, radius `xl`, shadow `lg`. Four-option answers on cream-100. The lead posts to
@@ -161,7 +169,7 @@ White panel, radius `xl`, shadow `lg`. Four-option answers on cream-100. The lea
 
 ### Header and footer
 - Header: sticky, green-900, logo left, pill nav centered, primary button right. On phones: a full-screen green menu.
-- Footer: cream, logo and quiz button, three link columns, then **Ascend AI Marketing** in very large green type across the full width (no logo mark), then the copyright line.
+- Footer: cream, logo and quiz button, three link columns, then the copyright line, then **Ascend AI Marketing** across the full width as a watermark: light weight, wide letter spacing, green at 20% fading to nothing at the bottom edge (no logo mark).
 
 ---
 
