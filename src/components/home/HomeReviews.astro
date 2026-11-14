@@ -13,12 +13,13 @@ import { reviews, reviewSummary, links } from '@/content/home'
         <Btn href={links.reviews} variant="link" icon="arrow-ur">See more reviews on Google</Btn>
       </SectionHead>
       <ul class="grid-3">
-        {reviews.slice(0, 3).map((review) => (
+        {reviews.slice(0, 3).map((review, i) => (
           <li class="card review">
             <p class="review__stars" aria-label="5 out of 5 stars">
               {[0, 1, 2, 3, 4].map(() => <Icon name="star" fill />)}
             </p>
-            <p class="review__text">{review.text}</p>
+            <p class="review__text" id={`review-${i}`} data-clamp>{review.text}</p>
+            <button type="button" class="link review__more" aria-controls={`review-${i}`} aria-expanded="false" hidden>Read more</button>
             <p class="review__who"><strong>{review.name}</strong><span>{review.detail}</span></p>
           </li>
         ))}
@@ -27,11 +28,29 @@ import { reviews, reviewSummary, links } from '@/content/home'
   )
 }
 
+<script>
+  // Long reviews start collapsed. "Read more" shows the whole review; the button only appears when text is cut off.
+  document.querySelectorAll<HTMLButtonElement>('.review__more').forEach((button) => {
+    const text = document.getElementById(button.getAttribute('aria-controls') ?? '')
+    if (!text) return
+    button.hidden = text.scrollHeight <= text.clientHeight + 2
+    button.addEventListener('click', () => {
+      const open = button.getAttribute('aria-expanded') !== 'true'
+      text.classList.toggle('is-open', open)
+      button.setAttribute('aria-expanded', String(open))
+      button.textContent = open ? 'Show less' : 'Read more'
+    })
+  })
+</script>
+
 <style>
-  .review { display: flex; flex-direction: column; gap: var(--space-5); }
+  .review { display: flex; flex-direction: column; gap: var(--space-5); align-self: start; }
   .review__stars { display: flex; gap: 2px; color: var(--color-brand); }
   .review__stars :global(.icon) { width: 1.125rem; height: 1.125rem; }
-  .review__text { font-size: var(--text-body); line-height: 1.55; color: var(--surface-fg); }
+  .review__text { font-size: var(--text-body); line-height: 1.55; color: var(--surface-fg); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5; line-clamp: 5; overflow: hidden; }
+  .review__more[hidden] { display: none; }
+  .review__text.is-open { display: block; -webkit-line-clamp: unset; line-clamp: unset; }
+  .review__more { align-self: flex-start; margin-top: calc(var(--space-2) * -1); background: none; border: 0; padding: 0; cursor: pointer; font: inherit; font-size: var(--text-sm); color: var(--surface-fg); }
   .review__who { margin-top: auto; padding-top: var(--space-5); border-top: 1px solid var(--surface-line); font-size: var(--text-sm); color: var(--surface-muted); display: grid; gap: var(--space-1); }
   .review__who strong { color: var(--surface-fg); font-weight: var(--weight-strong); }
 </style>

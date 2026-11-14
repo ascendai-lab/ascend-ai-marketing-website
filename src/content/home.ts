@@ -186,10 +186,10 @@ export const services = {
   allLabel: 'View all services',
   allHref: '/services',
   items: [
-    { icon: 'map', name: 'Local SEO', short: 'local SEO', text: 'Show up first on Google Maps and local search.', href: '/services/local-seo' },
+    { icon: 'map', name: 'Local SEO', short: 'local SEO', text: 'Show up at the top of Google and AI search engines like ChatGPT.', href: '/services/local-seo' },
     { icon: 'search', name: 'Google Ads management', short: 'Google Ads', text: 'Ads that bring calls from people ready to book.', href: '/services/google-ads' },
     { icon: 'megaphone', name: 'Meta ads on Facebook and Instagram', short: 'Meta ads', text: 'Reach homeowners near you before they need you.', href: '/services/meta-ads' },
-    { icon: 'bot', name: 'AI agents', short: 'AI agents', text: 'An AI receptionist that answers, follows up and books.', href: '/services/ai-agents' },
+    { icon: 'bot', name: 'Custom AI agents', short: 'custom AI agents', text: 'Custom AI agents built for any job in your shop.', href: '/services/ai-agents' },
     { icon: 'flow', name: 'Custom workflows', short: 'custom workflows', text: 'Automations built around how your shop really works.', href: '/services/custom-workflows' },
     { icon: 'code', name: 'Custom software', short: 'custom software', text: 'Tools like a CRM built just for your shop.', href: '/services/custom-software' },
   ] satisfies { icon: IconName; name: string; short: string; text: string; href: string }[],
@@ -215,7 +215,7 @@ export const faq = {
     { q: 'How fast can my site go live?', a: 'Your site goes live 72 hours after we have everything we need.' },
     { q: 'Who owns the website?', a: 'You do. Your website, domain, Google profile, ad accounts and contact list are all in your name.' },
     { q: 'Do I keep my phone number?', a: 'Yes. We set up a call tracking number that forwards to your existing number.' },
-    { q: 'What does the plan include?', a: 'Your website, hosting and care, and the full lead system, GoHighLevel included. Ads, local SEO, AI agents, custom workflows and custom software cost extra, on their own or with the plan.' },
+    { q: 'What does the plan include?', a: 'Your website, hosting and care, and the full lead system, GoHighLevel included. Ads, local SEO, custom AI agents, custom workflows and custom software cost extra, on their own or with the plan.' },
     { q: 'What if I already have a website?', a: "If it's a WordPress site you want to keep, we can host and care for it. On any other platform, we build you a new site." },
   ],
 }
