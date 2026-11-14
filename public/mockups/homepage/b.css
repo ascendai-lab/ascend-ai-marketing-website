@@ -313,3 +313,38 @@
   .mB .b-price-row { display: flex; flex-direction: column; }
 }
 @media (max-width: 640px) { .mB .b-card-quiz { width: calc(100vw - 72px); } .mB .b-bigmark { gap: 12px; margin: 56px 0 28px; } }
+
+/* One-plan pricing card */
+.mB .b-plan-intro { margin-top: 20px; max-width: 60ch; }
+.mB .b-plan { margin-top: 56px; display: grid; grid-template-columns: 1.1fr 1fr; background: var(--b-deep); color: #fff; border-radius: 26px; overflow: hidden; }
+.mB .b-plan-main { padding: 48px; display: flex; flex-direction: column; }
+.mB .b-plan-tag { align-self: flex-start; display: flex; gap: 10px; align-items: center; font-size: 14px; padding: 7px 8px 7px 14px; border-radius: 999px; background: rgba(255,255,255,.08); }
+.mB .b-plan-tag em { font-style: normal; background: var(--sage); color: #0e2a17; padding: 4px 10px; border-radius: 999px; font-weight: 600; font-size: 13px; }
+.mB .b-plan .b-amount { display: flex; align-items: baseline; gap: 14px; margin: 28px 0 12px; font-size: 92px; line-height: 1; letter-spacing: -.05em; font-weight: 420; }
+.mB .b-plan .b-amount s { font-size: 30px; color: rgba(255,255,255,.4); letter-spacing: -.02em; font-weight: 400; }
+.mB .b-plan .b-amount span { font-size: 17px; letter-spacing: 0; color: rgba(255,255,255,.66); white-space: nowrap; }
+.mB .b-plan-sub { font-size: 16px; line-height: 1.55; color: rgba(255,255,255,.74); max-width: 42ch; }
+.mB .b-plan-tl { display: grid; grid-template-columns: 12fr 7fr; gap: 6px; margin: 30px 0 34px; }
+.mB .b-plan-tl > div { border-radius: 14px; padding: 16px 18px; display: grid; gap: 4px; background: rgba(255,255,255,.07); }
+.mB .b-plan-tl .b-tl-now { background: var(--sage); color: #0e2a17; }
+.mB .b-plan-tl span { font-size: 13.5px; opacity: .75; }
+.mB .b-plan-tl b { font-size: 28px; font-weight: 500; letter-spacing: -.03em; }
+.mB .b-plan-tl small { font-size: 14px; font-weight: 400; }
+.mB .b-plan .b-actions { margin-top: auto; }
+.mB .b-plan-incl { background: #fff; color: var(--b-ink); margin: 10px; border-radius: 20px; padding: 40px; }
+.mB .b-plan-incl .b-incl-title { font-size: 15px; font-weight: 600; margin-bottom: 22px; }
+.mB .b-plan-incl .b-ticks { grid-template-columns: 1fr; gap: 0; }
+.mB .b-plan-incl .b-ticks li { padding: 13px 0; border-bottom: 1px solid var(--b-line); font-size: 16px; }
+.mB .b-plan-incl .b-ticks li:last-child { border-bottom: 0; }
+/* compact problem cards */
+.mB .b-pains li { display: grid; grid-template-columns: 46px 1fr; gap: 16px; align-items: center; padding: 22px; }
+.mB .b-pains .b-dot { margin-bottom: 0; }
+.mB .b-pains { grid-template-columns: repeat(2, 1fr); max-width: 980px; margin: 0 auto; }
+@media (max-width: 1100px) { .mB .b-plan { grid-template-columns: 1fr; } }
+@media (max-width: 640px) {
+  .mB .b-plan-main { padding: 28px 22px; } .mB .b-plan-incl { padding: 24px 20px; }
+  .mB .b-plan .b-amount { font-size: 64px; flex-wrap: wrap; }
+  .mB .b-plan-tl { grid-template-columns: 1fr 1fr; }
+  .mB .b-pains li { padding: 16px; }
+}
+@media (min-width: 821px) { .mB .b-strip { justify-content: flex-start; padding-left: max(40px, calc((100% - 1280px) / 2 + 40px)); } }

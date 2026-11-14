@@ -1,5 +1,5 @@
 /* ═══ Mockup C · Clear proof (Northvane centered type, bento and dark comparison; Navis video frame and stats) ═══ */
-.mC { --c-bg: #EFEEEA; --c-panel: #E6E5E0; --c-card: #FFFFFF; --c-ink: #1E1E1E; --c-muted: #62645F; --c-line: #DAD9D3; --c-night: #143521; --c-night-2: #1d4630; background: var(--c-bg); color: var(--c-ink); font-variation-settings: "ROND" 0; }
+.mC { --c-bg: #EFEEEA; --c-panel: #E6E5E0; --c-card: #FFFFFF; --c-ink: #1E1E1E; --c-muted: #62645F; --c-line: #DAD9D3; --c-night: #17181A; --c-night-2: #222326; --c-forest: #143521; background: var(--c-bg); color: var(--c-ink); font-variation-settings: "ROND" 0; }
 .mC .c-wrap { max-width: 1240px; margin: 0 auto; padding-left: 40px; padding-right: 40px; }
 .mC .c-sec { padding: 112px 0; }
 .mC .c-center { text-align: center; margin-left: auto; margin-right: auto; }
@@ -44,7 +44,7 @@
 .mC .c-hero-top { display: grid; grid-template-columns: 1.25fr 1fr; gap: 64px; align-items: end; }
 .mC .c-hero h1 { font-size: clamp(44px, 5.4vw, 78px); line-height: 1; letter-spacing: -.04em; font-weight: 430; text-wrap: balance; }
 .mC .c-hero-side p { font-size: 17.5px; line-height: 1.6; color: #3f423e; margin-bottom: 28px; max-width: 42ch; }
-.mC .c-video { position: relative; display: block; margin-top: 56px; border-radius: 20px; overflow: hidden; aspect-ratio: 2.25 / 1; background: #3b4a40; }
+.mC .c-video { position: relative; display: block; margin-top: 0; border-radius: 20px; overflow: hidden; aspect-ratio: 2.25 / 1; background: #3b4a40; }
 .mC .c-video img { width: 100%; height: 100%; object-fit: cover; }
 .mC .c-video::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,.45)); }
 .mC .c-play { position: absolute; z-index: 1; left: 50%; top: 50%; translate: -50% -50%; width: 92px; height: 92px; border-radius: 50%; background: #fff; color: var(--c-ink); display: grid; place-items: center; box-shadow: 0 12px 40px rgba(0,0,0,.25); }
@@ -199,7 +199,7 @@
 
 /* Final + quiz skin */
 .mC .c-final { padding: 0 0 40px; }
-.mC .c-final-panel { background: var(--c-night); color: #fff; border-radius: 28px; padding: 64px 56px; display: grid; grid-template-columns: 1fr 1.1fr; gap: 56px; align-items: center; }
+.mC .c-final-panel { background: var(--c-forest); color: #fff; border-radius: 28px; padding: 64px 56px; display: grid; grid-template-columns: 1fr 1.1fr; gap: 56px; align-items: center; }
 .mC .c-urgent { font-size: 16px; line-height: 1.6; color: rgba(255,255,255,.66); margin-bottom: 40px; max-width: 46ch; padding-bottom: 36px; box-shadow: inset 0 -1px 0 rgba(255,255,255,.14); }
 .mC .c-urgent strong { display: block; color: var(--sage); font-size: 20px; font-weight: 500; letter-spacing: -.01em; margin-bottom: 8px; }
 .mC .c-final .c-h2 { color: #fff; }
@@ -291,3 +291,29 @@
 .mC .c-feed em { font-style: normal; font-size: 12px; font-weight: 600; padding: 5px 9px; border-radius: 6px; background: var(--c-bg); }
 .mC .c-photo-steps { aspect-ratio: 1 / 1.02; }
 @media (max-width: 680px) { .mC .c-feed { left: 10px; right: 10px; bottom: 10px; padding: 4px 12px; } .mC .c-photo-steps { aspect-ratio: 3 / 4; } }
+
+/* Hero media row: video + quiz question 1 */
+.mC .c-media { display: grid; grid-template-columns: 1fr 360px; gap: 16px; margin-top: 56px; }
+.mC .c-media .c-video { aspect-ratio: auto; min-height: 460px; }
+.mC .c-hq { background: var(--c-forest); color: #fff; border-radius: 20px; padding: 26px; display: flex; flex-direction: column; }
+.mC .c-hq-top { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: rgba(255,255,255,.66); }
+.mC .c-hq-bar { display: flex; gap: 4px; }
+.mC .c-hq-bar i { width: 18px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.2); }
+.mC .c-hq-bar i.on { background: var(--sage); }
+.mC .c-hq-q { font-size: 24px; line-height: 1.22; letter-spacing: -.015em; font-weight: 500; margin: 18px 0 20px; }
+.mC .c-hq-opts { display: grid; gap: 8px; }
+.mC .c-hq-opts button { display: flex; align-items: center; gap: 12px; min-height: 50px; padding: 0 14px; border-radius: 12px; border: 0; background: rgba(255,255,255,.08); color: #fff; font-size: 15.5px; text-align: left; }
+.mC .c-hq-opts button:hover { background: var(--sage); color: #10301b; }
+.mC .c-hq-opts b { width: 26px; height: 26px; border-radius: 7px; background: rgba(255,255,255,.12); display: grid; place-items: center; font-size: 12px; font-weight: 600; }
+.mC .c-hq-foot { margin-top: auto; padding-top: 18px; font-size: 13.5px; line-height: 1.5; color: rgba(255,255,255,.62); }
+.mC .c-tl-a s { font-size: 18px; color: rgba(255,255,255,.45); font-weight: 400; margin-right: 4px; }
+.mC .c-urgency { padding: 24px 0 64px; }
+.mC .c-urgency .c-h2 { max-width: 20ch; }
+.mC .c-urgency .c-body { max-width: 56ch; text-align: center; }
+.mC .c-work-first { padding-top: 96px; }
+@media (max-width: 1100px) { .mC .c-media { grid-template-columns: 1fr; } .mC .c-media .c-video { min-height: 0; aspect-ratio: 16 / 9; } }
+@media (max-width: 680px) {
+  .mC .c-media { margin-top: 32px; } .mC .c-media .c-video { aspect-ratio: 4 / 3; }
+  .mC .c-hq { padding: 20px; } .mC .c-hq-q { font-size: 21px; }
+  .mC .c-addon-list li { grid-template-columns: 22px 1fr auto !important; } .mC .c-addon-list b { grid-column: auto !important; }
+}
