@@ -231,9 +231,11 @@ const structuredData = [businessJsonLd, ...jsonLd].filter(Boolean)
         // From the keyboard, a jump to a form lands on its first field; otherwise focus goes to the
         // section's heading (after a tap too, so a phone's keyboard doesn't pop up unasked).
         function focusTarget(target, keyboard) {
-          var field = keyboard && target.querySelector('.quiz__step:not([hidden]) :is([aria-pressed="true"], .quiz__option, input), input:not([type="hidden"]):not([tabindex="-1"]), select, textarea, iframe')
+          var field = keyboard && !matchMedia('(pointer: coarse)').matches && target.querySelector('.quiz__step:not([hidden]) :is([aria-pressed="true"], .quiz__option, input), input:not([type="hidden"]):not([tabindex="-1"]), select, textarea, iframe')
           // A jump to a form (the calendar, the quiz) lands on the form, so the next Tab goes into it.
           var form = !field && (target.matches('[data-quiz]') ? target : target.querySelector('form'))
+          // On a touch screen, land on the section's heading: focusing the form could open the keyboard over it.
+          if (form && form.tagName === 'FORM' && matchMedia('(pointer: coarse)').matches) form = null
           var el = field || form || target.querySelector('h1, h2, h3, legend') || target
           if (!field && !el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1')
           el.focus({ preventScroll: true })

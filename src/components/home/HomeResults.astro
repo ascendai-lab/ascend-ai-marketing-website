@@ -9,7 +9,7 @@ import { results, links } from '@/content/home'
   <SectionHead eyebrow={results.eyebrow} heading={results.heading} align="split">
     <Btn href={links.work} variant="link" icon="arrow-ur">{results.link}</Btn>
   </SectionHead>
-  <div class="grid-3">
+  <div class="grid-3 results__grid">
     {results.items.map((item) => (
       <article class:list={['card result', item.dark && 'surface-deep']}>
         <p class="tag">{item.tag}</p>
@@ -32,4 +32,6 @@ import { results, links } from '@/content/home'
   .result > :nth-last-child(2) { margin-bottom: var(--space-6); }
   .result__who { margin-top: auto; padding-top: var(--space-5); border-top: 1px solid var(--surface-line); font-size: var(--text-sm); font-weight: var(--weight-strong); color: var(--surface-fg); }
   @media (max-width: 959px) { .result { min-height: 18rem; } }
+  /* Tablets: the cards stack, so the tags don't wrap and the figures line up. */
+  @media (max-width: 959px) { .results__grid { grid-template-columns: minmax(0, 1fr); } }
 </style>

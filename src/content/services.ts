@@ -83,7 +83,7 @@ export const categories: Record<string, CategoryLook> = {
     photo: { src: photo('1758598497049-da3b63569529'), alt: 'A contractor smiles while he takes a call' },
     notes: [
       { icon: 'phone', title: 'Tap to call', text: 'From any phone' },
-      { icon: 'cal', title: 'Visit booked online', text: 'Thursday, 9:00 AM' },
+      { icon: 'cal', title: 'Visit booked online', text: 'Thursday, 9:00 AM' },
     ],
   },
   'HVAC Local SEO': {

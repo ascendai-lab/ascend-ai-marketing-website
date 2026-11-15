@@ -100,7 +100,7 @@ export const about = {
   ],
   photo: { src: photo('1728516687003-58347d3412b3'), alt: 'Mark Johnson, founder of Ascend AI Marketing' },
   chips: [
-    { icon: 'users', title: 'Real people', text: 'Not a ticket system. Not a call center.' },
+    { icon: 'users', title: 'Real people', text: 'Not a ticket system. Not a call center.' },
     { icon: 'clock', title: 'Live in 72 hours', text: 'After we have everything we need.' },
   ] satisfies { icon: IconName; title: string; text: string }[],
 }
@@ -119,7 +119,7 @@ export const steps = {
 
 export const inbox = [
   { initials: 'JR', title: 'AC not cooling', detail: 'Missed call · text sent', status: 'New', tone: 'new' },
-  { initials: 'SM', title: 'Furnace tune-up', detail: 'Web form · booked Tue 9:00 AM', status: 'Booked', tone: 'done' },
+  { initials: 'SM', title: 'Furnace tune-up', detail: 'Web form · booked Tue 9:00 AM', status: 'Booked', tone: 'done' },
   { initials: 'DK', title: 'Heat pump quote', detail: 'Follow-up sent by text and email', status: 'Nudged', tone: 'muted' },
   { initials: 'LP', title: 'Job done', detail: 'Review request sent', status: 'Review', tone: 'muted' },
 ] as const
