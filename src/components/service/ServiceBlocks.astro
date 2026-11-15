@@ -33,7 +33,7 @@ type Group =
   | { kind: 'pricing'; text: string; link: { text: string; href: string } }
   | { kind: 'note'; text: string }
   | { kind: 'points'; items: Inline[] }
-  | { kind: 'ticks'; items: string[] }
+  | { kind: 'ticks'; items: string[]; plain?: boolean }
   | { kind: 'own'; text: string }
   | { kind: 'price'; text: string }
   | { kind: 'proof'; items: { text: string; quote?: { text: string; who: string } }[] }
@@ -73,7 +73,12 @@ for (const [i, block] of blocks.entries()) {
     else push({ kind: 'prose', items: [block.text] })
   } else if (block.type === 'ul' || block.type === 'ol') {
     if (block.items.every((item) => titled(item.lead))) push({ kind: 'points', items: block.items })
-    else push({ kind: 'ticks', items: block.items.map((item) => (item.lead ? `**${item.lead}** ${item.text}` : item.text)) })
+    else {
+      // A list under "Not included" gets plain bullets, not check marks that read as "included".
+      const last = groups.at(-1)
+      const plain = last?.kind === 'label' && /not included/i.test(last.text)
+      push({ kind: 'ticks', items: block.items.map((item) => (item.lead ? `**${item.lead}** ${item.text}` : item.text)), plain })
+    }
   } else if (block.type === 'field') {
     if (SINGLE.test(block.name)) groups.push({ kind: 'note', text: block.text })
     else if (leadRun(i)) push({ kind: 'points', items: [{ lead: `${block.name}.`, text: block.text }] })
@@ -129,7 +134,7 @@ for (const [i, block] of blocks.entries()) {
     if (group.kind === 'ticks')
       return (
         <div class="card blocks__ticks" data-reveal>
-          <ul class="ticks">{group.items.map((text) => <li><Icon name="check" /><span set:html={inline(text)} /></li>)}</ul>
+          <ul class="ticks">{group.items.map((text) => <li>{group.plain ? <span class="blocks__dot" aria-hidden="true" /> : <Icon name="check" />}<span set:html={inline(text)} /></li>)}</ul>
         </div>
       )
     if (group.kind === 'price')
@@ -137,7 +142,7 @@ for (const [i, block] of blocks.entries()) {
         <div class="card surface-deep blocks__price" data-reveal>
           <p class="tag">Price</p>
           <p class="blocks__price-text" set:html={inline(group.text)} />
-          <div class="actions"><Btn href={links.book} variant="secondary">{hero.secondary}</Btn></div>
+          <div class="actions"><Btn href={links.quiz} icon="arrow">{hero.primary}</Btn><Btn href={links.book} variant="secondary">{hero.secondary}</Btn></div>
         </div>
       )
     return (
@@ -164,6 +169,7 @@ for (const [i, block] of blocks.entries()) {
   .blocks__num { font-size: var(--text-sm); letter-spacing: 0.06em; font-variant-numeric: tabular-nums; color: var(--color-brand); margin-bottom: var(--space-4); }
   .blocks__ticks { padding-block: var(--space-2); }
   .blocks__ticks .ticks li span { color: var(--surface-fg); }
+  .blocks__ticks .ticks .blocks__dot { flex: none; width: 0.375rem; height: 0.375rem; margin: 0.6em 0.4rem 0; border-radius: var(--radius-full); background: var(--surface-muted); }
   .blocks__price { display: grid; gap: var(--space-5); justify-items: start; }
   .blocks__price-text { font-size: var(--text-body-lg); line-height: 1.55; color: var(--surface-fg); max-width: 52ch; }
   .blocks__price-text :global(.link) { color: var(--color-accent); }

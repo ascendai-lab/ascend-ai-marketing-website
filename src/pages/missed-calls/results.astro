@@ -19,7 +19,7 @@ import { GRADES, RESULT_KEY, results as copy } from '@/content/quiz'
 const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => emptyLayout)
 ---
 
-<BaseLayout layout={layout} title="Your missed call results" seo={{ noIndex: true }}>
+<BaseLayout layout={layout} title="Your missed call results | Ascend AI Marketing" description="Your missed call estimate, call handling score and fixes." seo={{ noIndex: true }}>
   <section class="results-hero surface-deep" data-results data-key={RESULT_KEY} data-grades={JSON.stringify(GRADES)}>
     <div class="container">
       <!-- Shown until the result loads, and to anyone who opens the page without taking the quiz. -->
@@ -40,7 +40,7 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
           <div class="actions"><Btn href="#calendar" icon="arrow">{copy.book}</Btn></div>
         </div>
         <div class="card surface-white results__fixes">
-          <p class="t-h4">{copy.fixesTitle}</p>
+          <p class="t-h4" data-fixes-title>{copy.fixesTitle}</p>
           <ol data-fixes></ol>
         </div>
       </div>
@@ -66,16 +66,19 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
   </Section>
 
   <Section surface="white" anchorId="calendar">
-    <div class="split split--top">
-      <div class="results-plan" data-reveal>
+    <!-- Phones: heading, then the form, then the plan. Desktop: the form on the right. -->
+    <div class="split split--top results-book">
+      <div class="results-book__head" data-reveal>
         <p class="eyebrow">Book your call</p>
         <h2 class="t-h2">{copy.calendarHeading}</h2>
+      </div>
+      <div class="results-book__cal" data-reveal><BookingCalendar id="results-calendar" /></div>
+      <div class="results-plan" data-reveal>
         <div data-filled hidden><PlanBox heading={copy.plan.heading} steps={copy.plan.steps} after={copy.plan.after} /></div>
         <div data-empty><PlanBox heading={copy.plan.heading} steps={copy.plan.steps.map((step) => step.replace(/\s*\(Done\.\)$/, ''))} after={copy.plan.after} /></div>
         <p class="results__pricing">{copy.pricing.text} <a class="link" href={links.plan}>{copy.pricing.link}</a></p>
         <Btn href={links.teardown} variant="link" icon="arrow-ur">{copy.notReady}</Btn>
       </div>
-      <div data-reveal><BookingCalendar id="results-calendar" /></div>
     </div>
   </Section>
 </BaseLayout>
@@ -93,6 +96,9 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
     set('[data-grade]', result.grade)
     set('[data-grade-text]', result.grade)
     set('[data-grade-line]', grades[result.grade] ?? '')
+    // "Your 3 fixes" says how many there really are.
+    const title = root.querySelector('[data-fixes-title]')
+    if (title && result.fixes.length !== 3) title.textContent = (title.textContent ?? '').replace('3', String(result.fixes.length)).replace(/fixes(?=\W*$)/, result.fixes.length === 1 ? 'fix' : 'fixes')
     const list = root.querySelector('[data-fixes]')
     result.fixes.forEach(([title, text]) => {
       const li = document.createElement('li')
@@ -132,7 +138,11 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
   .results-mark { display: grid; grid-template-columns: 9rem 1fr; gap: var(--space-6); align-items: center; }
   .results-mark__photo { margin: 0; aspect-ratio: 1; border-radius: var(--radius-md); }
   .results-mark__copy { display: grid; gap: var(--space-3); font-size: var(--text-body); }
-  .results-plan { display: grid; gap: var(--space-6); align-content: start; }
+  .results-book { grid-template-areas: 'head' 'cal' 'plan'; row-gap: var(--space-8); }
+  .results-book__head { grid-area: head; }
+  .results-book__cal { grid-area: cal; }
+  .results-plan { grid-area: plan; display: grid; gap: var(--space-6); align-content: start; }
+  @media (min-width: 1101px) { .results-book { grid-template-areas: 'head cal' 'plan cal'; grid-template-rows: auto 1fr; row-gap: var(--space-6); } }
   .results__pricing { font-size: var(--text-body); color: var(--surface-muted); }
   .results-plan :global(.link) { justify-self: start; }
   @media (min-width: 1101px) { .results-grid { grid-template-columns: 7fr 5fr; gap: var(--space-16); } }

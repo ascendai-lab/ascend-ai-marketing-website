@@ -43,7 +43,8 @@ const iconFor = (text: string): IconName =>
   /own/i.test(text) ? 'key' : /72|hours|fast/i.test(text) ? 'clock' : /people|answer/i.test(text) ? 'users' : /price|pay/i.test(text) ? 'check' : /phone|number/i.test(text) ? 'phone' : /ranking|google/i.test(text) ? 'pin' : /ai\b/i.test(text) ? 'bot' : 'check'
 const trust = page.hero.trust ? page.hero.trust.split(/(?<=\.)\s+/).map((text) => ({ icon: iconFor(text), text })) : homeHero.trust
 
-const primary = isTeardown ? null : { text: page.hero.primary ?? homeHero.primary, href: isQuiz ? '#quiz' : links.quiz }
+// The quiz page's quiz sits right beside the copy, so the hero offers the call instead of a second quiz button.
+const primary = isTeardown || isQuiz ? null : { text: page.hero.primary ?? homeHero.primary, href: isQuiz ? '#quiz' : links.quiz }
 const secondary = isTeardown ? null : { text: page.hero.secondary ?? homeHero.secondary, href: isBook ? '#calendar' : links.book }
 
 const small = page.closing.small

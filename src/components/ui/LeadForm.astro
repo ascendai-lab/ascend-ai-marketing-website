@@ -5,6 +5,7 @@
  * pushed to the dataLayer as `event`, so it can be tracked as a conversion.
  */
 import Icon from './Icon.astro'
+import { consent, PRIVACY_PATH } from '@/content/legal'
 
 type FieldName = 'name' | 'shop' | 'website' | 'email' | 'phone'
 interface Props {
@@ -46,6 +47,7 @@ const types: Record<FieldName, { type: 'text' | 'url' | 'email' | 'tel'; auto: s
   <button type="submit" class="btn btn--primary lead-form__submit">{button}<Icon name="arrow" /></button>
   <p class="lead-form__error lead-form__send-error" role="alert"></p>
   {note && <p class="lead-form__note">{note}</p>}
+  <p class="lead-form__consent">{consent.text} <a href={PRIVACY_PATH}>{consent.link}</a>.</p>
   <div class="lead-form__done" hidden tabindex="-1"><span class="icon-chip icon-chip--ui"><Icon name="check" /></span><p>{success}</p></div>
 </form>
 
@@ -112,13 +114,15 @@ const types: Record<FieldName, { type: 'text' | 'url' | 'email' | 'tel'; auto: s
 
 <style>
   .lead-form { display: grid; gap: var(--space-5); background: var(--color-white); color: var(--color-text); border-radius: var(--radius-xl); padding: clamp(var(--space-6), 3vw, var(--space-8)); box-shadow: var(--shadow-lg); }
-  .lead-form__fields { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+  .lead-form__fields { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); align-items: start; }
   .lead-form__field { display: grid; gap: var(--space-2); font-size: var(--text-sm); font-weight: var(--weight-medium); }
   .lead-form__field input[aria-invalid='true'] { border-color: var(--color-error); box-shadow: 0 0 0 1px var(--color-error); }
   .lead-form__error { font-size: var(--text-xs); font-weight: var(--weight-medium); color: var(--color-error); }
   .lead-form__error:empty { display: none; }
   .lead-form__submit { justify-self: start; }
   .lead-form__note { font-size: var(--text-xs); color: var(--color-text-muted); margin-top: calc(var(--space-2) * -1); }
+  .lead-form__consent { font-size: var(--text-xs); line-height: 1.5; color: var(--color-text-muted); }
+  .lead-form__consent a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
   .lead-form__done { display: flex; gap: var(--space-4); align-items: flex-start; font-size: var(--text-body-lg); line-height: 1.5; }
   .lead-form__done[hidden] { display: none; }
   @media (max-width: 640px) {

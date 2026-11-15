@@ -28,6 +28,7 @@ const columns: FooterColumn[] = navigation?.footerColumns?.length
       }),
     }))
   : fallback.columns
+import { PRIVACY_PATH } from '@/content/legal'
 ---
 
 <footer class="site-footer surface-cream">
@@ -80,15 +81,12 @@ const columns: FooterColumn[] = navigation?.footerColumns?.length
 
     <div class="site-footer__bottom">
       <p>© {year} {copyright}. All rights reserved.</p>
-      {
-        footerPages.length > 0 && (
-          <ul>
-            {footerPages.map((page) => page.slug && (
-              <li><a href={routes.page(page.slug)}>{page.title}</a></li>
-            ))}
-          </ul>
-        )
-      }
+      <ul>
+        <li><a href={PRIVACY_PATH}>Privacy policy</a></li>
+        {footerPages.map((page) => page.slug && (
+          <li><a href={routes.page(page.slug)}>{page.title}</a></li>
+        ))}
+      </ul>
     </div>
 
     <p class="site-footer__name" aria-hidden="true" data-fit><span>{brand.name}</span></p>

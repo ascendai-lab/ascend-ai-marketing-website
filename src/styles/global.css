@@ -360,6 +360,8 @@
   @media (min-width: 1101px) {
     .section-head--split { display: grid; grid-template-columns: 5fr 7fr; gap: var(--space-16); align-items: end; }
     .section-head--split > p:not(.eyebrow) { max-width: var(--measure); }
+    /* A lone link (no intro) sits at the right edge, level with the heading's last line. */
+    .section-head--split > :is(.link, .btn):last-child:nth-child(2) { justify-self: end; margin-bottom: var(--space-2); }
   }
   @media (max-width: 640px) {
     .section-head--center { text-align: left; }

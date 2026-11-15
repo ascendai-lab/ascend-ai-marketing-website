@@ -32,7 +32,7 @@ const { sections, roleOf, look, phone } = Astro.props
 const withPhone = (text: string) => (phone ? text.replace(/\[BUSINESS PHONE\]/g, phone) : text)
 const needsPhone = (text: string) => !phone && text.includes('[BUSINESS PHONE]')
 const paragraphs = (s: ServiceSectionCopy) => s.blocks.flatMap((b) => (b.type === 'p' ? [b.lead ? `${b.lead} ${b.text}` : b.text] : []))
-const stepIcons: IconName[] = ['check', 'cal', 'zap']
+const stepIcons: IconName[] = ['clock', 'cal', 'zap']
 
 /** Eyebrows come from the copy's section labels, with a few renamed to read well on the page. */
 function eyebrowFor(section: ServiceSectionCopy, role: PageRole) {

@@ -38,7 +38,8 @@ const unlinkMissing = (text) =>
   text.replace(/\[([^\]]+)\]\(\/services\/([^)]+)\)/g, (all, label, slug) => (services.has(slug) ? all : label))
 /** `Etheric Networks (past client): 45 leads. "Quote." Camille, Etheric Networks` → a result and a quote. */
 const proof = (text) => {
-  const m = text.match(/^(.*?)\s"([^"]+)"\s(.+)$/)
+  // The quote starts a new sentence and ends with its own full stop; quoted phrases inside a sentence aren't quotes.
+  const m = text.match(/^(.*?[.!?])\s"([^"]+[.!?])"\s([^"]+)$/)
   return m ? [{ type: 'result', text: m[1].trim() }, { type: 'quote', text: m[2].trim(), who: m[3].trim() }] : [{ type: 'result', text }]
 }
 /** "See the full plan (/hvac-lead-system)" or "See pricing (links to /hvac-lead-system)" → text and href. */

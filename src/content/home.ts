@@ -110,7 +110,7 @@ export const steps = {
   heading: 'Three steps to a full schedule.',
   note: 'The 72 hours start once we have everything we need from you.',
   items: [
-    { icon: 'check', title: 'Take the 60-second quiz.', text: 'See what missed calls may cost you each month.' },
+    { icon: 'clock', title: 'Take the 60-second quiz.', text: 'See what missed calls may cost you each month.' },
     { icon: 'cal', title: 'Book a 15-minute call.', text: 'We show you where leads leak out and how to fix it.' },
     { icon: 'zap', title: 'Go live in 72 hours.', text: 'Your site and lead system start catching calls.' },
   ] satisfies { icon: IconName; title: string; text: string }[],

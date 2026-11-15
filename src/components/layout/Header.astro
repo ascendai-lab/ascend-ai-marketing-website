@@ -149,7 +149,7 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
   const header = document.querySelector<HTMLElement>('.site-header')
   const toggle = document.querySelector<HTMLButtonElement>('.site-header__toggle')
   const nav = document.getElementById('site-nav')
-  const desktop = window.matchMedia('(min-width: 1101px)')
+  const desktop = window.matchMedia('(min-width: 1024px)')
 
   // The mobile menu is a full-screen panel that starts right under the header and covers the page.
   const placeMenu = () => header && nav?.style.setProperty('--nav-top', `${Math.max(0, header.getBoundingClientRect().bottom)}px`)
@@ -248,7 +248,7 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
 
   .site-header { position: sticky; top: 0; z-index: 50; }
   .site-header__inner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-6); min-height: var(--header-h); }
-  .site-header__logo { flex: none; }
+  .site-header__logo { flex: none; display: flex; align-items: center; min-height: 44px; }
   .site-header__logo :global(img) { width: 11.5rem; height: auto; max-height: 2.5rem; object-fit: contain; object-position: left; }
 
   /* Mobile menu: a full-screen deep green panel under the header. */
@@ -308,7 +308,7 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
   .site-header__toggle[aria-expanded='true'] .bars::after { top: 0; transform: rotate(-45deg); }
 
   /* Desktop: logo, a pill of links in the middle, the quiz button on the right. */
-  @media (min-width: 1101px) {
+  @media (min-width: 1024px) {
     .site-header__inner { display: grid; grid-template-columns: 1fr auto 1fr; }
     .site-header__toggle { display: none; }
     .site-nav { display: contents; position: static; visibility: visible; clip-path: none; padding: 0; background: none; }

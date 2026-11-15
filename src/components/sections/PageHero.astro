@@ -53,7 +53,7 @@ const hasAside = tool
         </nav>
       )}
       <p class="eyebrow">{eyebrow}</p>
-      <h1 class="t-display svc-hero__h">{headline}</h1>
+      <h1 class="t-display svc-hero__h">{headline.replace(/(\d)-(?=[a-z])/g, "$1\u2011")}</h1>
       {subhead && <p class="svc-hero__sub">{subhead}</p>}
       {(primary || secondary) && (
         <div class="actions">
