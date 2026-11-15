@@ -356,6 +356,7 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
   .svc-menu__links a { display: flex; align-items: center; min-height: 44px; padding: var(--space-1) 0; font-size: var(--text-body); color: var(--surface-body); }
   /* The panel clips while it animates, so focus rings sit just inside each link instead of being cut off. */
   .svc-menu__panel a:focus-visible { outline-offset: -3px; border-radius: var(--radius-sm); }
+  @media (max-width: 1023px) { .svc-menu__links a, .svc-menu__cat { padding-inline: var(--space-2); margin-inline: calc(var(--space-2) * -1); } }
   .svc-menu__links a[aria-current='page'], .svc-menu__cat[aria-current='page'] { color: var(--color-accent); }
   .svc-menu__foot { display: grid; gap: var(--space-2); margin-top: var(--space-5); }
   .svc-menu__all { display: inline-flex; align-items: center; gap: var(--space-2); min-height: 44px; font-size: var(--text-body); font-weight: var(--weight-medium); color: var(--surface-fg); }

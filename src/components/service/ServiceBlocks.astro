@@ -29,7 +29,7 @@ type Group =
   | { kind: 'bold'; text: string }
   | { kind: 'label'; text: string }
   | { kind: 'links'; items: { title: string; href?: string; text: string }[] }
-  | { kind: 'cta'; text: string; href: string }
+  | { kind: 'cta'; text: string; href: string; withBook?: boolean }
   | { kind: 'pricing'; text: string; link: { text: string; href: string } }
   | { kind: 'note'; text: string }
   | { kind: 'points'; items: Inline[] }
@@ -65,6 +65,17 @@ const leadRun = (i: number) => {
   const run = runOf(i)
   return run.length > 1 && run.every((b) => b.type === 'field' || (b.type === 'p' && titled(b.lead)))
 }
+/** An item that ends with ":" introduces the items after it: they sit under it as a sub-list. */
+const nest = (items: string[]) => {
+  const out: { text: string; children: string[] }[] = []
+  let parent: { text: string; children: string[] } | null = null
+  for (const text of items) {
+    if (parent) parent.children.push(text)
+    else out.push({ text, children: [] })
+    if (!parent && /:\s*$/.test(text)) parent = out[out.length - 1]
+  }
+  return out
+}
 for (const [i, block] of blocks.entries()) {
   if (block.type === 'p') {
     if (block.lead && !leadRun(i)) push({ kind: 'prose', items: [`**${block.lead}** ${block.text}`] })
@@ -86,7 +97,12 @@ for (const [i, block] of blocks.entries()) {
   } else if (block.type === 'bold') groups.push({ kind: 'bold', text: block.text })
   else if (block.type === 'label') groups.push({ kind: 'label', text: block.text })
   else if (block.type === 'links') push({ kind: 'links', items: block.items })
-  else if (block.type === 'cta') groups.push({ kind: 'cta', text: block.text, href: block.href || (quizLike(block.text) ? links.quiz : links.book) })
+  else if (block.type === 'cta') {
+    // A quiz button right after a line offering the call gets the call button beside it, so both promises have a way in.
+    const last = groups.at(-1)
+    const offersCall = last?.kind === 'prose' && last.items.some((text) => /minute call/i.test(text))
+    groups.push({ kind: 'cta', text: block.text, href: block.href || (quizLike(block.text) ? links.quiz : links.book), withBook: offersCall && quizLike(block.text) })
+  }
   else if (block.type === 'pricing') groups.push({ kind: 'pricing', text: block.text, link: block.link })
   else if (block.type === 'price') groups.push({ kind: 'price', text: block.text })
   else if (block.type === 'result') push({ kind: 'proof', items: [{ text: block.text }] })
@@ -104,7 +120,7 @@ for (const [i, block] of blocks.entries()) {
     if (group.kind === 'bold') return <p class="lead strong blocks__bold" set:html={inline(group.text)} />
     if (group.kind === 'note') return <p class="card blocks__note" set:html={inline(group.text)} />
     if (group.kind === 'label') return <h3 class="t-h4 blocks__label">{group.text.replace(/:$/, '')}</h3>
-    if (group.kind === 'cta') return <div class="actions"><Btn href={group.href} icon="arrow" variant={quizLike(group.text) ? 'primary' : 'secondary'}>{group.text}</Btn></div>
+    if (group.kind === 'cta') return <div class="actions"><Btn href={group.href} icon="arrow" variant={quizLike(group.text) ? 'primary' : 'secondary'}>{group.text}</Btn>{group.withBook && <Btn href={links.book} variant="secondary">{hero.secondary}</Btn>}</div>
     if (group.kind === 'pricing')
       return <p class="blocks__pricing">{group.text} <a class="link" href={group.link.href || links.plan}>{group.link.text}</a></p>
     if (group.kind === 'links')
@@ -134,7 +150,11 @@ for (const [i, block] of blocks.entries()) {
     if (group.kind === 'ticks')
       return (
         <div class="card blocks__ticks">
-          <ul class="ticks">{group.items.map((text) => <li>{group.plain ? <span class="blocks__dot" aria-hidden="true" /> : <Icon name="check" />}<span set:html={inline(text)} /></li>)}</ul>
+          <ul class="ticks">{nest(group.items).map((item) => (
+            <li>{group.plain ? <span class="blocks__dot" aria-hidden="true" /> : <Icon name="check" />}<span set:html={inline(item.text)} />
+              {item.children.length > 0 && <ul class="ticks blocks__sub">{item.children.map((text) => <li><span class="blocks__dot" aria-hidden="true" /><span set:html={inline(text)} /></li>)}</ul>}
+            </li>
+          ))}</ul>
         </div>
       )
     if (group.kind === 'price')
@@ -169,6 +189,11 @@ for (const [i, block] of blocks.entries()) {
   .blocks__num { font-size: var(--text-sm); letter-spacing: 0.06em; font-variant-numeric: tabular-nums; color: var(--color-brand); margin-bottom: var(--space-4); }
   .blocks__ticks { padding-block: var(--space-2); }
   .blocks__ticks .ticks li span { color: var(--surface-fg); }
+  .blocks__ticks .ticks li:has(> .blocks__sub) { flex-wrap: wrap; }
+  .blocks__ticks .ticks li:has(> .blocks__sub) > span:not(.blocks__dot) { flex: 1; min-width: 0; }
+  .blocks__sub { flex-basis: 100%; margin-top: var(--space-1); padding-left: calc(0.375rem + 0.8rem + var(--space-3)); }
+  .blocks__sub li { padding-block: 0.6rem; }
+  .blocks__sub li span:not(.blocks__dot) { color: var(--surface-body); }
   .blocks__ticks .ticks .blocks__dot { flex: none; width: 0.375rem; height: 0.375rem; margin: 0.6em 0.4rem 0; border-radius: var(--radius-full); background: var(--surface-muted); }
   .blocks__price { display: grid; gap: var(--space-5); justify-items: start; }
   .blocks__price-text { font-size: var(--text-body-lg); line-height: 1.55; color: var(--surface-fg); max-width: calc(52 * var(--ch)); }
@@ -189,7 +214,9 @@ for (const [i, block] of blocks.entries()) {
   /* Cards without a page of their own are flat, so they don't look clickable. */
   .blocks__link--plain { background: none; box-shadow: none; border: 1px solid var(--surface-line); }
   .blocks__link p { font-size: var(--text-body); line-height: 1.55; color: var(--surface-muted); }
-  .blocks__link--go { padding-right: calc(var(--space-6) + 2.5rem); transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
+  /* Only the title makes room for the arrow; the description runs the full width of the card. */
+  .blocks__link--go h3 { padding-right: 2.75rem; }
+  .blocks__link--go { transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
   .blocks__link--go h3 a::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
   .blocks__link--go:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
   .blocks__link--go:has(a:focus-visible) { outline: 3px solid var(--surface-fg, var(--color-text)); outline-offset: 3px; }

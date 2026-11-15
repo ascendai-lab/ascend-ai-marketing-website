@@ -37,6 +37,8 @@ const {
   trust = homeHero.trust,
   tool = false,
 } = Astro.props
+// Each sentence of the headline keeps to its own lines where it fits ("Catch every call. / Book more HVAC jobs.").
+const sentences = headline.replace(/(\d)-(?=[a-z])/g, '$1\u2011').split(/(?<=[.!?])\s+/)
 const hasAside = tool
 ---
 
@@ -53,7 +55,7 @@ const hasAside = tool
         </nav>
       )}
       <p class="eyebrow">{eyebrow}</p>
-      <h1 class="t-display svc-hero__h">{headline.replace(/(\d)-(?=[a-z])/g, "$1\u2011")}</h1>
+      <h1 class="t-display svc-hero__h">{sentences.map((s, i) => <>{i > 0 && " "}<span class="svc-hero__sent">{s}</span></>)}</h1>
       {subhead && <p class="svc-hero__sub">{subhead}</p>}
       {(primary || secondary) && (
         <div class="actions">
@@ -104,6 +106,7 @@ const hasAside = tool
     .svc-hero__crumbs ol { align-items: center; }
     .svc-hero__crumbs a { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; padding-inline: var(--space-2); margin-inline: calc(var(--space-2) * -1); }
   }
+  .svc-hero__sent { display: inline-block; }
   .svc-hero__h { font-size: var(--text-display-sm); max-width: calc(17 * var(--ch)); }
   .svc-hero__sub { margin: var(--stack-body) 0 var(--stack-actions); font-size: var(--text-body-lg); line-height: var(--leading-body); max-width: calc(46 * var(--ch)); color: var(--surface-body); }
   .svc-hero__note { margin-top: var(--space-4); font-size: var(--text-sm); color: var(--surface-muted); }

@@ -91,4 +91,6 @@ import { reviews, reviewSummary, links } from '@/content/home'
   .review__more:hover { color: var(--surface-fg); }
   .review__who { margin-top: auto; padding-top: var(--space-5); border-top: 1px solid var(--surface-line); font-size: var(--text-sm); color: var(--surface-muted); display: grid; gap: var(--space-1); }
   .review__who strong { color: var(--surface-fg); font-weight: var(--weight-strong); }
+  /* Three narrow columns: room for a detail line that wraps, so the cards end level. */
+  @media (min-width: 760px) and (max-width: 1279px) { .review__who span { min-height: calc(2 * 1.5em); } }
 </style>

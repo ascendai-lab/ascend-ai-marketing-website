@@ -232,7 +232,9 @@ const structuredData = [businessJsonLd, ...jsonLd].filter(Boolean)
         // section's heading (after a tap too, so a phone's keyboard doesn't pop up unasked).
         function focusTarget(target, keyboard) {
           var field = keyboard && target.querySelector('.quiz__step:not([hidden]) :is([aria-pressed="true"], .quiz__option, input), input:not([type="hidden"]):not([tabindex="-1"]), select, textarea, iframe')
-          var el = field || target.querySelector('h1, h2, h3, legend') || target
+          // A jump to a form (the calendar, the quiz) lands on the form, so the next Tab goes into it.
+          var form = !field && (target.matches('[data-quiz]') ? target : target.querySelector('form'))
+          var el = field || form || target.querySelector('h1, h2, h3, legend') || target
           if (!field && !el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1')
           el.focus({ preventScroll: true })
         }
