@@ -77,8 +77,11 @@ proof and the final quiz.
 
 ## 3. Typography
 
-**Font:** Google Sans Flex (`opsz,wdth,wght,ROND`), `ROND 20`, falling back to
-Google Sans and the system font.
+**Font:** Google Sans Flex, `ROND 20`. Self-hosted at `/fonts/google-sans-flex.woff2` (latin, ROND 20 and
+width 100 built in, `opsz` 12–96, `wght` 380–700), preloaded, `font-display: optional`. The fallback is
+Arial sized to match (`Google Sans Flex Fallback`). Text measures use `--ch` (one Google Sans Flex `ch`),
+never the `ch` unit, so widths don't change with the font. Entrance reveals: section heads and a few
+`[data-reveal]` blocks only.
 
 | Role | Class | Size | Weight | Line height |
 |---|---|---|---|---|

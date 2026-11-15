@@ -1,7 +1,16 @@
 @import "tailwindcss";
 
-/* Sized to match Google Sans Flex, so lines wrap the same before and after the web font arrives
-   and the hero doesn't jump mid-entrance when it swaps in. */
+/* Google Sans Flex, self-hosted and preloaded: latin, ROND 20 and width 100 built in, weights 380 to 700.
+   "optional": if it isn't ready by first paint, that page view keeps the fallback, so text never
+   reflows mid-entrance; the next page has it from the cache. */
+@font-face {
+  font-family: 'Google Sans Flex';
+  src: url('/fonts/google-sans-flex.woff2') format('woff2');
+  font-weight: 380 700;
+  font-style: normal;
+  font-display: optional;
+}
+/* Sized to match Google Sans Flex, so the fallback reads at about the same size and length. */
 @font-face {
   font-family: 'Google Sans Flex Fallback';
   src: local('Arial'), local('Helvetica Neue'), local('Helvetica'), local('Liberation Sans');
@@ -588,11 +597,11 @@
    Hidden only while html has .motion, which is set in <head> when motion is allowed,
    so the page never stays blank without JavaScript or with reduced motion. */
 @layer components {
-  .motion :is(.section .section-head, .section .grid-3, .section .grid-4, [data-reveal]):not(.is-in) {
+  .motion :is(.section .section-head, [data-reveal]):not(.is-in) {
     opacity: 0; translate: 0 var(--reveal-shift);
   }
   /* A piece inside something that already slides in arrives with it (motion.ts skips it too). */
-  .motion :is(.section .section-head, .section .grid-3, .section .grid-4, [data-reveal]) :is(.section-head, .grid-3, .grid-4, [data-reveal]):not(.is-in) {
+  .motion :is(.section .section-head, [data-reveal]) :is(.section-head, [data-reveal]):not(.is-in) {
     opacity: 1; translate: none;
   }
   /* The entrance uses the separate `translate` property, so hover moves (which use `transform`)

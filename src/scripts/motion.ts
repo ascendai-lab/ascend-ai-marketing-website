@@ -5,9 +5,9 @@
 const root = document.documentElement
 // Keep in step with the matching list under "Entrance" in global.css, which hides these before they arrive.
 const SELECTOR = [
-  // Sparing on purpose: section headings and rows of cards slide in, plus a few blocks marked [data-reveal].
-  // Body copy, forms and photos are simply there.
-  '.section .section-head', '.section .grid-3', '.section .grid-4', '[data-reveal]',
+  // Sparing on purpose: section headings slide in, plus a few blocks marked [data-reveal].
+  // Body copy, cards, forms and photos are simply there.
+  '.section .section-head', '[data-reveal]',
 ].join(', ')
 
 if (root.classList.contains('motion')) {

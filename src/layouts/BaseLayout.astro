@@ -143,9 +143,8 @@ const structuredData = [businessJsonLd, ...jsonLd].filter(Boolean)
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       )
     }
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wdth,wght,ROND@6..144,75..125,300..800,0..100&display=swap" />
+    <!-- Self-hosted Google Sans Flex (OFL), trimmed to the weights and roundness the site uses. -->
+    <link rel="preload" href="/fonts/google-sans-flex.woff2" as="font" type="font/woff2" crossorigin />
     <meta name="theme-color" content="#11301c" />
     <link rel="sitemap" href="/sitemap.xml" />
     {tracking?.googleSiteVerification && <meta name="google-site-verification" content={stegaClean(tracking.googleSiteVerification)} />}

@@ -164,6 +164,8 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
     if (!toggle || !nav) return
     if (open) placeMenu()
     toggle.setAttribute('aria-expanded', String(open))
+    // Reopening before the close has finished (items still fading): skip the stagger.
+    nav.classList.toggle('is-reopening', open && nav.getAnimations({ subtree: true }).length > 0)
     nav.classList.toggle('is-open', open)
     document.documentElement.classList.toggle('menu-open', open)
     // While the menu covers the page, the page behind can't be reached by keyboard or screen reader.
@@ -324,6 +326,8 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
   /* Open and close share one curve, so reopening mid-close turns around smoothly instead of jumping. */
   .site-nav__item, .site-nav__cta { opacity: 0; transform: translateY(-14px); transition: opacity 260ms var(--ease-out) 40ms, transform 260ms var(--ease-out) 40ms; }
   .site-nav.is-open .site-nav__item, .site-nav.is-open .site-nav__cta { opacity: 1; transform: none; transition: opacity 300ms var(--ease-out), transform 300ms var(--ease-out); transition-delay: calc(60ms + var(--i, 0) * 25ms); }
+  /* Reopened while still closing: the items come straight back with the panel, no stagger wait. */
+  .site-nav.is-open.is-reopening .site-nav__item, .site-nav.is-open.is-reopening .site-nav__cta { transition-delay: 0ms; }
   :global(html.menu-open body) { overflow: hidden; }
   @media (prefers-reduced-motion: reduce) {
     .site-nav, .site-nav.is-open { clip-path: none; opacity: 0; transition: opacity 0.15s, visibility 0s linear 0.15s; }
