@@ -1,8 +1,7 @@
 ---
-/** Service page hero: breadcrumb, category eyebrow, headline and the two calls to action, beside a photo with product notes. */
-import Btn from '@components/ui/Btn.astro'
-import Icon from '@components/ui/Icon.astro'
-import { hero as homeHero, links } from '@/content/home'
+/** Service page hero: the shared page hero with the service's breadcrumb, its category and the category photo. */
+import PageHero from '@components/sections/PageHero.astro'
+import { links } from '@/content/home'
 import type { CategoryLook, ServiceCopy } from '@/content/services'
 
 interface Props {
@@ -13,66 +12,13 @@ interface Props {
 const { page, look } = Astro.props
 ---
 
-<section class="svc-hero surface-deep">
-  <div class="container svc-hero__grid">
-    <div class="svc-hero__copy">
-      <nav aria-label="Breadcrumb" class="svc-hero__crumbs">
-        <ol>
-          <li><a href="/">Home</a></li>
-          <li><a href="/services">Services</a></li>
-          <li aria-current="page">{page.title}</li>
-        </ol>
-      </nav>
-      <p class="eyebrow">{look.name}</p>
-      <h1 class="t-display svc-hero__h">{page.hero.headline}</h1>
-      <p class="svc-hero__sub">{page.hero.subhead}</p>
-      <div class="actions">
-        <Btn href={links.quiz} icon="arrow">{page.hero.primary}</Btn>
-        <Btn href={links.book} variant="secondary">{page.hero.secondary}</Btn>
-      </div>
-    </div>
-    <figure class="media svc-hero__photo">
-      <img src={look.photo.src} alt={look.photo.alt} width="1400" height="1600" loading="eager" fetchpriority="high" />
-      <ul class="svc-hero__notes">
-        {look.notes.map((note, i) => (
-          <li class="float-note" style={`--i: ${i}`}><span class="icon-chip icon-chip--ui"><Icon name={note.icon} /></span><div><strong>{note.title}</strong><span>{note.text}</span></div></li>
-        ))}
-      </ul>
-    </figure>
-  </div>
-  <div class="container">
-    <ul class="hero__trust">
-      {homeHero.trust.map((item, i) => (
-        <li style={`--i: ${i}`}><Icon name={item.icon} />{item.text}</li>
-      ))}
-    </ul>
-  </div>
-</section>
-
-<style>
-  .svc-hero { padding-block: var(--space-12) var(--space-10); overflow: hidden; }
-  .svc-hero__grid { display: grid; gap: var(--space-10); align-items: center; }
-  .svc-hero__crumbs { margin-bottom: var(--space-8); }
-  .svc-hero__crumbs ol { display: flex; flex-wrap: wrap; gap: var(--space-2); font-size: var(--text-sm); color: var(--surface-muted); }
-  .svc-hero__crumbs li + li::before { content: '/'; margin-right: var(--space-2); color: var(--color-text-inverse-faint); }
-  .svc-hero__crumbs a { color: var(--surface-body); transition: color var(--dur-fast) var(--ease-out); }
-  .svc-hero__crumbs a:hover { color: var(--surface-fg); }
-  .svc-hero__h { font-size: var(--text-display-sm); max-width: 17ch; }
-  .svc-hero__sub { margin: var(--stack-body) 0 var(--stack-actions); font-size: var(--text-body-lg); line-height: var(--leading-body); max-width: 46ch; color: var(--surface-body); }
-  .svc-hero__photo { margin: 0; aspect-ratio: 7 / 8; max-height: 36rem; width: 100%; }
-  .svc-hero__notes { position: absolute; left: var(--space-5); right: var(--space-5); bottom: var(--space-5); display: grid; gap: var(--space-2); justify-items: start; }
-  .svc-hero__notes li:nth-child(2) { margin-left: var(--space-8); }
-  .hero__trust { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3) var(--space-10); padding-top: var(--space-12); }
-  .hero__trust li { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-body); color: var(--surface-body); }
-  .hero__trust :global(.icon) { width: var(--icon-size); height: var(--icon-size); color: var(--color-accent); }
-  @media (min-width: 1101px) {
-    .svc-hero { padding-block: var(--space-14) var(--space-12); }
-    .svc-hero__grid { grid-template-columns: 7fr 5fr; gap: var(--space-16); }
-  }
-  @media (max-width: 1100px) { .svc-hero__photo { aspect-ratio: 4 / 3; } }
-  @media (max-width: 640px) {
-    .svc-hero { padding-top: var(--space-8); }
-    .svc-hero__notes li:nth-child(n) { margin-left: 0; }
-    .hero__trust { flex-direction: column; justify-content: flex-start; }
-  }
-</style>
+<PageHero
+  crumbs={[{ label: 'Home', href: '/' }, { label: 'Services', href: '/services' }, { label: look.name, href: look.href }, { label: page.title }]}
+  eyebrow={look.name}
+  headline={page.hero.headline}
+  subhead={page.hero.subhead}
+  primary={{ text: page.hero.primary, href: links.quiz }}
+  secondary={{ text: page.hero.secondary, href: links.book }}
+  photo={look.photo}
+  notes={look.notes}
+/>

@@ -3,14 +3,15 @@ import { loadQuery } from '@cms/lib/load'
 import { sitemapQuery } from '@cms/queries'
 import { hrefFor, indexRoutes } from '@cms/routes'
 import { serviceHref, servicePages } from '@/content/services'
+import { sitePages } from '@/content/pages'
 
 /** Built from the CMS on request, so new pages appear without a rebuild. */
 export const GET: APIRoute = async ({ site, url }) => {
   const origin = site ?? new URL(url.origin)
   const docs = await loadQuery(false, sitemapQuery).catch(() => [])
-  // Service pages that are still drawn from the approved copy (no CMS document yet).
+  // Pages that are still drawn from the approved copy (no CMS document yet).
   const cmsPaths = new Set(docs.map((doc) => hrefFor(doc._type, doc.slug)))
-  const copyPages = servicePages.map((page) => serviceHref(page.slug)).filter((path) => !cmsPaths.has(path))
+  const copyPages = [...sitePages.map((page) => page.path), ...servicePages.map((page) => serviceHref(page.slug))].filter((path) => !cmsPaths.has(path))
 
   const entries = [
     ...docs.flatMap((doc) => {

@@ -10,8 +10,11 @@ interface Props {
 
 const { section } = Astro.props
 const paragraphs = section.blocks.flatMap((b) => (b.type === 'p' ? [b.text] : []))
-const close = paragraphs.length > 1 ? paragraphs.at(-1) : undefined
-const body = close ? paragraphs.slice(0, -1) : paragraphs
+// The copy's "Bold line" is the turn; without one, the last of several paragraphs is.
+const boldBlock = section.blocks.find((b) => b.type === 'bold')
+const bold = boldBlock?.type === 'bold' ? boldBlock.text : undefined
+const close = bold ?? (paragraphs.length > 1 ? paragraphs.at(-1) : undefined)
+const body = close && !bold ? paragraphs.slice(0, -1) : paragraphs
 ---
 
 <Section surface="cream">
@@ -23,9 +26,9 @@ const body = close ? paragraphs.slice(0, -1) : paragraphs
       </div>
       <div data-reveal><MissedCallsPanel /></div>
     </div>
-    <div class="problem__body">
-      {body.map((p) => <p class="body-lg" data-reveal>{p}</p>)}
-      {close && <p class="lead strong problem__close" data-reveal>{close}</p>}
+    <div class="problem__body" data-reveal>
+      {body.map((p) => <p class="body-lg">{p}</p>)}
+      {close && <p class="lead strong problem__close">{close}</p>}
     </div>
   </div>
 </Section>

@@ -1,0 +1,49 @@
+---
+/** Booking confirmation (/book/confirmed): the calendar sends people here after they book. Not indexed. */
+import BaseLayout from '@layouts/BaseLayout.astro'
+import Btn from '@components/ui/Btn.astro'
+import Icon from '@components/ui/Icon.astro'
+import PlanBox from '@components/ui/PlanBox.astro'
+import { loadQuery } from '@cms/lib/load'
+import { emptyLayout } from '@cms/lib/types'
+import { layoutQuery } from '@cms/queries'
+import { hero, links } from '@/content/home'
+import { confirmed as copy } from '@/content/quiz'
+
+const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => emptyLayout)
+---
+
+<BaseLayout layout={layout} title="You're booked" seo={{ noIndex: true }}>
+  <section class="booked surface-deep">
+    <div class="container booked__grid">
+      <div class="booked__copy">
+        <span class="icon-chip booked__check"><Icon name="check" /></span>
+        <h1 class="t-display booked__h">{copy.headline}</h1>
+        <p class="booked__sub">{copy.subhead}</p>
+        <p class="booked__before">{copy.before}</p>
+        <div class="actions"><Btn href={links.quiz} icon="arrow">{hero.primary}</Btn></div>
+        <p class="booked__note">{copy.reschedule}</p>
+        <Btn href={links.teardown} variant="link" icon="arrow-ur">{copy.small}</Btn>
+      </div>
+      <div class="surface-white booked__plan"><PlanBox steps={copy.plan} after={copy.after} /></div>
+    </div>
+  </section>
+  <script is:inline>
+    // A finished booking is a conversion: tell the tag manager once per visit.
+    window.dataLayer = window.dataLayer || []
+    window.dataLayer.push({ event: 'call_booked' })
+  </script>
+</BaseLayout>
+
+<style>
+  .booked { padding-block: var(--space-16); min-height: 70vh; display: grid; align-items: center; }
+  .booked__grid { display: grid; gap: var(--space-10); align-items: center; }
+  .booked__copy { display: grid; gap: var(--space-5); justify-items: start; }
+  .booked__check { background: var(--color-accent); color: var(--color-green-950); }
+  .booked__h { font-size: var(--text-display-sm); }
+  .booked__sub { font-size: var(--text-body-lg); color: var(--surface-body); }
+  .booked__before { font-size: var(--text-body); color: var(--surface-fg); max-width: 40ch; }
+  .booked__note { font-size: var(--text-sm); color: var(--surface-muted); }
+  .booked__plan { border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-lg); }
+  @media (min-width: 1101px) { .booked__grid { grid-template-columns: 7fr 5fr; gap: var(--space-16); } }
+</style>

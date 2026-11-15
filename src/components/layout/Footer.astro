@@ -8,6 +8,7 @@ import Btn from '@components/ui/Btn.astro'
 import ContactDetails from './ContactDetails.astro'
 import { stegaClean } from '@sanity/client/stega'
 import { brand, footer as fallback, links, hero } from '@/content/home'
+import { servicesByCategory, serviceHref } from '@/content/services'
 
 interface Props {
   layout: Layout
@@ -68,6 +69,15 @@ const columns: FooterColumn[] = navigation?.footerColumns?.length
       </div>
     </div>
 
+    <nav class="site-footer__services" aria-label="Services">
+      {servicesByCategory.map(({ look, pages }) => (
+        <div>
+          <h2 class="site-footer__heading"><a href={look.href}>{look.name}</a></h2>
+          <ul>{pages.map((page) => <li><a href={serviceHref(page.slug)}>{page.title}</a></li>)}</ul>
+        </div>
+      ))}
+    </nav>
+
     <div class="site-footer__bottom">
       <p>© {year} {copyright}. All rights reserved.</p>
       {
@@ -122,7 +132,10 @@ const columns: FooterColumn[] = navigation?.footerColumns?.length
     -webkit-background-clip: text; background-clip: text;
   }
   .site-footer__name span { display: inline-block; }
-  .site-footer__bottom { margin-top: var(--space-16); padding-top: var(--space-6); border-top: 1px solid var(--surface-line); display: flex; flex-wrap: wrap; gap: var(--space-4); justify-content: space-between; font-size: var(--text-sm); }
+  .site-footer__services { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: var(--space-8) var(--space-6); margin-top: var(--space-14); padding-top: var(--space-10); border-top: 1px solid var(--surface-line); }
+  .site-footer__services .site-footer__heading a { color: var(--surface-fg); font-weight: var(--weight-medium); }
+  .site-footer__services ul a { display: block; padding: 0.3125rem 0; font-size: var(--text-sm); color: var(--surface-body); }
+  .site-footer__bottom { margin-top: var(--space-14); padding-top: var(--space-6); border-top: 1px solid var(--surface-line); display: flex; flex-wrap: wrap; gap: var(--space-4); justify-content: space-between; font-size: var(--text-sm); }
   .site-footer__bottom p { color: var(--surface-muted); }
   .site-footer__bottom ul { display: flex; flex-wrap: wrap; gap: var(--space-5); color: var(--surface-muted); }
   @media (min-width: 641px) { .site-footer__cols { grid-template-columns: repeat(3, 1fr); } }

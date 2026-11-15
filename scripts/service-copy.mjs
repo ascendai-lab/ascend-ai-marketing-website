@@ -33,6 +33,8 @@ function parsePage(chunk) {
   let section = null
   for (const raw of lines) {
     // Outside link placeholders are notes for later, not page copy (they can also sit at the end of a line).
+    const tag = raw.match(/\[QUIZ TAG:\s*interest-([a-z0-9-]+)\]/)
+    if (tag) page.quizTag = tag[1]
     const line = raw.replace(/\s*\[OUTSIDE LINK:[^\]]*\]/g, '').trim()
     if (!line || line === '---' || line.startsWith('## ') || line.startsWith('# ')) continue
     if (line.startsWith('**Word count:**')) continue

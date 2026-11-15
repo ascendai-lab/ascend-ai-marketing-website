@@ -12,6 +12,7 @@
     "preview": "astro preview",
     "check": "astro check",
     "services:copy": "node scripts/service-copy.mjs",
+    "pages:copy": "node scripts/site-copy.mjs",
     "typegen": "sanity schema extract --path=./src/sanity/schema.json --force && sanity typegen generate",
     "sanity": "sanity dev",
     "sanity:deploy": "sanity deploy",

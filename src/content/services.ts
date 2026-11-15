@@ -7,17 +7,28 @@ import data from './services.json'
 import type { IconName } from '@components/ui/Icon.astro'
 
 export type Inline = { lead?: string; text: string }
+export type Link = { text: string; href: string }
+/** A past client card on the work page. */
+export type CaseCard = { name: string; kind: string; headline: string; did: string[]; result: string; quote?: { text: string; who: string } }
 export type Block =
   | ({ type: 'p' } & Inline)
   | { type: 'ul' | 'ol'; items: Inline[] }
   | { type: 'quote'; text: string; who: string }
-  | { type: 'result' | 'price'; text: string }
+  | { type: 'result' | 'price' | 'bold' | 'label'; text: string }
   | { type: 'faq'; items: { q: string; a: string }[] }
+  | { type: 'links'; items: { title: string; href?: string; text: string }[] }
+  | ({ type: 'cta' } & Link)
+  | { type: 'pricing'; text: string; link: Link }
+  | { type: 'field'; name: string; text: string }
+  | ({ type: 'case' } & CaseCard)
+  | { type: 'calendar' }
 
 export interface ServiceSectionCopy {
   label: string
   heading: string
   blocks: Block[]
+  /** Labelled lines in the section ("Tip line", "Founder quote"), by name. */
+  fields?: Record<string, string>
 }
 
 export interface ServiceCopy {
@@ -29,6 +40,8 @@ export interface ServiceCopy {
   hero: { headline: string; subhead: string; primary: string; secondary: string }
   sections: ServiceSectionCopy[]
   closing: { heading: string; body: string; primary: string; secondary: string; teardown?: { lead: string; text: string } }
+  /** The interest tag the quiz sends from this page ("google-ads" → interest-google-ads). */
+  quizTag?: string
 }
 
 export const servicePages = data as ServiceCopy[]
@@ -55,6 +68,8 @@ const photo = (id: string, w = 1400) => `https://images.unsplash.com/photo-${id}
 type Note = { icon: IconName; title: string; text: string }
 export interface CategoryLook {
   name: string
+  /** The category's hub page. */
+  href: string
   icon: IconName
   photo: { src: string; alt: string }
   notes: Note[]
@@ -63,6 +78,7 @@ export interface CategoryLook {
 export const categories: Record<string, CategoryLook> = {
   'HVAC Website Design': {
     name: 'HVAC Website Design',
+    href: '/hvac-website-design',
     icon: 'layout',
     photo: { src: photo('1758598497049-da3b63569529'), alt: 'A contractor smiles while he takes a call' },
     notes: [
@@ -72,6 +88,7 @@ export const categories: Record<string, CategoryLook> = {
   },
   'HVAC Local SEO': {
     name: 'HVAC Local SEO',
+    href: '/hvac-local-seo',
     icon: 'map',
     photo: { src: photo('1792799888905-8696bd32a11a'), alt: 'An HVAC technician services an outdoor unit' },
     notes: [
@@ -81,6 +98,7 @@ export const categories: Record<string, CategoryLook> = {
   },
   'HVAC Lead Management': {
     name: 'HVAC Lead Management',
+    href: '/hvac-lead-management',
     icon: 'inbox',
     photo: { src: photo('1791395534168-af200f472f93'), alt: 'An HVAC technician and a homeowner look over a job on a phone' },
     notes: [
@@ -90,6 +108,7 @@ export const categories: Record<string, CategoryLook> = {
   },
   'HVAC Ads': {
     name: 'HVAC Ads',
+    href: '/hvac-ads',
     icon: 'megaphone',
     photo: { src: photo('1792799888905-8696bd32a11a'), alt: 'An HVAC technician services an outdoor unit' },
     notes: [
@@ -99,6 +118,7 @@ export const categories: Record<string, CategoryLook> = {
   },
   'AI Agents and Automation': {
     name: 'AI Agents and Automation',
+    href: '/hvac-ai-automation',
     icon: 'bot',
     photo: { src: photo('1791395534168-af200f472f93'), alt: 'An HVAC technician and a homeowner look over a job on a phone' },
     notes: [

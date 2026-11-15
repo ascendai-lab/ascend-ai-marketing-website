@@ -33,9 +33,11 @@ interface Props {
   modifiedAt?: string | null
   /** Extra JSON-LD objects for this page. */
   jsonLd?: Record<string, unknown>[]
+  /** The quiz interest tag for this page ("google-ads"). Every quiz link on the page carries it. */
+  quizTag?: string
 }
 
-const { layout, title, seo, description, image, type = 'website', publishedAt, modifiedAt, jsonLd = [] } = Astro.props
+const { layout, title, seo, description, image, type = 'website', publishedAt, modifiedAt, jsonLd = [], quizTag } = Astro.props
 const { settings } = layout
 const { draftMode } = Astro.locals
 
@@ -180,7 +182,7 @@ const structuredData = [businessJsonLd, ...jsonLd].filter(Boolean)
     }
   </head>
 
-  <body>
+  <body data-quiz-tag={quizTag}>
     {
       tracking?.gtmId && (
         <noscript>
@@ -198,6 +200,25 @@ const structuredData = [businessJsonLd, ...jsonLd].filter(Boolean)
     </main>
 
     <Footer layout={layout} />
+
+    <script is:inline>
+      // Quiz links carry the page's interest tag, so a lead from the Google Ads page is tagged Google Ads.
+      // On the quiz page itself, quiz links scroll up to the quiz instead of reloading the page.
+      ;(function () {
+        var tag = document.body.getAttribute('data-quiz-tag')
+        var path = location.pathname.replace(/\/$/, '')
+        var here = path === '/missed-calls'
+        // On the booking page, call buttons jump to the calendar.
+        if (path === '/book') document.querySelectorAll('a[href="/book"]').forEach(function (a) { a.setAttribute('href', '#calendar') })
+        document.querySelectorAll('a[href^="/missed-calls"]').forEach(function (a) {
+          var url = new URL(a.getAttribute('href'), location.origin)
+          if (url.pathname !== '/missed-calls') return
+          if (here && !url.search) { a.setAttribute('href', '#quiz'); return }
+          if (tag && !url.searchParams.has('interest')) url.searchParams.set('interest', tag)
+          a.setAttribute('href', url.pathname + url.search + url.hash)
+        })
+      })()
+    </script>
 
     {
       draftMode && (

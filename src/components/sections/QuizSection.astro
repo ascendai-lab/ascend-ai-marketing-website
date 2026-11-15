@@ -1,9 +1,15 @@
 ---
-/** The closing call to action: a big heading and the second actions on the left, the missed-call quiz on the right. */
+/**
+ * The closing call to action: a big heading, the call and teardown links on the left, and on the
+ * right the quiz's first question. Picking an answer opens the quiz page at question 2, so every
+ * quiz start and finish happens on /missed-calls, where it's easy to track.
+ * On the quiz page itself (`onQuizPage`), the right side is a button back up to the quiz.
+ */
 import Section from '@components/ui/Section.astro'
 import Btn from '@components/ui/Btn.astro'
-import MissedCallQuiz from '@components/home/MissedCallQuiz.astro'
+import Icon from '@components/ui/Icon.astro'
 import { finalCta, links, hero } from '@/content/home'
+import { QUESTIONS } from '@/content/quiz'
 
 interface Props {
   eyebrow?: string
@@ -13,31 +19,71 @@ interface Props {
   teardown?: string
   /** A short line under the teardown link. */
   teardownNote?: string
+  onQuizPage?: boolean
+  /** Extra buttons on the left, before the call button (the teardown page's form button). */
+  extra?: { text: string; href: string }
 }
 
-const { eyebrow = finalCta.eyebrow, heading, body = finalCta.body, teardown = finalCta.teardown, teardownNote } = Astro.props
+const { eyebrow = finalCta.eyebrow, heading, body = finalCta.body, teardown = finalCta.teardown, teardownNote, onQuizPage = false, extra } = Astro.props
 // Short headings sit in a narrow column; longer questions get more room so they don't stack word by word.
 const long = heading.replace(/<[^>]+>/g, '').length > 40
+const first = QUESTIONS[0]
 ---
 
-<Section surface="deep" anchorId="quiz">
-  <div class="split">
+<Section surface="deep" anchorId={onQuizPage ? 'take-the-quiz' : 'quiz'}>
+  <div class:list={['split', onQuizPage && 'final--solo']}>
     <div>
       <p class="eyebrow">{eyebrow}</p>
       <h2 class:list={['t-h2 final__h', long && 'final__h--long']} set:html={heading} />
       {body && <p class="body-lg final__body">{body}</p>}
-      <div class="actions final__actions"><Btn href={links.book} variant="secondary">{hero.secondary}</Btn></div>
-      <Btn href={links.teardown} variant="link" icon="arrow-ur">{teardown}</Btn>
+      <div class="actions final__actions">
+        {onQuizPage && <Btn href="#quiz" icon="arrow">{hero.primary}</Btn>}
+        {extra && <Btn href={extra.href} icon="arrow">{extra.text}</Btn>}
+        <Btn href={links.book} variant="secondary">{hero.secondary}</Btn>
+      </div>
+      {teardown && <Btn href={links.teardown} variant="link" icon="arrow-ur">{teardown}</Btn>}
       {teardownNote && <p class="text-sm text-muted final__note">{teardownNote}</p>}
     </div>
-    <MissedCallQuiz id="missed-call-quiz" />
+    {!onQuizPage && (
+      <div class="quiz-card surface-white">
+        <div class="quiz-card__top">
+          <p class="quiz-card__count">Question 1 of 5</p>
+          <ol class="quiz-card__bar" aria-hidden="true">{QUESTIONS.map((_, i) => <li class:list={[i === 0 && 'now']} />)}</ol>
+        </div>
+        <p class="quiz-card__q" id="quiz-card-q">{first.q}</p>
+        <ul class="quiz-card__options" aria-labelledby="quiz-card-q">
+          {first.a.map((answer, i) => (
+            <li><a href={`${links.quiz}?a=${i}`} class="quiz-card__option"><span class="quiz-card__key">{String.fromCharCode(65 + i)}</span><span>{answer}</span></a></li>
+          ))}
+        </ul>
+        <p class="quiz-card__small"><Icon name="clock" />Free. You get your numbers and 3 fixes.</p>
+      </div>
+    )}
   </div>
 </Section>
 
 <style>
+  .final--solo { grid-template-columns: minmax(0, 1fr); }
   .final__h { font-size: var(--text-cta); max-width: 13ch; }
   .final__h--long { font-size: var(--text-h2); max-width: 20ch; }
   .final__body { margin-top: var(--stack-body); }
   .final__note { margin-top: var(--space-3); max-width: 44ch; }
   .final__actions { margin: var(--stack-actions) 0 var(--space-2); }
+
+  /* The quiz's first question, as a card. Each answer opens the quiz page at question 2. */
+  .quiz-card { background: var(--color-white); color: var(--color-text); border-radius: var(--radius-xl); padding: clamp(var(--space-6), 3vw, var(--space-8)); box-shadow: var(--shadow-lg); }
+  .quiz-card__top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-6); }
+  .quiz-card__count { font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--color-text-muted); }
+  .quiz-card__bar { display: flex; gap: var(--space-1); }
+  .quiz-card__bar li { width: 1.375rem; height: 5px; border-radius: 3px; background: var(--color-border); }
+  .quiz-card__bar li.now { background: var(--color-brand-deep); }
+  .quiz-card__q { font-size: var(--text-question); line-height: 1.25; letter-spacing: -0.01em; font-weight: var(--weight-medium); margin-bottom: var(--space-5); }
+  .quiz-card__options { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+  .quiz-card__option { display: flex; align-items: center; gap: var(--space-3); min-height: 3.625rem; padding: var(--space-3) var(--space-4); font-size: var(--text-body); line-height: 1.3; background: var(--color-surface-muted); border: 1px solid var(--color-border); border-radius: var(--radius-md); transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out); }
+  .quiz-card__option:hover { border-color: var(--color-brand-deep); }
+  .quiz-card__option:active { background: var(--color-brand-deep); color: var(--color-white); }
+  .quiz-card__key { flex: none; width: 1.625rem; height: 1.625rem; border-radius: var(--radius-full); display: grid; place-items: center; font-size: var(--text-2xs); font-weight: var(--weight-strong); background: var(--color-white); color: var(--color-green-900); }
+  .quiz-card__small { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-5); font-size: var(--text-xs); color: var(--color-text-muted); }
+  .quiz-card__small :global(.icon) { width: 1rem; height: 1rem; color: var(--color-brand); flex: none; }
+  @media (max-width: 640px) { .quiz-card__options { grid-template-columns: 1fr; } }
 </style>

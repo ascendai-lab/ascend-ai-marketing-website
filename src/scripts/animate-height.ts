@@ -1,16 +1,16 @@
 /**
- * Smoothly animates an element's height between two pixel values, with the same soft
- * ease-out as the entrances. Clips overflow while it runs. Returns null (no animation)
+ * Smoothly animates an element's height between two pixel values with an ease-in-out,
+ * so it neither snaps open nor stops abruptly. Clips overflow while it runs. Returns null (no animation)
  * for reduced motion.
  */
 const savedOverflow = new WeakMap<HTMLElement, string>()
 const heightAnimations = new WeakSet<Animation>()
 
-export function motionTiming(fallbackMs = 480) {
+export function motionTiming(fallbackMs = 420) {
   const css = getComputedStyle(document.documentElement)
   return {
     duration: parseFloat(css.getPropertyValue('--dur-accordion')) || fallbackMs,
-    easing: css.getPropertyValue('--ease-reveal').trim() || 'ease-out',
+    easing: css.getPropertyValue('--ease-height').trim() || 'ease-in-out',
   }
 }
 

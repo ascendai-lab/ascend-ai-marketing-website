@@ -8,13 +8,14 @@ interface Props {
   section: ServiceSectionCopy
   eyebrow: string
   surface: 'cream' | 'white'
+  anchorId?: string
 }
 
-const { section, eyebrow, surface } = Astro.props
+const { section, eyebrow, surface, anchorId } = Astro.props
 const numbered = /how it works|how .* (works|runs)/i.test(section.label + ' ' + section.heading)
 ---
 
-<Section surface={surface}>
+<Section surface={surface} anchorId={anchorId}>
   <div class="columns">
     <div class="columns__aside" data-reveal>
       <p class="eyebrow">{eyebrow}</p>

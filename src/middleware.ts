@@ -18,6 +18,11 @@ const CDN_CACHE = 'public, durable, s-maxage=60, stale-while-revalidate=604800'
  * islands, JSON-LD and the GA / pixel snippets are inline. If a new embed or tracker stops working,
  * add its domain here.
  */
+// The booking calendar (GoHighLevel) can live on its own domain, so its origin is allowed as a frame too.
+const calendarOrigin = (() => {
+  try { return new URL(import.meta.env.PUBLIC_GHL_CALENDAR_URL ?? '').origin } catch { return '' }
+})()
+
 const CSP = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://*.google-analytics.com https://connect.facebook.net",
@@ -25,7 +30,7 @@ const CSP = [
   "font-src 'self' data: https://fonts.gstatic.com",
   "img-src 'self' data: blob: https://cdn.sanity.io https://*.google-analytics.com https://*.googletagmanager.com https://www.facebook.com https://*.googleapis.com https://*.gstatic.com https://*.googleusercontent.com https://i.ytimg.com https://*.vimeocdn.com https://images.unsplash.com",
   "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://www.facebook.com https://connect.facebook.net",
-  "frame-src https://www.google.com https://maps.google.com https://www.youtube-nocookie.com https://www.youtube.com https://player.vimeo.com https://www.googletagmanager.com",
+  `frame-src https://www.google.com https://maps.google.com https://www.youtube-nocookie.com https://www.youtube.com https://player.vimeo.com https://www.googletagmanager.com https://api.leadconnectorhq.com https://link.msgsndr.com ${calendarOrigin}`.trim(),
   "media-src 'self' https://cdn.sanity.io",
   "object-src 'none'",
   "base-uri 'self'",

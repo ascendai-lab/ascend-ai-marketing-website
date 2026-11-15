@@ -20,21 +20,19 @@ function setOpen(details: HTMLDetailsElement, open: boolean) {
   details.open = true
   const to = open ? details.getBoundingClientRect().height : summary.getBoundingClientRect().height
 
-  // The answer fades with the height, starting from wherever it is now, so a quick reversal never blinks.
+  // The answer only fades (no slide, so nothing moves against the height). It starts from its current
+  // opacity, so a quick reversal never blinks. Opening, it fades in once the space starts to open.
   const timing = motionTiming()
   ;[...details.children].filter((el) => el !== summary).forEach((el) => {
-    const style = getComputedStyle(el)
-    const current = Number(style.opacity)
-    const shift = style.translate === 'none' ? '0 0' : style.translate.includes(' ') ? style.translate : `${style.translate} 0`
+    const current = Number(getComputedStyle(el).opacity)
     el.getAnimations().forEach((a) => a.cancel())
     const start = wasMoving ? current : open ? 0 : 1
-    const from = wasMoving ? shift : open ? '0 -8px' : '0 0'
-    el.animate(
-      open
-        ? [{ opacity: start, translate: from }, { opacity: 1, translate: '0 0' }]
-        : [{ opacity: start, translate: from }, { opacity: 0, translate: '0 -8px' }],
-      { ...timing, duration: open ? timing.duration : timing.duration * 0.6, fill: 'forwards' },
-    )
+    el.animate([{ opacity: start }, { opacity: open ? 1 : 0 }], {
+      duration: open ? timing.duration * 0.75 : timing.duration * 0.5,
+      delay: open && !wasMoving ? timing.duration * 0.25 : 0,
+      easing: 'ease-out',
+      fill: 'both',
+    })
   })
 
   const animation = animateHeight(details, from, to)

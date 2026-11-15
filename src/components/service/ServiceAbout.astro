@@ -12,7 +12,7 @@ interface Props {
 }
 
 const { section } = Astro.props
-const paragraphs = section.blocks.flatMap((b) => (b.type === 'p' ? [b.text] : []))
+const paragraphs = section.blocks.flatMap((b) => (b.type === 'p' || b.type === 'field' ? [b.text] : []))
 const proof = section.blocks.filter((b) => b.type === 'result' || b.type === 'quote')
 ---
 

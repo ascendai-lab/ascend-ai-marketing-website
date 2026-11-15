@@ -11,7 +11,7 @@ export const brand = {
 }
 
 export const links = {
-  quiz: '/#quiz',
+  quiz: '/missed-calls',
   book: '/book',
   plan: '/hvac-lead-system',
   work: '/work',
@@ -22,12 +22,13 @@ export const links = {
 
 const photo = (id: string, w = 1200) => `https://images.unsplash.com/photo-${id}?w=${w}&q=80&auto=format&fit=crop`
 
-export const nav = [
-  { label: 'Home', href: '/' },
-  { label: 'Services', href: '/services' },
-  { label: 'How it works', href: '/#steps' },
-  { label: 'Pricing', href: '/#pricing' },
-  { label: 'FAQ', href: '/#faq' },
+/** The main menu. `menu: 'services'` opens the services panel (every service, grouped by category). */
+export const nav: { label: string; href: string; menu?: 'services' }[] = [
+  { label: 'Services', href: '/services', menu: 'services' },
+  { label: 'The lead system', href: '/hvac-lead-system' },
+  { label: 'Pricing', href: '/hvac-lead-system#pricing' },
+  { label: 'Our work', href: '/work' },
+  { label: 'About', href: '/about' },
 ]
 
 export const hero = {
@@ -191,7 +192,7 @@ export const services = {
   allLabel: 'View all services',
   allHref: '/services',
   items: [
-    { icon: 'map', name: 'Local SEO', short: 'local SEO', text: 'Show up at the top of Google and AI search engines like ChatGPT.', href: '/services#hvac-local-seo' },
+    { icon: 'map', name: 'Local SEO', short: 'local SEO', text: 'Show up at the top of Google and AI search engines like ChatGPT.', href: '/hvac-local-seo' },
     { icon: 'search', name: 'Google Ads management', short: 'Google Ads', text: 'Ads that bring calls from people ready to book.', href: '/services/google-ads-hvac' },
     { icon: 'megaphone', name: 'Meta ads on Facebook and Instagram', short: 'Meta ads', text: 'Reach homeowners near you before they need you.', href: '/services/facebook-instagram-ads-hvac' },
     { icon: 'bot', name: 'Custom AI agents', short: 'custom AI agents', text: 'Custom AI agents built for any job in your shop.', href: '/services/ai-agents-hvac' },
@@ -260,8 +261,8 @@ export const reviews: { name: string; detail: string; text: string }[] = [
 
 export const footer = {
   columns: [
-    { heading: 'Services', links: [{ label: 'What you get', href: '/#included' }, { label: 'Pricing', href: '/#pricing' }, { label: 'The full plan', href: '/hvac-lead-system' }] },
+    { heading: 'The lead system', links: [{ label: 'What you get', href: '/hvac-lead-system#included' }, { label: 'Pricing', href: '/hvac-lead-system#pricing' }, { label: 'All services', href: '/services' }] },
     { heading: 'Company', links: [{ label: 'About', href: '/about' }, { label: 'Our work', href: '/work' }, { label: 'FAQ', href: '/#faq' }] },
-    { heading: 'Start', links: [{ label: 'The quiz', href: '/#quiz' }, { label: 'Book a call', href: '/book' }, { label: 'Video teardown', href: '/teardown' }] },
+    { heading: 'Start', links: [{ label: 'The quiz', href: '/missed-calls' }, { label: 'Book a call', href: '/book' }, { label: 'Video teardown', href: '/teardown' }] },
   ],
 }

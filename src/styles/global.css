@@ -171,7 +171,8 @@
     --dur-reveal: 1000ms;
     --dur-reveal-fade: 700ms;  /* the fade finishes before the slide, so nothing looks ghosted */
     --dur-menu: 500ms;
-    --dur-accordion: 480ms;
+    --dur-accordion: 420ms;
+    --ease-height: cubic-bezier(0.4, 0, 0.2, 1);  /* ease-in-out for height: starts and lands softly, never snaps open */
     --reveal-shift: 2.5rem;
     --reveal-step: 110ms;
 
@@ -542,12 +543,12 @@
   .contact-form__row { display: grid; gap: var(--space-5); }
   @media (min-width: 640px) { .contact-form__row { grid-template-columns: 1fr 1fr; } }
   .contact-form__field label { display: block; margin-bottom: 0.375rem; font-size: var(--text-sm); font-weight: var(--weight-strong); color: var(--color-text); }
-  .contact-form__field :is(input, textarea), .field input {
+  .contact-form__field :is(input, textarea), .field input, .lead-form__field input {
     width: 100%; min-height: var(--control-h); padding: 0.75rem 0.875rem;
     border: 1px solid var(--color-border); border-radius: var(--radius-sm);
     background: var(--color-surface-muted); color: var(--color-text); font-size: var(--text-body);
   }
-  .contact-form__field :is(input, textarea):focus-visible { outline: 2px solid var(--color-brand); outline-offset: 1px; }
+  :is(.contact-form__field, .lead-form__field) :is(input, textarea):focus-visible { outline: 2px solid var(--color-brand); outline-offset: 1px; }
   .contact-form__error { color: var(--color-error); font-size: 0.9rem; }
   .contact-form .btn { justify-self: start; }
   .contact-form__success { padding: 1.5rem; border-radius: var(--radius-md); background: var(--color-sage-100); }
@@ -560,7 +561,7 @@
    Hidden only while html has .motion, which is set in <head> when motion is allowed,
    so the page never stays blank without JavaScript or with reduced motion. */
 @layer components {
-  .motion :is(.section .section-head, .section .split > :not(.accordion, script), .section .grid-2 > *, .section .grid-3 > *, .section .grid-4 > *, .section .plan, .section .plan__own, .section .accordion > details, [data-reveal]):not(.is-in) {
+  .motion :is(.section .section-head, .section .split > :not(script), .section .grid-2 > *, .section .grid-3 > *, .section .grid-4 > *, .section .plan, [data-reveal]):not(.is-in) {
     opacity: 0; translate: 0 var(--reveal-shift);
   }
   /* The entrance uses the separate `translate` property, so hover moves (which use `transform`)
@@ -586,7 +587,8 @@
   .motion .svc-hero__copy > :nth-child(3) { --n: 2; }
   .motion .svc-hero__copy > :nth-child(4) { --n: 3; }
   .motion .svc-hero__copy > :nth-child(5) { --n: 4; }
-  .motion .svc-hero__photo { animation: rise var(--dur-reveal) var(--ease-reveal) 240ms both; }
+  .motion .svc-hero__copy > :nth-child(n + 6) { --n: 5; }
+  .motion :is(.svc-hero__photo, .svc-hero__tool) { animation: rise var(--dur-reveal) var(--ease-reveal) 240ms both; }
   .motion .svc-hero__notes li { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(240ms + var(--dur-reveal) + var(--i, 0) * 120ms); }
   .motion .hero__trust li { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(700ms + var(--i, 0) * 80ms); }
   /* The slide's contents move, not the slide itself, so scroll snapping can't fight the slide-in. */

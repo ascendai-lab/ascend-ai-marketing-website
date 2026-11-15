@@ -50,7 +50,7 @@ const jsonLd = service
       <PageBuilder blocks={service.pageBuilder} document={service} settings={layout.settings} firstHeroIsH1={false} />
     </BaseLayout>
   ) : (
-    <BaseLayout layout={layout} seo={{ metaTitle: copy!.seo.title, metaDescription: copy!.seo.description }} jsonLd={jsonLd}>
+    <BaseLayout layout={layout} seo={{ metaTitle: copy!.seo.title, metaDescription: copy!.seo.description }} jsonLd={jsonLd} quizTag={copy!.quizTag}>
       <ServicePage page={copy!} />
     </BaseLayout>
   )

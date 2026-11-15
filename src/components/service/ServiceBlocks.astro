@@ -6,6 +6,8 @@
  *  - plain bullets as a tick list in a card
  *  - a price note as a dark callout with the call button
  *  - past client results and quotes as proof cards
+ *  - a list of services as link cards, a bold line as the turn, buttons and the "See pricing" line
+ *  - labelled lines ("Terms in plain words: …") as titled cards; a short label introduces the list after it
  */
 import Btn from '@components/ui/Btn.astro'
 import Icon from '@components/ui/Icon.astro'
@@ -24,6 +26,12 @@ const { blocks, numbered = false } = Astro.props
 
 type Group =
   | { kind: 'prose'; items: string[] }
+  | { kind: 'bold'; text: string }
+  | { kind: 'label'; text: string }
+  | { kind: 'links'; items: { title: string; href?: string; text: string }[] }
+  | { kind: 'cta'; text: string; href: string }
+  | { kind: 'pricing'; text: string; link: { text: string; href: string } }
+  | { kind: 'note'; text: string }
   | { kind: 'points'; items: Inline[] }
   | { kind: 'ticks'; items: string[] }
   | { kind: 'own'; text: string }
@@ -41,7 +49,10 @@ const push = (group: Group) => {
 const titled = (lead?: string) => !!lead && /[:.]$/.test(lead)
 // A run of bold-led paragraphs becomes cards only when it has two or more and every lead is a title.
 // Otherwise the whole run stays as prose, so a sequence never breaks halfway or restarts its numbers.
-const isLed = (b?: Block) => b?.type === 'p' && !!b.lead
+const isLed = (b?: Block) => (b?.type === 'p' && !!b.lead) || (b?.type === 'field' && !SINGLE.test(b.name))
+/** Labelled lines that stand alone as a note rather than a card. */
+const SINGLE = /^(limited-time line|honest line|agreement line|tip line|under the calendar)$/i
+const quizLike = (text: string) => /60-second quiz/i.test(text)
 const runOf = (i: number) => {
   let start = i
   let end = i
@@ -51,7 +62,7 @@ const runOf = (i: number) => {
 }
 const leadRun = (i: number) => {
   const run = runOf(i)
-  return run.length > 1 && run.every((b) => b.type === 'p' && titled(b.lead))
+  return run.length > 1 && run.every((b) => b.type === 'field' || (b.type === 'p' && titled(b.lead)))
 }
 for (const [i, block] of blocks.entries()) {
   if (block.type === 'p') {
@@ -62,7 +73,16 @@ for (const [i, block] of blocks.entries()) {
   } else if (block.type === 'ul' || block.type === 'ol') {
     if (block.items.every((item) => titled(item.lead))) push({ kind: 'points', items: block.items })
     else push({ kind: 'ticks', items: block.items.map((item) => (item.lead ? `**${item.lead}** ${item.text}` : item.text)) })
-  } else if (block.type === 'price') groups.push({ kind: 'price', text: block.text })
+  } else if (block.type === 'field') {
+    if (SINGLE.test(block.name)) groups.push({ kind: 'note', text: block.text })
+    else if (leadRun(i)) push({ kind: 'points', items: [{ lead: `${block.name}.`, text: block.text }] })
+    else push({ kind: 'prose', items: [`**${block.name}:** ${block.text}`] })
+  } else if (block.type === 'bold') groups.push({ kind: 'bold', text: block.text })
+  else if (block.type === 'label') groups.push({ kind: 'label', text: block.text })
+  else if (block.type === 'links') push({ kind: 'links', items: block.items })
+  else if (block.type === 'cta') groups.push({ kind: 'cta', text: block.text, href: block.href || (quizLike(block.text) ? links.quiz : links.book) })
+  else if (block.type === 'pricing') groups.push({ kind: 'pricing', text: block.text, link: block.link })
+  else if (block.type === 'price') groups.push({ kind: 'price', text: block.text })
   else if (block.type === 'result') push({ kind: 'proof', items: [{ text: block.text }] })
   else if (block.type === 'quote') {
     const last = groups.at(-1)
@@ -74,7 +94,25 @@ for (const [i, block] of blocks.entries()) {
 <div class="blocks">
   {groups.map((group) => {
     if (group.kind === 'prose') return <div class="blocks__prose" data-reveal>{group.items.map((text) => <p class="body-lg" set:html={inline(text)} />)}</div>
-    if (group.kind === 'own') return <div data-reveal><OwnNote text={group.text} /></div>
+    if (group.kind === 'own') return <OwnNote text={group.text} />
+    if (group.kind === 'bold') return <p class="lead strong blocks__bold" data-reveal set:html={inline(group.text)} />
+    if (group.kind === 'note') return <p class="card blocks__note" data-reveal set:html={inline(group.text)} />
+    if (group.kind === 'label') return <h3 class="t-h4 blocks__label">{group.text.replace(/:$/, '')}</h3>
+    if (group.kind === 'cta') return <div class="actions"><Btn href={group.href} icon="arrow" variant={quizLike(group.text) ? 'primary' : 'secondary'}>{group.text}</Btn></div>
+    if (group.kind === 'pricing')
+      return <p class="blocks__pricing">{group.text} <a class="link" href={group.link.href || links.plan}>{group.link.text}</a></p>
+    if (group.kind === 'links')
+      return (
+        <ul class="blocks__links">
+          {group.items.map((item) => (
+            <li class:list={['card blocks__link', item.href && 'blocks__link--go']} data-reveal>
+              <h3 class="t-h4">{item.href ? <a href={item.href}>{item.title}</a> : item.title}</h3>
+              <p set:html={inline(item.text)} />
+              {item.href && <span class="blocks__go" aria-hidden="true"><Icon name="arrow" /></span>}
+            </li>
+          ))}
+        </ul>
+      )
     if (group.kind === 'points')
       return (
         <ul class:list={['blocks__points', group.items.length > 2 && group.items.length !== 4 ? 'grid-points-3' : 'grid-points-2']}>
@@ -135,7 +173,24 @@ for (const [i, block] of blocks.entries()) {
   .blocks__result blockquote { padding-top: var(--space-4); border-top: 1px solid var(--surface-line); }
   .blocks__result blockquote p { font-style: italic; color: var(--surface-body); }
   .blocks__result footer { margin-top: var(--space-2); font-size: var(--text-sm); font-weight: var(--weight-strong); color: var(--surface-fg); }
+  .blocks__bold { max-width: var(--measure); }
+  .blocks__note { font-size: var(--text-body-lg); line-height: 1.5; color: var(--surface-fg); background: var(--color-sage-100); max-width: var(--measure); }
+  .blocks__label { margin-bottom: calc(var(--space-4) - var(--space-8)); }
+  .blocks__pricing { font-size: var(--text-body); color: var(--surface-muted); }
+  .blocks__links { display: grid; gap: var(--grid-gap); }
+  .blocks__link { position: relative; display: grid; gap: var(--space-2); align-content: start; }
+  .blocks__link p { font-size: var(--text-body); line-height: 1.55; color: var(--surface-muted); }
+  .blocks__link--go { padding-right: calc(var(--space-6) + 2.5rem); transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
+  .blocks__link--go h3 a::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+  .blocks__link--go:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+  .blocks__link--go:has(a:focus-visible) { outline: 3px solid var(--color-ui); outline-offset: 3px; }
+  .blocks__link--go a:focus-visible { outline: none; }
+  .blocks__go { position: absolute; top: var(--space-6); right: var(--space-6); width: 2.25rem; height: 2.25rem; border-radius: var(--radius-full); display: grid; place-items: center; background: var(--color-bg); color: var(--color-brand-deep); transition: background-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out); }
+  .blocks__go :global(.icon) { width: 1rem; height: 1rem; }
+  .blocks__link--go:hover .blocks__go { background: var(--color-brand-deep); color: var(--color-white); }
   @media (min-width: 641px) {
+    .blocks__links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .blocks__links > :last-child:nth-child(odd) { grid-column: 1 / -1; }
     .grid-points-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .grid-points-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .grid-points-3 > :last-child:nth-child(odd) { grid-column: 1 / -1; }

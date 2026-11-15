@@ -99,6 +99,7 @@ All env vars are documented in `.env.example`.
 | `SANITY_API_READ_TOKEN` | src/sanity/lib/load.ts, api/draft-mode (server only) |
 | `N8N_CONTACT_WEBHOOK_URL` | src/pages/api/contact.ts |
 | `SITE_URL` | astro.config.mjs |
+| `PUBLIC_GHL_CALENDAR_URL` | Booking calendar embed (/book, quiz results). Optional: without it a call request form shows |
 
 ---
 
@@ -115,7 +116,8 @@ The payload sent to n8n:
   "email": "string",
   "phone": "string (optional)",
   "message": "string",
-  "source": "website-contact-form",
+  "source": "website-contact-form | missed-call-quiz | teardown-request | call-request",
+  "tags": ["interest-<topic>"] (empty when the page has no quiz tag),
   "timestamp": "ISO 8601",
   "siteUrl": "string",
   "page": "string (path the form was sent from)"

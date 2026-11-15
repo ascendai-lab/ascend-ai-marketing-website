@@ -9,6 +9,10 @@ const ContactSchema = z.object({
   phone:   z.string().optional(),
   message: z.string().min(10, 'Message must be at least 10 characters'),
   page:    z.string().max(200).optional(),
+  // Which form sent it, so n8n can tag and route the lead.
+  source:  z.enum(['website-contact-form', 'missed-call-quiz', 'teardown-request', 'call-request']).optional(),
+  // The service the lead came from ("google-ads"); n8n adds it to GHL as interest-<tag>.
+  interest: z.string().regex(/^[a-z0-9-]{1,60}$/).optional(),
   // Honeypot — real people never see or fill this field.
   website: z.string().max(0).optional(),
 })
@@ -66,7 +70,7 @@ export const POST: APIRoute = async ({ request, site }) => {
     )
   }
 
-  const { name, email, phone, message, page } = result.data
+  const { name, email, phone, message, page, source, interest } = result.data
 
   // Build n8n payload
   const payload = {
@@ -74,7 +78,8 @@ export const POST: APIRoute = async ({ request, site }) => {
     email,
     phone:     phone ?? '',
     message,
-    source:    'website-contact-form',
+    source:    source ?? 'website-contact-form',
+    tags:      interest ? [`interest-${interest}`] : [],
     timestamp: new Date().toISOString(),
     siteUrl:   site?.href ?? request.headers.get('origin') ?? '',
     page:      page ?? '',

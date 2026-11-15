@@ -277,7 +277,8 @@
         "lead": "Not ready to talk?",
         "text": "Get a free video teardown of your website. Mark, our founder, records it himself. We send it as soon as it's ready."
       }
-    }
+    },
+    "quizTag": "72-hour-website"
   },
   {
     "title": "HVAC website redesign",
@@ -570,7 +571,8 @@
         "lead": "Not ready to talk?",
         "text": "Get a free video teardown of your website. Mark, our founder, records it himself. We send it as soon as it's ready."
       }
-    }
+    },
+    "quizTag": "website-redesign"
   },
   {
     "title": "HVAC website hosting and care",
@@ -832,7 +834,8 @@
         "lead": "Not ready to talk?",
         "text": "Get a free video teardown of your website. Mark, our founder, records it himself. We send it as soon as it's ready."
       }
-    }
+    },
+    "quizTag": "hosting-care"
   },
   {
     "title": "HVAC landing pages",
@@ -1122,7 +1125,8 @@
         "lead": "Not ready to talk?",
         "text": "Get a free video teardown of your website. Mark, our founder, records it himself. We send it as soon as it's ready."
       }
-    }
+    },
+    "quizTag": "landing-pages"
   },
   {
     "title": "Google Business Profile setup for HVAC",
@@ -1356,7 +1360,8 @@
         "lead": "Not ready to talk?",
         "text": "Get a free video teardown of your website. Mark, our founder, records it himself. We send it as soon as it's ready."
       }
-    }
+    },
+    "quizTag": "google-business-profile"
   },
   {
     "title": "Google review generation for HVAC",
@@ -1591,7 +1596,8 @@
         "lead": "Not ready to talk?",
         "text": "Get a free video teardown of your website. Mark, our founder, records it himself. We send it as soon as it's ready."
       }
-    }
+    },
+    "quizTag": "google-reviews"
   },
   {
     "title": "AI search optimization for HVAC",
@@ -1807,7 +1813,8 @@
         "lead": "Not ready to talk?",
         "text": "Get a free video teardown of your website. Mark, our founder, records it himself. We send it as soon as it's ready."
       }
-    }
+    },
+    "quizTag": "ai-search"
   },
   {
     "title": "Missed call text back for HVAC",
@@ -2029,7 +2036,8 @@
         "lead": "Not ready yet?",
         "text": "Get a free video teardown of your website. We send it as soon as it's ready."
       }
-    }
+    },
+    "quizTag": "missed-call-text-back"
   },
   {
     "title": "GoHighLevel CRM setup for HVAC",
@@ -2261,7 +2269,8 @@
         "lead": "Not ready yet?",
         "text": "Get a free video teardown of your website. We send it as soon as it's ready."
       }
-    }
+    },
+    "quizTag": "gohighlevel-crm"
   },
   {
     "title": "Speed to lead for HVAC",
@@ -2490,7 +2499,8 @@
         "lead": "Not ready yet?",
         "text": "Get a free video teardown of your website. We send it as soon as it's ready."
       }
-    }
+    },
+    "quizTag": "speed-to-lead"
   },
   {
     "title": "Google Ads management for HVAC",
@@ -2702,7 +2712,8 @@
         "lead": "Not ready yet?",
         "text": "Get a free video teardown of your website. We send it as soon as it's ready."
       }
-    }
+    },
+    "quizTag": "google-ads"
   },
   {
     "title": "Meta ads for HVAC: Facebook and Instagram",
@@ -2918,7 +2929,8 @@
         "lead": "Not ready yet?",
         "text": "Get a free video teardown of your website. We send it as soon as it's ready."
       }
-    }
+    },
+    "quizTag": "meta-ads"
   },
   {
     "title": "AI agents for HVAC",
@@ -3157,7 +3169,8 @@
         "lead": "Not ready yet?",
         "text": "Get a free video teardown of your website. We send it as soon as it's ready."
       }
-    }
+    },
+    "quizTag": "ai-agents"
   },
   {
     "title": "Automated workflows for HVAC",
@@ -3390,7 +3403,8 @@
         "lead": "Not ready yet?",
         "text": "Get a free video teardown of your website. We send it as soon as it's ready."
       }
-    }
+    },
+    "quizTag": "automated-workflows"
   },
   {
     "title": "Custom software for HVAC",
@@ -3605,6 +3619,7 @@
         "lead": "Not ready yet?",
         "text": "Get a free video teardown of your website. We send it as soon as it's ready."
       }
-    }
+    },
+    "quizTag": "custom-software"
   }
 ]

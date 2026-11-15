@@ -11,6 +11,7 @@ import { emptyLayout } from '@cms/lib/types'
 import { layoutQuery, servicesIndexQuery } from '@cms/queries'
 import { brand, finalCta, links, hero } from '@/content/home'
 import { categoryId, serviceHref, servicesByCategory } from '@/content/services'
+import { findPage } from '@/content/pages'
 
 const { draftMode } = Astro.locals
 const [layout, services] = await Promise.all([
@@ -43,7 +44,12 @@ const seo = { metaTitle: `HVAC Marketing Services | ${brand.name}`, metaDescript
   )}
   {groups.map(({ look, pages }, i) => (
     <Section surface={i % 2 ? 'white' : 'cream'} anchorId={categoryId(look.name)}>
-      <SectionHead eyebrow={`${pages.length} services`} heading={look.name} />
+      <SectionHead eyebrow={`${pages.length} services`} heading={look.name} align="split">
+        <div class="svc-index__intro">
+          {findPage(look.href)?.hero.subhead && <p class="body-lg">{findPage(look.href)?.hero.subhead}</p>}
+          <Btn href={look.href} variant="link" icon="arrow">{`More on ${look.name}`}</Btn>
+        </div>
+      </SectionHead>
       <ul class="grid-3">
         {pages.map((page) => (
           <li class="card card--feature svc-card">
@@ -60,6 +66,7 @@ const seo = { metaTitle: `HVAC Marketing Services | ${brand.name}`, metaDescript
 </BaseLayout>
 
 <style>
+  .svc-index__intro { display: grid; gap: var(--space-4); justify-items: start; max-width: 44ch; }
   .svc-index-hero { padding-block: var(--space-16); }
   .svc-index-hero .t-display { max-width: 18ch; }
   .svc-index-hero__sub { margin: var(--stack-body) 0 var(--stack-actions); font-size: var(--text-body-lg); max-width: 52ch; color: var(--surface-body); }
