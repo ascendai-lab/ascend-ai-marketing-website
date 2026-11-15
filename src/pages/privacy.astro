@@ -22,7 +22,7 @@ const seo = { metaTitle: `Privacy policy | Ascend AI Marketing`, metaDescription
 <BaseLayout layout={layout} seo={seo} jsonLd={jsonLd}>
   <section class="legal-hero surface-deep">
     <div class="container">
-      <p class="eyebrow">Last updated {privacy.updated}</p>
+      <p class="privacy__updated">Last updated {privacy.updated}</p>
       <h1 class="t-display legal-hero__h">{privacy.title}</h1>
       <p class="legal-hero__intro">{privacy.intro}</p>
     </div>
@@ -40,6 +40,7 @@ const seo = { metaTitle: `Privacy policy | Ascend AI Marketing`, metaDescription
 </BaseLayout>
 
 <style>
+  .privacy__updated { font-size: var(--text-sm); color: var(--surface-muted); margin-bottom: var(--space-4); }
   .legal-hero { padding-block: var(--space-16); }
   .legal-hero__h { font-size: var(--text-display-sm); }
   .legal-hero__intro { margin-top: var(--stack-body); font-size: var(--text-body-lg); color: var(--surface-body); max-width: calc(52 * var(--ch)); }

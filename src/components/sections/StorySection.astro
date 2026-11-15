@@ -14,7 +14,7 @@ interface Props {
   surface?: 'cream' | 'white'
 }
 
-const { eyebrow = success.eyebrow, heading, body, close, photo = success.photo, notes = success.notes, surface = 'white' } = Astro.props
+const { heading, body, close, photo = success.photo, notes = success.notes, surface = 'white' } = Astro.props
 ---
 
 <Section surface={surface}>
@@ -28,7 +28,6 @@ const { eyebrow = success.eyebrow, heading, body, close, photo = success.photo, 
       </ul>
     </figure>
     <div>
-      <p class="eyebrow">{eyebrow}</p>
       <h2 class="t-h2">{heading}</h2>
       <div class="story__body">{body.map((p) => <p class="body-lg">{p}</p>)}</div>
       {close && <p class="lead strong story__close">{close}</p>}

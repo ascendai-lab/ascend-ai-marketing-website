@@ -1,6 +1,6 @@
 ---
 /**
- * The hero every inner page uses: breadcrumb, eyebrow, headline and the two calls to action,
+ * The hero every inner page uses: breadcrumb, headline and the two calls to action,
  * beside a photo with product notes (or whatever the page puts in the `aside` slot: the quiz, a form).
  * The trust row runs underneath.
  */
@@ -26,7 +26,6 @@ interface Props {
 
 const {
   crumbs,
-  eyebrow,
   headline,
   subhead,
   primary = { text: homeHero.primary, href: links.quiz },
@@ -54,7 +53,6 @@ const hasAside = tool
           </ol>
         </nav>
       )}
-      <p class="eyebrow">{eyebrow}</p>
       <h1 class="t-display svc-hero__h">{sentences.map((s, i) => <>{i > 0 && " "}<span class="svc-hero__sent">{s}</span></>)}</h1>
       {subhead && <p class="svc-hero__sub">{subhead}</p>}
       {(primary || secondary) && (

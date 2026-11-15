@@ -19,7 +19,6 @@ const proof = section.blocks.filter((b) => b.type === 'result' || b.type === 'qu
 <Section surface="white" anchorId="about">
   <div class="split split--wide-left">
     <div>
-      <p class="eyebrow">About us</p>
       <h2 class="t-h2">{section.heading}</h2>
       <div class="about__body">{paragraphs.map((p) => <p class="body-lg">{p}</p>)}</div>
       <div class="actions about__actions"><Btn href={links.book}>{hero.secondary}</Btn></div>

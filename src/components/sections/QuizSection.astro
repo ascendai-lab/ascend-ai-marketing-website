@@ -24,7 +24,7 @@ interface Props {
   extra?: { text: string; href: string }
 }
 
-const { eyebrow = finalCta.eyebrow, heading, body = finalCta.body, teardown = finalCta.teardown, teardownNote, onQuizPage = false, extra } = Astro.props
+const { heading, body = finalCta.body, teardown = finalCta.teardown, teardownNote, onQuizPage = false, extra } = Astro.props
 // Short headings sit in a narrow column; longer questions get more room so they don't stack word by word.
 const long = heading.replace(/<[^>]+>/g, '').length > 40
 const first = QUESTIONS[0]
@@ -33,7 +33,6 @@ const first = QUESTIONS[0]
 <Section surface="deep" anchorId={onQuizPage ? 'take-the-quiz' : 'quiz'}>
   <div class:list={['split final', onQuizPage && 'final--solo']}>
     <div class="final__head">
-      <p class="eyebrow">{eyebrow}</p>
       <h2 class:list={['t-h2 final__h', long && 'final__h--long']} set:html={heading} />
       {body && <p class="body-lg final__body">{body}</p>}
     </div>

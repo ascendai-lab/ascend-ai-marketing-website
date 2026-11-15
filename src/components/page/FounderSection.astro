@@ -23,7 +23,6 @@ const paragraphs = section.blocks.flatMap((b) => (b.type === 'p' ? [b.text] : []
       <img src={about.photo.src} alt={about.photo.alt} width="1200" height="1400" loading="lazy" />
     </figure>
     <div class="founder__copy" data-reveal>
-      <p class="eyebrow">{section.label}</p>
       <h2 class="t-h2">{section.heading}</h2>
       {fields["Mark's story"] && <blockquote class="founder__story"><p>"{unquote(fields["Mark's story"])}"</p></blockquote>}
       {paragraphs.map((p) => <p class="body-lg">{p}</p>)}

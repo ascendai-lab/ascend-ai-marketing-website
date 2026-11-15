@@ -2,7 +2,6 @@
 /** "Serving HVAC shops nationwide": the copy on the left, three climate cards on the right. */
 import Section from '@components/ui/Section.astro'
 import Icon, { type IconName } from '@components/ui/Icon.astro'
-import { nationwide } from '@/content/home'
 
 interface Props {
   eyebrow?: string
@@ -13,14 +12,13 @@ interface Props {
   climates?: { icon: IconName; title: string; text: string }[]
 }
 
-const { eyebrow = nationwide.eyebrow, heading, body, surface = 'white', climates } = Astro.props
+const { heading, body, surface = 'white', climates } = Astro.props
 ---
 
 <Section surface={surface}>
   {climates ? (
     <div class="split">
       <div>
-        <p class="eyebrow">{eyebrow}</p>
         <h2 class="t-h2">{heading}</h2>
         <div class="nation__body">{body.map((p) => <p class="body-lg">{p}</p>)}</div>
       </div>
@@ -33,7 +31,6 @@ const { eyebrow = nationwide.eyebrow, heading, body, surface = 'white', climates
   ) : (
     <div class="split split--top">
       <div>
-        <p class="eyebrow">{eyebrow}</p>
         <h2 class="t-h2">{heading}</h2>
       </div>
       <div>{body.map((p) => <p class="body-lg">{p}</p>)}</div>

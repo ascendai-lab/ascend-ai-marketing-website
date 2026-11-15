@@ -3,7 +3,7 @@
 import Section from '@components/ui/Section.astro'
 import Btn from '@components/ui/Btn.astro'
 import Icon from '@components/ui/Icon.astro'
-import { faq as homeFaq, links, hero } from '@/content/home'
+import { links, hero } from '@/content/home'
 
 interface Props {
   eyebrow?: string
@@ -13,7 +13,7 @@ interface Props {
   anchorId?: string
 }
 
-const { eyebrow = homeFaq.eyebrow, heading, body, items, anchorId = 'faq' } = Astro.props
+const { heading, body, items, anchorId = 'faq' } = Astro.props
 
 const faqJsonLd = {
   '@context': 'https://schema.org',
@@ -25,7 +25,6 @@ const faqJsonLd = {
 <Section surface="cream" anchorId={anchorId}>
   <div class="split split--top">
     <div>
-      <p class="eyebrow">{eyebrow}</p>
       <h2 class="t-h2">{heading}</h2>
       {body && <p class="body-lg faq__body">{body}</p>}
       <div class="actions faq__actions">

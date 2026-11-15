@@ -32,7 +32,7 @@ export const nav: { label: string; href: string; menu?: 'services' }[] = [
 ]
 
 export const hero = {
-  eyebrow: 'Ascend AI Marketing · HVAC',
+  eyebrow: 'Ascend AI Marketing',
   heading: 'Book more HVAC jobs from the calls you <em>already get.</em>',
   body: 'We build your HVAC website and lead system. It answers every lead and follows up for you, so more jobs land on your calendar. You own all of it.',
   primary: 'Take the 60-second quiz',

@@ -24,14 +24,12 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
     <div class="container">
       <!-- Shown until the result loads, and to anyone who opens the page without taking the quiz. -->
       <div class="results-empty" data-empty>
-        <p class="eyebrow">The missed call quiz</p>
         <h1 class="t-display results__h">{copy.empty.heading}</h1>
         <p class="results__sub">{copy.empty.body}</p>
         <div class="actions"><Btn href={links.quiz} icon="arrow">{hero.primary}</Btn><Btn href={links.book} variant="secondary">{hero.secondary}</Btn></div>
       </div>
       <div class="results-grid" data-filled hidden>
         <div class="results__copy">
-          <p class="eyebrow">Your results</p>
           <h1 class="t-display results__h" data-headline></h1>
           <div class="results__score">
             <span class="results__grade" data-grade></span>
@@ -50,7 +48,6 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
   <Section surface="cream">
     <div class="split results-why">
       <div data-reveal>
-        <p class="eyebrow">What it means</p>
         <p class="lead results__meaning">{copy.meaning}</p>
         <p class="body-lg results__picture">{copy.picture}</p>
       </div>
@@ -69,7 +66,6 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
     <!-- Phones: heading, then the form, then the plan. Desktop: the form on the right. -->
     <div class="split split--top results-book">
       <div class="results-book__head" data-reveal>
-        <p class="eyebrow">Book your call</p>
         <h2 class="t-h2">{copy.calendarHeading}</h2>
       </div>
       <div class="results-book__cal"><BookingCalendar id="results-calendar" /></div>

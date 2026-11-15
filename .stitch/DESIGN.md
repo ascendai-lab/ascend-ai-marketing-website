@@ -105,7 +105,7 @@ never the `ch` unit, so widths don't change with the font. Entrance reveals: sec
 | Button | `.btn` | 16px (14px small) | 560 (`--weight-ui`) | 1 |
 
 - Headings are light and large, with tight negative tracking. Wrap one phrase in `<em>` to color it (sage on dark, green on light).
-- Every section opens with an eyebrow: a small square dot and an uppercase label.
+- Only the home page hero has an eyebrow (a small square dot and an uppercase label, "Ascend AI Marketing"). Other sections and pages open straight with the heading. (Mark, 2026-11-15)
 - Nothing smaller than 12px. Body copy stays under about 60 characters wide.
 
 ---
@@ -164,7 +164,7 @@ Small pills for categories ("Local SEO and Google Ads") and offers (`.tag--accen
 only places blue and red appear.
 
 ### Section header (`SectionHead.astro`)
-Eyebrow, H2, optional intro. `align`: `left` (default), `center` (left on phones) or `split`
+H2, optional intro (no eyebrow). `align`: `left` (default), `center` (left on phones) or `split`
 (heading left, intro or link right).
 
 ### Reviews (`HomeReviews.astro`)
@@ -211,8 +211,8 @@ White panel, radius `xl`, shadow `lg`. Four-option answers on cream-100. The lea
 ### Service pages (`src/components/service/ServicePage.astro`)
 - Copy: the approved files in `docs/copy/` are turned into `src/content/services.json` by `npm run services:copy`. Never edit the JSON by hand.
 - Route: `/services/<slug>`. A Sanity `service` document with the same slug wins; otherwise the page draws from the copy.
-- Order: hero (deep, breadcrumb, category eyebrow, `--text-display-sm` headline, photo with two notes, trust row) → the problem (cream, missed-call panel) → about us (white, founder photo, past client cards) → three steps (deeper) → the page's own sections → the story (photo with notes) → what's at stake (deep, centered) → nationwide (white) → FAQ (cream) → the quiz (deep).
-- The page's own sections all use one layout (`ServiceDetail`): eyebrow and heading on the left, sticky on desktop, content on the right in `.columns`. Light sections alternate cream and white.
+- Order: hero (deep, breadcrumb, `--text-display-sm` headline, photo with two notes, trust row) → the problem (cream, missed-call panel) → about us (white, founder photo, past client cards) → three steps (deeper) → the page's own sections → the story (photo with notes) → what's at stake (deep, centered) → nationwide (white) → FAQ (cream) → the quiz (deep).
+- The page's own sections all use one layout (`ServiceDetail`): heading on the left, sticky on desktop, content on the right in `.columns`. Light sections alternate cream and white.
 - Content blocks (`ServiceBlocks`): paragraphs as body copy; a run of two or more paragraphs whose bold leads are titles (ending in ":" or ".") as cards, numbered in "how it works" sections; any other bold lead stays inline in the sentence; plain bullets as a tick list in a card; the price note as a dark callout with the call button; "You own…" as the ownership line with the key icon.
 - Long content reveals in a few calm pieces: a card grid card by card, a block of paragraphs as one block. Small things (the ownership line, each FAQ item, single lines) don't get their own entrance. The FAQ list arrives as one block.
 - Category photos and notes live in `categories` in `src/content/services.ts` (stand-ins until Mark picks photos).

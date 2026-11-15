@@ -386,7 +386,7 @@
   }
   .eyebrow::before { content: ''; width: 8px; height: 8px; border-radius: 2px; background: var(--dot, var(--color-brand)); flex: none; }
 
-  /* Section header: eyebrow, heading, intro. Centered on desktop, left on phones. */
+  /* Section header: heading, intro. Centered on desktop, left on phones. */
   .section-head { margin-bottom: var(--section-head-gap); }
   .section-head > p:not(.eyebrow) { margin-top: var(--stack-body); }
   .section-head--center { text-align: center; }

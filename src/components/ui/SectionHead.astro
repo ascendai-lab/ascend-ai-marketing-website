@@ -9,7 +9,7 @@ interface Props {
   class?: string
 }
 
-const { eyebrow, heading, intro, align = 'left', as: Tag = 'h2', class: className } = Astro.props
+const { heading, intro, align = 'left', as: Tag = 'h2', class: className } = Astro.props
 ---
 
 <header class:list={['section-head', align !== 'left' && `section-head--${align}`, className]}>
@@ -17,7 +17,6 @@ const { eyebrow, heading, intro, align = 'left', as: Tag = 'h2', class: classNam
     align === 'split' ? (
       <>
         <div>
-          {eyebrow && <p class="eyebrow">{eyebrow}</p>}
           <Tag class="t-h2" set:html={heading} />
         </div>
         {intro && <p class="body-lg">{intro}</p>}
@@ -25,7 +24,6 @@ const { eyebrow, heading, intro, align = 'left', as: Tag = 'h2', class: classNam
       </>
     ) : (
       <>
-        {eyebrow && <p class="eyebrow">{eyebrow}</p>}
         <Tag class="t-h2" set:html={heading} />
         {intro && <p class="body-lg">{intro}</p>}
         <slot />

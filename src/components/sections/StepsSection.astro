@@ -18,12 +18,12 @@ interface Props {
   more?: string[]
 }
 
-const { eyebrow = homeSteps.eyebrow, heading, note, items, anchorId, more = [] } = Astro.props
+const { heading, note, items, anchorId, more = [] } = Astro.props
 const photo = homeSteps.photo
 ---
 
 <Section surface="deeper" anchorId={anchorId}>
-  <SectionHead eyebrow={eyebrow} heading={heading} intro={note} align="split" />
+  <SectionHead heading={heading} intro={note} align="split" />
   <div class="split split--top steps">
     <div>
     <ol class="steps__list">
