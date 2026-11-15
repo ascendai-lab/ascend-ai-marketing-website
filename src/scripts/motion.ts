@@ -5,32 +5,37 @@
 const root = document.documentElement
 // Keep in step with the matching list under "Entrance" in global.css, which hides these before they arrive.
 const SELECTOR = [
-  '.section .section-head', '.section .split > *', '.section .grid-2 > *', '.section .grid-3 > *',
+  '.section .section-head', '.section .split > :not(.accordion, script)', '.section .grid-2 > *', '.section .grid-3 > *',
   '.section .grid-4 > *', '.section .plan', '.section .plan__own', '.section .accordion > details', '[data-reveal]',
 ].join(', ')
 
 if (root.classList.contains('motion')) {
-  // Stagger siblings so a row of cards arrives one after another.
-  const targets = [...document.querySelectorAll<HTMLElement>(SELECTOR)]
-  targets.forEach((el) => {
-    const siblings = el.parentElement ? [...el.parentElement.children].filter((c) => targets.includes(c as HTMLElement)) : []
-    const index = Math.min(siblings.indexOf(el), 5)
-    if (index > 0) el.style.setProperty('--reveal-delay', `calc(var(--reveal-step) * ${index})`)
-  })
+  const css = getComputedStyle(root)
+  const ms = (name: string, fallback: number) => parseFloat(css.getPropertyValue(name)) || fallback
+  const step = ms('--reveal-step', 110)
+  const settle = ms('--dur-reveal', 1000) + 200
 
+  // Items slide up as soon as their top edge comes into view. Items that arrive in the
+  // same moment (a row of cards) follow each other in reading order; nothing waits on
+  // an item that is still off screen.
   const reveal = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return
-      const el = entry.target as HTMLElement
-      el.classList.add('is-in')
+    const arriving = entries
+      .filter((entry) => entry.isIntersecting)
+      .map((entry) => entry.target as HTMLElement)
+      .sort((a, b) => {
+        const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect()
+        return Math.round(ra.top - rb.top) || ra.left - rb.left
+      })
+    arriving.forEach((el, i) => {
       reveal.unobserve(el)
-      // Once it has arrived, hand transitions back to the element's own hover effects.
-      const done = () => el.classList.add('is-done')
-      el.addEventListener('transitionend', (e) => { if (e.target === el && e.propertyName === 'opacity') done() })
-      window.setTimeout(done, 1600)
+      const delay = Math.min(i, 4) * step
+      el.style.setProperty('--reveal-delay', `${delay}ms`)
+      el.classList.add('is-in')
+      // Once it has landed, hand transitions back to the element's own hover effects.
+      window.setTimeout(() => el.classList.add('is-done'), delay + settle)
     })
-  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 })
-  targets.forEach((el) => reveal.observe(el))
+  }, { rootMargin: '0px 0px -6% 0px', threshold: 0 })
+  document.querySelectorAll<HTMLElement>(SELECTOR).forEach((el) => reveal.observe(el))
 
   // Hero slides and trust items get their index for the load sequence.
   document.querySelectorAll<HTMLElement>('.hero .slide, .hero__trust li').forEach((el) => {

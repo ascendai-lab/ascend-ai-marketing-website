@@ -166,11 +166,13 @@
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
     --dur-fast: 160ms;
     --dur-base: 260ms;
-    --dur-reveal: 800ms;
+    --ease-reveal: cubic-bezier(0.33, 1, 0.68, 1);  /* ease-out cubic: a long, soft landing for slide-ups */
+    --dur-reveal: 1000ms;
+    --dur-reveal-fade: 700ms;  /* the fade finishes before the slide, so nothing looks ghosted */
     --dur-menu: 500ms;
     --dur-accordion: 420ms;
-    --reveal-shift: 1.5rem;
-    --reveal-step: 90ms;
+    --reveal-shift: 2.5rem;
+    --reveal-step: 110ms;
 
     /* Legacy names kept for the CMS blocks */
     --section-padding-y: var(--section-y);
@@ -552,22 +554,22 @@
    Hidden only while html has .motion, which is set in <head> when motion is allowed,
    so the page never stays blank without JavaScript or with reduced motion. */
 @layer components {
-  .motion :is(.section .section-head, .section .split > *, .section .grid-2 > *, .section .grid-3 > *, .section .grid-4 > *, .section .plan, .section .plan__own, .section .accordion > details, [data-reveal]):not(.is-in) {
+  .motion :is(.section .section-head, .section .split > :not(.accordion, script), .section .grid-2 > *, .section .grid-3 > *, .section .grid-4 > *, .section .plan, .section .plan__own, .section .accordion > details, [data-reveal]):not(.is-in) {
     opacity: 0; transform: translateY(var(--reveal-shift));
   }
   .motion .is-in:not(.is-done) {
-    transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-reveal) var(--ease-out);
+    transition: opacity var(--dur-reveal-fade) var(--ease-reveal), transform var(--dur-reveal) var(--ease-reveal);
     transition-delay: var(--reveal-delay, 0ms);
   }
 
   /* Hero: the headline, copy and slider arrive in sequence on load. */
   @keyframes rise { from { opacity: 0; transform: translateY(var(--reveal-shift)); } }
   @keyframes slide-in { from { opacity: 0; transform: translateX(3rem); } }
-  .motion .hero__top > :first-child > * { animation: rise var(--dur-reveal) var(--ease-out) both; }
+  .motion .hero__top > :first-child > * { animation: rise var(--dur-reveal) var(--ease-reveal) both; }
   .motion .hero__top > :first-child > :nth-child(2) { animation-delay: 80ms; }
-  .motion .hero__side { animation: rise var(--dur-reveal) var(--ease-out) 220ms both; }
-  .motion .hero .slide { animation: slide-in 1s var(--ease-out) both; animation-delay: calc(320ms + var(--i, 0) * 90ms); }
-  .motion .hero__trust li { animation: rise var(--dur-reveal) var(--ease-out) both; animation-delay: calc(600ms + var(--i, 0) * 80ms); }
+  .motion .hero__side { animation: rise var(--dur-reveal) var(--ease-reveal) 220ms both; }
+  .motion .hero .slide { animation: slide-in var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(320ms + var(--i, 0) * 90ms); }
+  .motion .hero__trust li { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(600ms + var(--i, 0) * 80ms); }
 
   /* Micro interactions */
   .btn { transition: background-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out); }
