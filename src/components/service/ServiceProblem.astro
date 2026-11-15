@@ -1,0 +1,39 @@
+---
+/** The problem: the heading and a phone full of missed calls on the left, the story on the right. The last line lands as the turn. */
+import Section from '@components/ui/Section.astro'
+import MissedCallsPanel from '@components/ui/MissedCallsPanel.astro'
+import type { ServiceSectionCopy } from '@/content/services'
+
+interface Props {
+  section: ServiceSectionCopy
+}
+
+const { section } = Astro.props
+const paragraphs = section.blocks.flatMap((b) => (b.type === 'p' ? [b.text] : []))
+const close = paragraphs.length > 1 ? paragraphs.at(-1) : undefined
+const body = close ? paragraphs.slice(0, -1) : paragraphs
+---
+
+<Section surface="cream">
+  <div class="columns">
+    <div class="problem__aside">
+      <div data-reveal>
+        <p class="eyebrow">The problem</p>
+        <h2 class="t-h2">{section.heading}</h2>
+      </div>
+      <div data-reveal><MissedCallsPanel /></div>
+    </div>
+    <div class="problem__body">
+      {body.map((p) => <p class="body-lg" data-reveal>{p}</p>)}
+      {close && <p class="lead strong problem__close" data-reveal>{close}</p>}
+    </div>
+  </div>
+</Section>
+
+<style>
+  .problem__body { display: grid; gap: var(--space-4); }
+  .problem__body .body-lg + .body-lg { margin-top: 0; }
+  .problem__close { margin-top: var(--space-4); font-weight: var(--weight-medium); max-width: 32ch; }
+  .problem__aside { display: grid; gap: var(--space-10); }
+  .problem__aside :global(.missed) { justify-self: start; }
+</style>

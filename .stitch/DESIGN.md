@@ -83,6 +83,7 @@ Google Sans and the system font.
 | Role | Class | Size | Weight | Line height |
 |---|---|---|---|---|
 | Display (H1) | `.t-display` | 40 → 70px | 400 | 1.04 |
+| Display, long headline (service H1) | `--text-display-sm` | 36 → 60px | 400 | 1.04 |
 | H2 | `.t-h2` | 32 → 52px | 420 | 1.1 |
 | H3 | `.t-h3` | 22 → 26px | 420 | 1.2 |
 | H4 / card title | `.t-h4` | 18px | 560 (`--weight-ui`) | 1.3 |
@@ -197,5 +198,15 @@ White panel, radius `xl`, shadow `lg`. Four-option answers on cream-100. The lea
 
 - Copy for the homepage lives in `src/content/home.ts`. Sections live in `src/components/home/`.
 - New pages are built from the same pieces: `Section`, `SectionHead`, `Btn`, `.card`, `.icon-chip`, `.grid-2|3|4`, `.split`.
-- Service pages share one template; only their content changes.
+- Service pages share one template; only their content changes. See "Service pages" below.
+- Sections used by more than one page live in `src/components/sections/` (steps, story, nationwide, FAQ, quiz) and take their copy as props.
+
+### Service pages (`src/components/service/ServicePage.astro`)
+- Copy: the approved files in `docs/copy/` are turned into `src/content/services.json` by `npm run services:copy`. Never edit the JSON by hand.
+- Route: `/services/<slug>`. A Sanity `service` document with the same slug wins; otherwise the page draws from the copy.
+- Order: hero (deep, breadcrumb, category eyebrow, `--text-display-sm` headline, photo with two notes, trust row) → the problem (cream, missed-call panel) → about us (white, founder photo, past client cards) → three steps (deeper) → the page's own sections → the story (photo with notes) → what's at stake (deep, centered) → nationwide (white) → FAQ (cream) → the quiz (deep).
+- The page's own sections all use one layout (`ServiceDetail`): eyebrow and heading on the left, sticky on desktop, content on the right in `.columns`. Light sections alternate cream and white.
+- Content blocks (`ServiceBlocks`): paragraphs as body copy; two or more bold-led paragraphs as cards (numbered in "how it works" sections); plain bullets as a tick list in a card; the price note as a dark callout with the call button; "You own…" as the ownership line with the key icon.
+- Long content reveals piece by piece (`[data-reveal]` on each card or paragraph), never as one tall column.
+- Category photos and notes live in `categories` in `src/content/services.ts` (stand-ins until Mark picks photos).
 - Never write a raw color, font size, radius or spacing value in a component. Use a token.

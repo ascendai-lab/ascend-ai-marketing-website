@@ -1,0 +1,43 @@
+---
+/** The closing call to action: a big heading and the second actions on the left, the missed-call quiz on the right. */
+import Section from '@components/ui/Section.astro'
+import Btn from '@components/ui/Btn.astro'
+import MissedCallQuiz from '@components/home/MissedCallQuiz.astro'
+import { finalCta, links, hero } from '@/content/home'
+
+interface Props {
+  eyebrow?: string
+  /** May hold one <em> phrase. */
+  heading: string
+  body?: string
+  teardown?: string
+  /** A short line under the teardown link. */
+  teardownNote?: string
+}
+
+const { eyebrow = finalCta.eyebrow, heading, body = finalCta.body, teardown = finalCta.teardown, teardownNote } = Astro.props
+// Short headings sit in a narrow column; longer questions get more room so they don't stack word by word.
+const long = heading.replace(/<[^>]+>/g, '').length > 40
+---
+
+<Section surface="deep" anchorId="quiz">
+  <div class="split">
+    <div>
+      <p class="eyebrow">{eyebrow}</p>
+      <h2 class:list={['t-h2 final__h', long && 'final__h--long']} set:html={heading} />
+      {body && <p class="body-lg final__body">{body}</p>}
+      <div class="actions final__actions"><Btn href={links.book} variant="secondary">{hero.secondary}</Btn></div>
+      <Btn href={links.teardown} variant="link" icon="arrow-ur">{teardown}</Btn>
+      {teardownNote && <p class="text-sm text-muted final__note">{teardownNote}</p>}
+    </div>
+    <MissedCallQuiz id="missed-call-quiz" />
+  </div>
+</Section>
+
+<style>
+  .final__h { font-size: var(--text-cta); max-width: 13ch; }
+  .final__h--long { font-size: var(--text-h2); max-width: 20ch; }
+  .final__body { margin-top: var(--stack-body); }
+  .final__note { margin-top: var(--space-3); max-width: 44ch; }
+  .final__actions { margin: var(--stack-actions) 0 var(--space-2); }
+</style>

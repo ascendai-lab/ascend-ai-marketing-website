@@ -1,26 +1,38 @@
 ---
+/** "Three steps": numbered steps on the deepest green, beside a photo with the lead inbox floating over it. */
 import { twoDigit } from '@/lib/format'
 import Section from '@components/ui/Section.astro'
 import SectionHead from '@components/ui/SectionHead.astro'
 import Btn from '@components/ui/Btn.astro'
-import Icon from '@components/ui/Icon.astro'
-import { steps, inbox, links, hero } from '@/content/home'
+import Icon, { type IconName } from '@components/ui/Icon.astro'
+import { steps as homeSteps, inbox, links, hero } from '@/content/home'
+
+interface Props {
+  eyebrow?: string
+  heading: string
+  note?: string
+  items: { icon: IconName; title: string; text: string }[]
+  anchorId?: string
+}
+
+const { eyebrow = homeSteps.eyebrow, heading, note, items, anchorId } = Astro.props
+const photo = homeSteps.photo
 ---
 
-<Section surface="deeper" anchorId="steps">
-  <SectionHead eyebrow={steps.eyebrow} heading={steps.heading} intro={steps.note} align="split" />
+<Section surface="deeper" anchorId={anchorId}>
+  <SectionHead eyebrow={eyebrow} heading={heading} intro={note} align="split" />
   <div class="split split--top steps">
     <ol class="steps__list">
-      {steps.items.map((step, i) => (
+      {items.map((step, i) => (
         <li>
           <div class="steps__head"><span class="icon-chip"><Icon name={step.icon} /></span><h3 class="t-h3">{step.title}</h3><span class="steps__num">{twoDigit(i)}</span></div>
-          <p>{step.text}</p>
+          {step.text && <p>{step.text}</p>}
           {i === 0 && <div class="steps__cta"><Btn href={links.quiz} icon="arrow">{hero.primary}</Btn></div>}
         </li>
       ))}
     </ol>
     <figure class="media steps__scene">
-      <img src={steps.photo.src} alt={steps.photo.alt} width="1600" height="1200" loading="lazy" />
+      <img src={photo.src} alt={photo.alt} width="1600" height="1200" loading="lazy" />
       <div class="ui-panel steps__inbox">
         <p class="steps__inbox-title"><Icon name="inbox" />One inbox for every lead</p>
         <ul>

@@ -2,17 +2,22 @@ import type { APIRoute } from 'astro'
 import { loadQuery } from '@cms/lib/load'
 import { sitemapQuery } from '@cms/queries'
 import { hrefFor, indexRoutes } from '@cms/routes'
+import { serviceHref, servicePages } from '@/content/services'
 
 /** Built from the CMS on request, so new pages appear without a rebuild. */
 export const GET: APIRoute = async ({ site, url }) => {
   const origin = site ?? new URL(url.origin)
-  const docs = await loadQuery(false, sitemapQuery)
+  const docs = await loadQuery(false, sitemapQuery).catch(() => [])
+  // Service pages that are still drawn from the approved copy (no CMS document yet).
+  const cmsPaths = new Set(docs.map((doc) => hrefFor(doc._type, doc.slug)))
+  const copyPages = servicePages.map((page) => serviceHref(page.slug)).filter((path) => !cmsPaths.has(path))
 
   const entries = [
     ...docs.flatMap((doc) => {
       const path = hrefFor(doc._type, doc.slug)
       return path ? [{ loc: new URL(path, origin).href, lastmod: doc._updatedAt }] : []
     }),
+    ...copyPages.map((path) => ({ loc: new URL(path, origin).href, lastmod: undefined })),
     ...Object.values(indexRoutes).map((path) => ({ loc: new URL(path, origin).href, lastmod: undefined })),
   ]
 

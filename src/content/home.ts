@@ -24,7 +24,7 @@ const photo = (id: string, w = 1200) => `https://images.unsplash.com/photo-${id}
 
 export const nav = [
   { label: 'Home', href: '/' },
-  { label: 'Services', href: '/#services' },
+  { label: 'Services', href: '/services' },
   { label: 'How it works', href: '/#steps' },
   { label: 'Pricing', href: '/#pricing' },
   { label: 'FAQ', href: '/#faq' },
@@ -191,12 +191,12 @@ export const services = {
   allLabel: 'View all services',
   allHref: '/services',
   items: [
-    { icon: 'map', name: 'Local SEO', short: 'local SEO', text: 'Show up at the top of Google and AI search engines like ChatGPT.', href: '/services/local-seo' },
-    { icon: 'search', name: 'Google Ads management', short: 'Google Ads', text: 'Ads that bring calls from people ready to book.', href: '/services/google-ads' },
-    { icon: 'megaphone', name: 'Meta ads on Facebook and Instagram', short: 'Meta ads', text: 'Reach homeowners near you before they need you.', href: '/services/meta-ads' },
-    { icon: 'bot', name: 'Custom AI agents', short: 'custom AI agents', text: 'Custom AI agents built for any job in your shop.', href: '/services/ai-agents' },
-    { icon: 'flow', name: 'Custom workflows', short: 'custom workflows', text: 'Automations built around how your shop really works.', href: '/services/custom-workflows' },
-    { icon: 'code', name: 'Custom software', short: 'custom software', text: 'Tools like a CRM built just for your shop.', href: '/services/custom-software' },
+    { icon: 'map', name: 'Local SEO', short: 'local SEO', text: 'Show up at the top of Google and AI search engines like ChatGPT.', href: '/services#hvac-local-seo' },
+    { icon: 'search', name: 'Google Ads management', short: 'Google Ads', text: 'Ads that bring calls from people ready to book.', href: '/services/google-ads-hvac' },
+    { icon: 'megaphone', name: 'Meta ads on Facebook and Instagram', short: 'Meta ads', text: 'Reach homeowners near you before they need you.', href: '/services/facebook-instagram-ads-hvac' },
+    { icon: 'bot', name: 'Custom AI agents', short: 'custom AI agents', text: 'Custom AI agents built for any job in your shop.', href: '/services/ai-agents-hvac' },
+    { icon: 'flow', name: 'Custom workflows', short: 'custom workflows', text: 'Automations built around how your shop really works.', href: '/services/automated-workflows-hvac' },
+    { icon: 'code', name: 'Custom software', short: 'custom software', text: 'Tools like a CRM built just for your shop.', href: '/services/custom-software-hvac' },
   ] satisfies { icon: IconName; name: string; short: string; text: string; href: string }[],
 }
 

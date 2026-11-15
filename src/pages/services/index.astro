@@ -1,20 +1,79 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro'
 import ServiceCard from '@components/cards/ServiceCard.astro'
+import Section from '@components/ui/Section.astro'
+import SectionHead from '@components/ui/SectionHead.astro'
+import Btn from '@components/ui/Btn.astro'
+import Icon from '@components/ui/Icon.astro'
+import QuizSection from '@components/sections/QuizSection.astro'
 import { loadQuery } from '@cms/lib/load'
+import { emptyLayout } from '@cms/lib/types'
 import { layoutQuery, servicesIndexQuery } from '@cms/queries'
+import { brand, finalCta, links, hero } from '@/content/home'
+import { categoryId, serviceHref, servicesByCategory } from '@/content/services'
 
 const { draftMode } = Astro.locals
-const [layout, services] = await Promise.all([loadQuery(draftMode, layoutQuery), loadQuery(draftMode, servicesIndexQuery)])
+const [layout, services] = await Promise.all([
+  loadQuery(draftMode, layoutQuery).catch(() => emptyLayout),
+  loadQuery(draftMode, servicesIndexQuery).catch(() => []),
+])
+const seo = { metaTitle: `HVAC Marketing Services | ${brand.name}`, metaDescription: 'Websites, lead systems, local SEO, ads, AI agents and custom software for HVAC shops. Get any service on its own, or add it to your plan.' }
 ---
 
-<BaseLayout layout={layout} title="Services">
-  <section class="section bg-muted">
-    <div class="container">
-      <header class="section-header"><h1 class="section-heading">Our services</h1></header>
-      <div class="grid-cards" data-columns="3">
-        {services.map((service) => <ServiceCard service={service} />)}
-      </div>
-    </div>
-  </section>
+<BaseLayout layout={layout} seo={seo}>
+  {
+    services.length ? (
+      <Section surface="cream">
+        <SectionHead heading="Our services" as="h1" />
+        <div class="grid-3">{services.map((service) => <ServiceCard service={service} />)}</div>
+      </Section>
+    ) : (
+      <>
+        <section class="svc-index-hero surface-deep">
+          <div class="container">
+            <p class="eyebrow">Services</p>
+            <h1 class="t-display">Everything your shop needs to <em>book more jobs.</em></h1>
+            <p class="svc-index-hero__sub">{hero.body}</p>
+            <div class="actions">
+              <Btn href={links.quiz} icon="arrow">{hero.primary}</Btn>
+              <Btn href={links.book} variant="secondary">{hero.secondary}</Btn>
+            </div>
+          </div>
+        </section>
+        {servicesByCategory.map(({ look, pages }, i) => (
+          <Section surface={i % 2 ? 'white' : 'cream'} anchorId={categoryId(look.name)}>
+            <SectionHead eyebrow={`${pages.length} services`} heading={look.name} />
+            <ul class="grid-3">
+              {pages.map((page) => (
+                <li class="card card--feature svc-card">
+                  <span class="icon-chip"><Icon name={look.icon} /></span>
+                  <h2 class="t-h4"><a href={serviceHref(page.slug)} class="svc-card__link">{page.title}</a></h2>
+                  <p>{page.short}</p>
+                  <span class="link svc-card__more" aria-hidden="true">Learn more<Icon name="arrow" /></span>
+                </li>
+              ))}
+            </ul>
+          </Section>
+        ))}
+        <QuizSection heading={finalCta.heading} />
+      </>
+    )
+  }
 </BaseLayout>
+
+<style>
+  .svc-index-hero { padding-block: var(--space-16); }
+  .svc-index-hero .t-display { max-width: 18ch; }
+  .svc-index-hero__sub { margin: var(--stack-body) 0 var(--stack-actions); font-size: var(--text-body-lg); max-width: 52ch; color: var(--surface-body); }
+  .svc-card { position: relative; }
+  .svc-card__link::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+  .svc-card__link:focus-visible { outline: none; }
+  .svc-card:has(.svc-card__link:focus-visible) { outline: 2px solid var(--color-brand); outline-offset: 2px; }
+  .svc-card__more { margin-top: auto; padding-top: var(--space-4); color: var(--color-brand); }
+  .svc-card:hover .svc-card__more :global(.icon) { transform: translateX(3px); }
+  :global(.motion) .svc-index-hero .container > * { animation: rise var(--dur-reveal) var(--ease-reveal) both; }
+  :global(.motion) .svc-index-hero .container > :nth-child(2) { animation-delay: 80ms; }
+  :global(.motion) .svc-index-hero .container > :nth-child(3) { animation-delay: 160ms; }
+  :global(.motion) .svc-index-hero .container > :nth-child(4) { animation-delay: 240ms; }
+  @media (max-width: 1100px) { .svc-card__more { display: none; } }
+</style>

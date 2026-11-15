@@ -1,15 +1,25 @@
 ---
+/** "Serving HVAC shops nationwide": the copy on the left, three climate cards on the right. */
 import Section from '@components/ui/Section.astro'
 import Icon from '@components/ui/Icon.astro'
 import { nationwide } from '@/content/home'
+
+interface Props {
+  eyebrow?: string
+  heading: string
+  body: string[]
+  surface?: 'cream' | 'white'
+}
+
+const { eyebrow = nationwide.eyebrow, heading, body, surface = 'white' } = Astro.props
 ---
 
-<Section surface="white">
+<Section surface={surface}>
   <div class="split">
     <div>
-      <p class="eyebrow">{nationwide.eyebrow}</p>
-      <h2 class="t-h2">{nationwide.heading}</h2>
-      <p class="body-lg nation__body">{nationwide.body}</p>
+      <p class="eyebrow">{eyebrow}</p>
+      <h2 class="t-h2">{heading}</h2>
+      <div class="nation__body">{body.map((p) => <p class="body-lg">{p}</p>)}</div>
     </div>
     <ul class="nation__list">
       {nationwide.climates.map((c) => (

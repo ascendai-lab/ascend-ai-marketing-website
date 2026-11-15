@@ -1,0 +1,131 @@
+---
+/**
+ * Draws a service section's content blocks in the Evergreen style:
+ *  - plain paragraphs as body copy ("You own…" becomes the ownership line)
+ *  - paragraphs or bullets that start with a bold phrase as cards (numbered when `numbered`)
+ *  - plain bullets as a tick list in a card
+ *  - a price note as a dark callout with the call button
+ *  - past client results and quotes as proof cards
+ */
+import Btn from '@components/ui/Btn.astro'
+import Icon from '@components/ui/Icon.astro'
+import OwnNote from '@components/ui/OwnNote.astro'
+import { twoDigit } from '@/lib/format'
+import { inline } from '@/lib/inline'
+import { links, hero } from '@/content/home'
+import type { Block, Inline } from '@/content/services'
+
+interface Props {
+  blocks: Block[]
+  numbered?: boolean
+}
+
+const { blocks, numbered = false } = Astro.props
+
+type Group =
+  | { kind: 'prose'; items: string[] }
+  | { kind: 'points'; items: Inline[] }
+  | { kind: 'ticks'; items: string[] }
+  | { kind: 'own'; text: string }
+  | { kind: 'price'; text: string }
+  | { kind: 'proof'; items: { text: string; quote?: { text: string; who: string } }[] }
+
+const groups: Group[] = []
+const push = (group: Group) => {
+  const last = groups.at(-1)
+  if (last && last.kind === group.kind && 'items' in last && 'items' in group) (last.items as unknown[]).push(...group.items)
+  else groups.push(group)
+}
+// A bold-led paragraph is a card only when it sits with others like it; a lone one stays in the prose with its lead in bold.
+const leadRun = (i: number) => {
+  const isLead = (b?: Block) => b?.type === 'p' && !!b.lead
+  return isLead(blocks[i]) && (isLead(blocks[i - 1]) || isLead(blocks[i + 1]))
+}
+for (const [i, block] of blocks.entries()) {
+  if (block.type === 'p') {
+    if (block.lead && !leadRun(i)) push({ kind: 'prose', items: [`**${block.lead}** ${block.text}`] })
+    else if (block.lead) push({ kind: 'points', items: [{ lead: block.lead, text: block.text }] })
+    else if (/^You own /.test(block.text)) groups.push({ kind: 'own', text: block.text })
+    else push({ kind: 'prose', items: [block.text] })
+  } else if (block.type === 'ul' || block.type === 'ol') {
+    if (block.items.every((item) => item.lead)) push({ kind: 'points', items: block.items })
+    else push({ kind: 'ticks', items: block.items.map((item) => (item.lead ? `**${item.lead}** ${item.text}` : item.text)) })
+  } else if (block.type === 'price') groups.push({ kind: 'price', text: block.text })
+  else if (block.type === 'result') push({ kind: 'proof', items: [{ text: block.text }] })
+  else if (block.type === 'quote') {
+    const last = groups.at(-1)
+    if (last?.kind === 'proof') last.items[last.items.length - 1].quote = { text: block.text, who: block.who }
+  }
+}
+---
+
+<div class="blocks">
+  {groups.map((group) => {
+    if (group.kind === 'prose') return <div class="blocks__prose" data-reveal>{group.items.map((text) => <p class="body-lg" set:html={inline(text)} />)}</div>
+    if (group.kind === 'own') return <div data-reveal><OwnNote text={group.text} /></div>
+    if (group.kind === 'points')
+      return (
+        <ul class:list={['blocks__points', group.items.length > 2 && group.items.length !== 4 ? 'grid-points-3' : 'grid-points-2']}>
+          {group.items.map((item, i) => (
+            <li class="card blocks__point" data-reveal>
+              {numbered && <span class="blocks__num">{twoDigit(i)}</span>}
+              <h3 class="t-h4" set:html={inline((item.lead ?? '').replace(/:$/, ''))} />
+              {item.text && <p set:html={inline(item.text)} />}
+            </li>
+          ))}
+        </ul>
+      )
+    if (group.kind === 'ticks')
+      return (
+        <div class="card blocks__ticks" data-reveal>
+          <ul class="ticks">{group.items.map((text) => <li><Icon name="check" /><span set:html={inline(text)} /></li>)}</ul>
+        </div>
+      )
+    if (group.kind === 'price')
+      return (
+        <div class="card surface-deep blocks__price" data-reveal>
+          <p class="tag">Price</p>
+          <p class="blocks__price-text" set:html={inline(group.text)} />
+          <div class="actions"><Btn href={links.book} variant="secondary">{hero.secondary}</Btn></div>
+        </div>
+      )
+    return (
+      <ul class="blocks__proof">
+        {group.items.map((item) => (
+          <li class="card blocks__result" data-reveal>
+            <p class="tag">Past client</p>
+            <p class="blocks__result-text">{item.text}</p>
+            {item.quote && <blockquote><p>"{item.quote.text}"</p><footer>{item.quote.who}</footer></blockquote>}
+          </li>
+        ))}
+      </ul>
+    )
+  })}
+</div>
+
+<style>
+  .blocks { display: grid; gap: var(--space-8); }
+  .blocks__prose { max-width: var(--measure); }
+  .blocks__prose :global(strong) { color: var(--surface-fg); font-weight: var(--weight-strong); }
+  .blocks__points { display: grid; gap: var(--grid-gap); }
+  .blocks__point { display: flex; flex-direction: column; gap: var(--space-2); }
+  .blocks__point p { font-size: var(--text-body); line-height: 1.55; color: var(--surface-muted); }
+  .blocks__num { font-size: var(--text-sm); letter-spacing: 0.06em; font-variant-numeric: tabular-nums; color: var(--color-brand); margin-bottom: var(--space-4); }
+  .blocks__ticks { padding-block: var(--space-2); }
+  .blocks__ticks .ticks li span { color: var(--surface-fg); }
+  .blocks__price { display: grid; gap: var(--space-5); justify-items: start; }
+  .blocks__price-text { font-size: var(--text-body-lg); line-height: 1.55; color: var(--surface-fg); max-width: 52ch; }
+  .blocks__price-text :global(.link) { color: var(--color-accent); }
+  .blocks__proof { display: grid; gap: var(--grid-gap); }
+  .blocks__result { display: grid; gap: var(--space-4); align-content: start; }
+  .blocks__result .tag { justify-self: start; }
+  .blocks__result-text { font-size: var(--text-h4); line-height: 1.45; color: var(--surface-fg); letter-spacing: -0.01em; }
+  .blocks__result blockquote { padding-top: var(--space-4); border-top: 1px solid var(--surface-line); }
+  .blocks__result blockquote p { font-style: italic; color: var(--surface-body); }
+  .blocks__result footer { margin-top: var(--space-2); font-size: var(--text-sm); font-weight: var(--weight-strong); color: var(--surface-fg); }
+  @media (min-width: 641px) {
+    .grid-points-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-points-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .blocks__proof { grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+  }
+</style>

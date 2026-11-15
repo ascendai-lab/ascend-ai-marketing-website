@@ -5,14 +5,15 @@ import HomeProblem from './HomeProblem.astro'
 import HomeResults from './HomeResults.astro'
 import HomeReviews from './HomeReviews.astro'
 import HomeAbout from './HomeAbout.astro'
-import HomeSteps from './HomeSteps.astro'
 import HomeIncluded from './HomeIncluded.astro'
-import HomeSuccess from './HomeSuccess.astro'
 import HomePricing from './HomePricing.astro'
 import HomeServices from './HomeServices.astro'
-import HomeNationwide from './HomeNationwide.astro'
-import HomeFaq from './HomeFaq.astro'
-import HomeFinal from './HomeFinal.astro'
+import StepsSection from '@components/sections/StepsSection.astro'
+import StorySection from '@components/sections/StorySection.astro'
+import NationwideSection from '@components/sections/NationwideSection.astro'
+import FaqSection from '@components/sections/FaqSection.astro'
+import QuizSection from '@components/sections/QuizSection.astro'
+import { steps, success, nationwide, faq, finalCta } from '@/content/home'
 ---
 
 <HomeHero />
@@ -20,11 +21,11 @@ import HomeFinal from './HomeFinal.astro'
 <HomeResults />
 <HomeReviews />
 <HomeAbout />
-<HomeSteps />
+<StepsSection anchorId="steps" heading={steps.heading} note={steps.note} items={steps.items} />
 <HomeIncluded />
-<HomeSuccess />
+<StorySection heading={success.heading} body={success.body} close={success.close} />
 <HomePricing />
 <HomeServices />
-<HomeNationwide />
-<HomeFaq />
-<HomeFinal />
+<NationwideSection heading={nationwide.heading} body={[nationwide.body]} />
+<FaqSection heading={faq.heading} items={faq.items} />
+<QuizSection heading={finalCta.heading} />

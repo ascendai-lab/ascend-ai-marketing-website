@@ -1,0 +1,25 @@
+---
+/** The shared layout for every other service section: eyebrow and heading on the left (sticky on desktop), the content on the right. */
+import Section from '@components/ui/Section.astro'
+import ServiceBlocks from './ServiceBlocks.astro'
+import type { ServiceSectionCopy } from '@/content/services'
+
+interface Props {
+  section: ServiceSectionCopy
+  eyebrow: string
+  surface: 'cream' | 'white'
+}
+
+const { section, eyebrow, surface } = Astro.props
+const numbered = /how it works|how .* (works|runs)/i.test(section.label + ' ' + section.heading)
+---
+
+<Section surface={surface}>
+  <div class="columns">
+    <div class="columns__aside" data-reveal>
+      <p class="eyebrow">{eyebrow}</p>
+      <h2 class="t-h2">{section.heading}</h2>
+    </div>
+    <ServiceBlocks blocks={section.blocks} numbered={numbered} />
+  </div>
+</Section>

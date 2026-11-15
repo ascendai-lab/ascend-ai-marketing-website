@@ -92,6 +92,7 @@
     --font-round: "ROND" 20;
 
     --text-display: clamp(2.5rem, 1.55rem + 3.8vw, 4.375rem);   /* 40 → 70 */
+    --text-display-sm: clamp(2.25rem, 1.6rem + 2.6vw, 3.75rem); /* 36 → 60: longer headlines (service pages) */
     --text-h2: clamp(2rem, 1.45rem + 2.1vw, 3.25rem);           /* 32 → 52 */
     --text-h3: clamp(1.375rem, 1.2rem + 0.6vw, 1.625rem);        /* 22 → 26 */
     --text-question: clamp(1.3125rem, 1.15rem + 0.6vw, 1.5rem);  /* 21 → 24: quiz */
@@ -308,10 +309,14 @@
     .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   }
   .split { display: grid; gap: var(--space-12); align-items: center; }
+  /* `.columns` is the same two-column layout for long content: its pieces reveal one by one ([data-reveal]), not as whole columns. */
+  .columns { display: grid; gap: var(--space-10); align-items: start; }
   @media (min-width: 1101px) {
     .split { grid-template-columns: 5fr 6fr; gap: var(--space-20); }
     .split--wide-left { grid-template-columns: 6fr 5fr; }
     .split--top { align-items: start; }
+    .columns { grid-template-columns: 5fr 7fr; gap: var(--space-16); }
+    .columns__aside { position: sticky; top: calc(var(--header-h) + var(--space-8)); }
   }
 }
 
@@ -575,6 +580,14 @@
   .motion .hero__top > :first-child > * { animation: rise var(--dur-reveal) var(--ease-reveal) both; }
   .motion .hero__top > :first-child > :nth-child(2) { animation-delay: 80ms; }
   .motion .hero__side { animation: rise var(--dur-reveal) var(--ease-reveal) 220ms both; }
+  /* Service hero: breadcrumb, eyebrow, headline, copy and buttons rise one after another, then the photo and its notes. */
+  .motion .svc-hero__copy > * { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(var(--n, 0) * 80ms); }
+  .motion .svc-hero__copy > :nth-child(2) { --n: 1; }
+  .motion .svc-hero__copy > :nth-child(3) { --n: 2; }
+  .motion .svc-hero__copy > :nth-child(4) { --n: 3; }
+  .motion .svc-hero__copy > :nth-child(5) { --n: 4; }
+  .motion .svc-hero__photo { animation: rise var(--dur-reveal) var(--ease-reveal) 240ms both; }
+  .motion .svc-hero__notes li { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(620ms + var(--i, 0) * 120ms); }
   .motion .hero__trust li { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(700ms + var(--i, 0) * 80ms); }
   /* The slide's contents move, not the slide itself, so scroll snapping can't fight the slide-in. */
   .motion .hero .slide > * { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(320ms + var(--i, 0) * 90ms); }

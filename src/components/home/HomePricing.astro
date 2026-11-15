@@ -3,6 +3,7 @@ import Section from '@components/ui/Section.astro'
 import SectionHead from '@components/ui/SectionHead.astro'
 import Btn from '@components/ui/Btn.astro'
 import Icon from '@components/ui/Icon.astro'
+import OwnNote from '@components/ui/OwnNote.astro'
 import { pricing, links, hero } from '@/content/home'
 ---
 
@@ -27,7 +28,7 @@ import { pricing, links, hero } from '@/content/home'
     </div>
   </div>
 
-  <p class="plan__own"><Icon name="key" /><span><strong>{pricing.own.lead}</strong> {pricing.own.text}</span></p>
+  <OwnNote lead={pricing.own.lead} text={pricing.own.text} class="plan__own" />
 </Section>
 
 <style>
@@ -40,9 +41,7 @@ import { pricing, links, hero } from '@/content/home'
   .plan__term { font-size: var(--text-body-lg); color: var(--surface-muted); margin-bottom: var(--space-10); }
   .plan__incl { margin: 0.625rem; border-radius: var(--radius-lg); }
   .plan__incl .t-h4 { margin-bottom: var(--space-3); }
-  .plan__own { display: flex; gap: var(--space-4); align-items: flex-start; max-width: 58rem; margin: var(--space-8) auto 0; font-size: var(--text-body); color: var(--surface-muted); }
-  .plan__own :global(.icon) { width: var(--icon-size); height: var(--icon-size); color: var(--color-brand); margin-top: 0.2rem; }
-  .plan__own strong { color: var(--surface-fg); }
+  :global(.own.plan__own) { margin: var(--space-8) auto 0; }
   @media (min-width: 1101px) {
     .plan { grid-template-columns: 1.1fr 1fr; }
     .plan__incl { padding: var(--space-10); }

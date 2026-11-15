@@ -1,29 +1,40 @@
 ---
+/** FAQ: heading and the two calls to action on the left, an accordion (one open at a time) on the right. Adds FAQPage JSON-LD. */
 import Section from '@components/ui/Section.astro'
 import Btn from '@components/ui/Btn.astro'
 import Icon from '@components/ui/Icon.astro'
-import { faq, links, hero } from '@/content/home'
+import { faq as homeFaq, links, hero } from '@/content/home'
+
+interface Props {
+  eyebrow?: string
+  heading: string
+  body?: string
+  items: { q: string; a: string }[]
+  anchorId?: string
+}
+
+const { eyebrow = homeFaq.eyebrow, heading, body = homeFaq.body, items, anchorId = 'faq' } = Astro.props
 
 const faqJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: faq.items.map((item) => ({ '@type': 'Question', name: item.q, acceptedAnswer: { '@type': 'Answer', text: item.a } })),
+  mainEntity: items.map((item) => ({ '@type': 'Question', name: item.q, acceptedAnswer: { '@type': 'Answer', text: item.a } })),
 }
 ---
 
-<Section surface="cream" anchorId="faq">
+<Section surface="cream" anchorId={anchorId}>
   <div class="split split--top">
     <div>
-      <p class="eyebrow">{faq.eyebrow}</p>
-      <h2 class="t-h2">{faq.heading}</h2>
-      <p class="body-lg faq__body">{faq.body}</p>
+      <p class="eyebrow">{eyebrow}</p>
+      <h2 class="t-h2">{heading}</h2>
+      {body && <p class="body-lg faq__body">{body}</p>}
       <div class="actions faq__actions">
         <Btn href={links.quiz} icon="arrow">{hero.primary}</Btn>
         <Btn href={links.book} variant="secondary">{hero.secondary}</Btn>
       </div>
     </div>
     <div class="accordion" data-one-open>
-      {faq.items.map((item, i) => (
+      {items.map((item, i) => (
         <details open={i === 0}>
           <summary>{item.q}<span class="plus"><Icon name="plus" /></span></summary>
           <p>{item.a}</p>

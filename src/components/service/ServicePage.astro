@@ -1,0 +1,87 @@
+---
+/**
+ * The one template every service page uses. It reads the page's approved copy (src/content/services.ts)
+ * and draws each section by its role. Light sections alternate cream and white; proof, stakes and the quiz sit on green.
+ */
+import ServiceHero from './ServiceHero.astro'
+import ServiceProblem from './ServiceProblem.astro'
+import ServiceAbout from './ServiceAbout.astro'
+import ServiceDetail from './ServiceDetail.astro'
+import ServiceStakes from './ServiceStakes.astro'
+import StepsSection from '@components/sections/StepsSection.astro'
+import StorySection from '@components/sections/StorySection.astro'
+import NationwideSection from '@components/sections/NationwideSection.astro'
+import FaqSection from '@components/sections/FaqSection.astro'
+import QuizSection from '@components/sections/QuizSection.astro'
+import type { IconName } from '@components/ui/Icon.astro'
+import { lookFor, roleOf, splitStep, type Role, type ServiceCopy, type ServiceSectionCopy } from '@/content/services'
+
+interface Props {
+  page: ServiceCopy
+}
+
+const { page } = Astro.props
+const look = lookFor(page.category)
+
+const paragraphs = (s: ServiceSectionCopy) => s.blocks.flatMap((b) => (b.type === 'p' ? [b.lead ? `${b.lead} ${b.text}` : b.text] : []))
+const stepIcons: IconName[] = ['check', 'cal', 'zap']
+
+/** Eyebrows come from the copy's section labels, with a few renamed to read well on the page. */
+function eyebrowFor(section: ServiceSectionCopy, role: Role) {
+  const label = section.label
+  if (role === 'life') return /^life/i.test(label) ? 'What changes' : label
+  if (/^(pricing|price)$/i.test(label)) return 'Pricing'
+  if (/^what('s included| (you get|care includes|we set up|we do|we build))/i.test(label)) return 'What you get'
+  return label
+}
+
+const fixedSurface: Partial<Record<Role, 'cream' | 'white'>> = { problem: 'cream', about: 'white', faq: 'cream', nationwide: 'white' }
+let lastLight: 'cream' | 'white' = 'white'
+const sections = page.sections.map((section, index) => {
+  const role = roleOf(page.sections, index)
+  let surface: 'cream' | 'white' | 'dark' = role === 'steps' || role === 'stakes' ? 'dark' : (fixedSurface[role] ?? (lastLight === 'cream' ? 'white' : 'cream'))
+  // The section before "Serving HVAC shops nationwide" (white) is always the green stakes band, so no two whites meet.
+  if (surface !== 'dark') lastLight = surface
+  return { section, role, surface, eyebrow: eyebrowFor(section, role) }
+})
+
+const teardown = page.closing.teardown
+const teardownFirst = teardown ? teardown.text.split(/(?<=\.)\s/)[0] : undefined
+const teardownRest = teardown && teardownFirst ? teardown.text.slice(teardownFirst.length).trim() : undefined
+---
+
+<ServiceHero page={page} look={look} />
+{
+  sections.map(({ section, role, surface, eyebrow }) => {
+    const light = surface === 'dark' ? 'cream' : surface
+    switch (role) {
+      case 'problem':
+        return <ServiceProblem section={section} />
+      case 'about':
+        return <ServiceAbout section={section} />
+      case 'steps': {
+        const list = section.blocks.find((b) => b.type === 'ol')
+        const items = list?.type === 'ol' ? list.items.map((item, i) => ({ icon: stepIcons[i] ?? 'check', ...splitStep(item.text) })) : []
+        return <StepsSection eyebrow="Getting started" heading={section.heading} note={paragraphs(section)[0]} items={items} />
+      }
+      case 'life':
+        return <StorySection eyebrow={eyebrow} heading={section.heading} body={paragraphs(section)} photo={look.photo} surface={light} />
+      case 'stakes':
+        return <ServiceStakes section={section} />
+      case 'nationwide':
+        return <NationwideSection heading={section.heading} body={paragraphs(section)} surface={light} />
+      case 'faq': {
+        const faq = section.blocks.find((b) => b.type === 'faq')
+        return <FaqSection heading={section.heading} items={faq && faq.type === 'faq' ? faq.items : []} />
+      }
+      default:
+        return <ServiceDetail section={section} eyebrow={eyebrow} surface={light} />
+    }
+  })
+}
+<QuizSection
+  heading={page.closing.heading}
+  body={page.closing.body || undefined}
+  teardown={teardown && teardownFirst ? `${teardown.lead} ${teardownFirst}` : undefined}
+  teardownNote={teardownRest || undefined}
+/>
