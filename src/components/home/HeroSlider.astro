@@ -98,7 +98,7 @@ import { slides, inbox } from '@/content/home'
         // Critically damped spring (semi-implicit Euler).
         v += (-omega * omega * (x - to) - 2 * omega * v) * dt
         x += v * dt
-        if (Math.abs(x - to) < 0.5 && Math.abs(v) < 20) {
+        if (Math.abs(x - to) < 1 && Math.abs(v) < 60) {
           track.scrollLeft = to
           raf = 0
           target = null
