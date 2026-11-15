@@ -133,7 +133,7 @@ import { consent, PRIVACY_PATH } from '@/content/legal'
       root.querySelectorAll('.quiz__bar li').forEach((li, i) => { li.className = i < step ? 'done' : i === step ? 'now' : '' })
       root.querySelector('.quiz__count')!.textContent = step < 5 ? `Question ${step + 1} of 5` : 'Last step'
       root.querySelector<HTMLElement>('.quiz__back')!.hidden = step === 0
-      if (!first) animateHeight(root, from, root.offsetHeight)
+      if (!first) animateHeight(root, from, root.getBoundingClientRect().height)
       first = false
     }
     // Moves keyboard focus to the step on screen, so it never drops to the page when a button hides.

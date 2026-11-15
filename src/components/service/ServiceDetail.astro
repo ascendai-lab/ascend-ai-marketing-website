@@ -21,6 +21,6 @@ const numbered = /how it works|how .* (works|runs)/i.test(section.label + ' ' + 
       <p class="eyebrow">{eyebrow}</p>
       <h2 class="t-h2">{section.heading}</h2>
     </div>
-    <div data-reveal><ServiceBlocks blocks={section.blocks} numbered={numbered} /></div>
+    <div><ServiceBlocks blocks={section.blocks} numbered={numbered} /></div>
   </div>
 </Section>

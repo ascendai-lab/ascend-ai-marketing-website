@@ -99,17 +99,17 @@ for (const [i, block] of blocks.entries()) {
 
 <div class="blocks">
   {groups.map((group) => {
-    if (group.kind === 'prose') return <div class="blocks__prose" data-reveal>{group.items.map((text) => <p class="body-lg" set:html={inline(text)} />)}</div>
+    if (group.kind === 'prose') return <div class="blocks__prose">{group.items.map((text) => <p class="body-lg" set:html={inline(text)} />)}</div>
     if (group.kind === 'own') return <OwnNote text={group.text} />
     if (group.kind === 'bold') return <p class="lead strong blocks__bold" set:html={inline(group.text)} />
-    if (group.kind === 'note') return <p class="card blocks__note" data-reveal set:html={inline(group.text)} />
+    if (group.kind === 'note') return <p class="card blocks__note" set:html={inline(group.text)} />
     if (group.kind === 'label') return <h3 class="t-h4 blocks__label">{group.text.replace(/:$/, '')}</h3>
     if (group.kind === 'cta') return <div class="actions"><Btn href={group.href} icon="arrow" variant={quizLike(group.text) ? 'primary' : 'secondary'}>{group.text}</Btn></div>
     if (group.kind === 'pricing')
       return <p class="blocks__pricing">{group.text} <a class="link" href={group.link.href || links.plan}>{group.link.text}</a></p>
     if (group.kind === 'links')
       return (
-        <ul class:list={['blocks__links', group.items.length === 3 && 'blocks__links--stack']} data-reveal>
+        <ul class:list={['blocks__links', group.items.length === 3 && 'blocks__links--stack']}>
           {[...group.items].sort((a, b) => Number(Boolean(b.href)) - Number(Boolean(a.href))).map((item) => (
             <li class:list={['card blocks__link', item.href ? 'blocks__link--go' : 'blocks__link--plain']}>
               <h3 class="t-h4">{item.href ? <a href={item.href}>{item.title}</a> : item.title}</h3>
@@ -121,7 +121,7 @@ for (const [i, block] of blocks.entries()) {
       )
     if (group.kind === 'points')
       return (
-        <ul class:list={['blocks__points', group.items.length === 3 ? 'grid-points-1' : group.items.length > 2 && group.items.length !== 4 ? 'grid-points-3' : 'grid-points-2']} data-reveal>
+        <ul class:list={['blocks__points', group.items.length === 3 ? 'grid-points-1' : group.items.length > 2 && group.items.length !== 4 ? 'grid-points-3' : 'grid-points-2']}>
           {group.items.map((item, i) => (
             <li class="card blocks__point">
               {numbered && <span class="blocks__num">{twoDigit(i)}</span>}
@@ -133,20 +133,20 @@ for (const [i, block] of blocks.entries()) {
       )
     if (group.kind === 'ticks')
       return (
-        <div class="card blocks__ticks" data-reveal>
+        <div class="card blocks__ticks">
           <ul class="ticks">{group.items.map((text) => <li>{group.plain ? <span class="blocks__dot" aria-hidden="true" /> : <Icon name="check" />}<span set:html={inline(text)} /></li>)}</ul>
         </div>
       )
     if (group.kind === 'price')
       return (
-        <div class="card surface-deep blocks__price" data-reveal>
+        <div class="card surface-deep blocks__price">
           <p class="tag">Price</p>
           <p class="blocks__price-text" set:html={inline(group.text)} />
           <div class="actions"><Btn href={links.quiz} icon="arrow">{hero.primary}</Btn><Btn href={links.book} variant="secondary">{hero.secondary}</Btn></div>
         </div>
       )
     return (
-      <ul class="blocks__proof" data-reveal>
+      <ul class="blocks__proof">
         {group.items.map((item) => (
           <li class="card blocks__result">
             <p class="tag">Past client</p>

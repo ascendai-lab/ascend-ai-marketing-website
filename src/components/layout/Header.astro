@@ -304,9 +304,10 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
     padding: var(--space-5) var(--container-padding-x) var(--space-10);
     visibility: hidden; clip-path: inset(0 0 100% 0);
     /* Closing: a quicker, even ease, so it doesn't rush off in the first frames. */
-    transition: clip-path 300ms var(--ease-height), visibility 0s linear 300ms;
+    transition: clip-path 400ms var(--ease-height), visibility 0s linear 400ms;
   }
-  .site-nav.is-open { visibility: visible; clip-path: inset(0 0 0 0); transition: clip-path var(--dur-menu) var(--ease-out), visibility 0s; }
+  .site-nav.is-open { visibility: visible; clip-path: inset(0 0 0 0); transition: clip-path 400ms var(--ease-height), visibility 0s; }
+  /* Open and close share one curve, so reopening mid-close turns around smoothly instead of jumping. */
   .site-nav__item, .site-nav__cta { opacity: 0; transform: translateY(-14px); transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out); }
   .site-nav.is-open .site-nav__item, .site-nav.is-open .site-nav__cta { opacity: 1; transform: none; transition: opacity 300ms var(--ease-out), transform 300ms var(--ease-out); transition-delay: calc(60ms + var(--i, 0) * 25ms); }
   :global(html.menu-open body) { overflow: hidden; }

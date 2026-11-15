@@ -25,7 +25,7 @@ const body = close && !bold ? paragraphs.slice(0, -1) : paragraphs
         <h2 class="t-h2">{section.heading}</h2>
       </div>
     </div>
-    <div class="problem__body" data-reveal>
+    <div class="problem__body">
       {body.map((p) => <p class="body-lg">{p}</p>)}
       {close && <p class="lead strong problem__close">{close}</p>}
       <div class="problem__panel"><MissedCallsPanel /></div>

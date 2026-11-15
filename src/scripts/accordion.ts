@@ -47,12 +47,16 @@ function setOpen(details: HTMLDetailsElement, open: boolean) {
   animation.onfinish = done
 }
 
-function holdInPlace(el: HTMLElement, top: number) {
-  const until = performance.now() + motionTiming().duration * 1.8
+function holdInPlace(el: HTMLElement, top: number, group: HTMLElement) {
+  // Holds until every item in the group has stopped moving (a reversal can run longer than one duration).
+  const start = performance.now()
+  const limit = motionTiming().duration * 4
+  const moving = () => [...group.querySelectorAll<HTMLElement>(':scope > details')].some((d) => d.getAnimations().length > 0)
   const step = () => {
     const shift = el.getBoundingClientRect().top - top
     if (Math.abs(shift) >= 0.5) window.scrollBy(0, shift)
-    if (performance.now() < until) requestAnimationFrame(step)
+    const elapsed = performance.now() - start
+    if (elapsed < 50 || (moving() && elapsed < limit)) requestAnimationFrame(step)
   }
   requestAnimationFrame(step)
 }
@@ -75,7 +79,7 @@ document.querySelectorAll<HTMLElement>('.accordion').forEach((group) => {
       }
       setOpen(details, open)
       // An item closing above would pull the clicked question up and out from under the pointer: keep it in place.
-      if (closedAbove && !reduce) holdInPlace(summary, top)
+      if (closedAbove && !reduce) holdInPlace(summary, top, group)
     })
   })
 })

@@ -32,7 +32,7 @@ const tel = phone?.replace(/[^\d+]/g, '')
       <p class="eyebrow">{section.label}</p>
       <h2 class="t-h2">{section.heading}</h2>
     </div>
-    <div class="cal__side" data-reveal>
+    <div class="cal__side">
       {fields['Tip line'] && (
         <p class="card cal__tip"><Icon name="zap" /><span>{fields['Tip line']} <a class="link" href={links.quiz}>{hero.primary}</a></span></p>
       )}
@@ -47,7 +47,7 @@ const tel = phone?.replace(/[^\d+]/g, '')
         </div>
       )}
     </div>
-    <div class="cal__form" data-reveal><BookingCalendar id="book-calendar" /></div>
+    <div class="cal__form"><BookingCalendar id="book-calendar" /></div>
   </div>
 </Section>
 

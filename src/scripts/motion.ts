@@ -5,8 +5,9 @@
 const root = document.documentElement
 // Keep in step with the matching list under "Entrance" in global.css, which hides these before they arrive.
 const SELECTOR = [
-  '.section .section-head', '.section .split > :not(script)', '.section .grid-2', '.section .grid-3',
-  '.section .grid-4', '.section .plan', '[data-reveal]',
+  // Sparing on purpose: section headings and rows of cards slide in, plus a few blocks marked [data-reveal].
+  // Body copy, forms and photos are simply there.
+  '.section .section-head', '.section .grid-3', '.section .grid-4', '[data-reveal]',
 ].join(', ')
 
 if (root.classList.contains('motion')) {
@@ -52,9 +53,11 @@ if (root.classList.contains('motion')) {
       .map((entry) => ({ el: entry.target as HTMLElement, box: entry.boundingClientRect }))
       .sort((a, b) => Math.round(a.box.top - b.box.top) || a.box.left - b.box.left)
     const gap = arriving.length > 1 ? Math.min(step, maxStagger / (arriving.length - 1)) : 0
-    arriving.forEach(({ el }, i) => {
+    // Items already well inside the screen (a fast flick, a jump) arrive at once instead of waiting their turn.
+    const inside = window.innerHeight * 0.75
+    arriving.forEach(({ el, box }, i) => {
       reveal.unobserve(el)
-      const delay = Math.round(i * gap)
+      const delay = box.top < inside ? 0 : Math.round(i * gap)
       el.style.setProperty('--reveal-delay', `${delay}ms`)
       el.classList.add('is-in')
       // Numbers inside start counting as their card arrives.

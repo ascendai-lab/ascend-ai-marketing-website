@@ -54,7 +54,7 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
         <p class="lead results__meaning">{copy.meaning}</p>
         <p class="body-lg results__picture">{copy.picture}</p>
       </div>
-      <div class="card results-mark" data-reveal>
+      <div class="card results-mark">
         <figure class="media results-mark__photo"><img src={about.photo.src} alt={about.photo.alt} width="800" height="800" loading="lazy" /></figure>
         <div class="results-mark__copy">
           {copy.video.url && <VideoButton url={copy.video.url} label={copy.video.title} title={copy.video.title} fallbackHref="#calendar" fallbackLabel={copy.book} />}
@@ -72,8 +72,8 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
         <p class="eyebrow">Book your call</p>
         <h2 class="t-h2">{copy.calendarHeading}</h2>
       </div>
-      <div class="results-book__cal" data-reveal><BookingCalendar id="results-calendar" /></div>
-      <div class="results-plan" data-reveal>
+      <div class="results-book__cal"><BookingCalendar id="results-calendar" /></div>
+      <div class="results-plan">
         <div data-filled hidden><PlanBox heading={copy.plan.heading} steps={copy.plan.steps} after={copy.plan.after} /></div>
         <div data-empty><PlanBox heading={copy.plan.heading} steps={copy.plan.steps.map((step) => step.replace(/\s*\(Done\.\)$/, ''))} after={copy.plan.after} /></div>
         <p class="results__pricing">{copy.pricing.text} <a class="link" href={links.plan}>{copy.pricing.link}</a></p>
