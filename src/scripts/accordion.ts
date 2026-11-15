@@ -23,13 +23,16 @@ function setOpen(details: HTMLDetailsElement, open: boolean) {
   // The answer fades with the height, starting from wherever it is now, so a quick reversal never blinks.
   const timing = motionTiming()
   ;[...details.children].filter((el) => el !== summary).forEach((el) => {
-    const current = Number(getComputedStyle(el).opacity)
+    const style = getComputedStyle(el)
+    const current = Number(style.opacity)
+    const shift = style.translate === 'none' ? '0 0' : style.translate.includes(' ') ? style.translate : `${style.translate} 0`
     el.getAnimations().forEach((a) => a.cancel())
     const start = wasMoving ? current : open ? 0 : 1
+    const from = wasMoving ? shift : open ? '0 -8px' : '0 0'
     el.animate(
       open
-        ? [{ opacity: start, translate: `0 ${(1 - start) * -8}px` }, { opacity: 1, translate: '0 0' }]
-        : [{ opacity: start }, { opacity: 0 }],
+        ? [{ opacity: start, translate: from }, { opacity: 1, translate: '0 0' }]
+        : [{ opacity: start, translate: from }, { opacity: 0, translate: '0 -8px' }],
       { ...timing, duration: open ? timing.duration : timing.duration * 0.6, fill: 'forwards' },
     )
   })

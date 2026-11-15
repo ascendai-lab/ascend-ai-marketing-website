@@ -206,7 +206,7 @@ const isCurrent = (href: string | undefined) => href !== undefined && (href.repl
     .site-nav__item, .site-nav__cta { opacity: 1; transform: none; }
     .site-nav__list { display: flex; gap: 2px; padding: 5px; border-radius: var(--radius-full); background: var(--color-control-inverse); }
     .site-nav__list > .site-nav__item + .site-nav__item { border-top: 0; }
-    .site-nav__item > a, .site-nav__item summary, .site-nav__item > span { padding: 0.5625rem 1.125rem; border-radius: var(--radius-full); font-size: var(--text-sm); letter-spacing: 0; color: var(--surface-body); }
+    .site-nav__item > a, .site-nav__item summary, .site-nav__item > span { padding: 0.5625rem 1.125rem; border-radius: var(--radius-full); font-size: var(--text-sm); letter-spacing: 0; color: var(--surface-body); transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); }
     .site-nav__item > a:hover { color: var(--surface-fg); background: var(--color-control-inverse); }
     .site-nav__item > a[aria-current='page'] { background: var(--color-white); color: var(--color-text); }
     .site-nav__dropdown { position: relative; }

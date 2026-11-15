@@ -576,6 +576,7 @@
   .motion .hero__top > :first-child > * { animation: rise var(--dur-reveal) var(--ease-reveal) both; }
   .motion .hero__top > :first-child > :nth-child(2) { animation-delay: 80ms; }
   .motion .hero__side { animation: rise var(--dur-reveal) var(--ease-reveal) 220ms both; }
+  .motion .hero__trust li { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(700ms + var(--i, 0) * 80ms); }
   /* The slide's contents move, not the slide itself, so scroll snapping can't fight the slide-in. */
   .motion .hero .slide > * { animation: slide-in var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(320ms + var(--i, 0) * 90ms); }
 
@@ -585,7 +586,7 @@
   .btn:active { transform: translateY(0) scale(0.98); }
   .btn .icon, .link .icon { transition: transform var(--dur-base) var(--ease-out); }
   .btn:hover .icon, .link:hover .icon { transform: translateX(3px); }
-  .link { transition: text-decoration-thickness var(--dur-fast) var(--ease-out); }
+  .link { transition: text-decoration-thickness var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); }
 
   .card { transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
   .card .icon-chip { transition: transform var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease-out); }

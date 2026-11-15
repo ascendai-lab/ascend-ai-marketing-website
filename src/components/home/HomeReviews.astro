@@ -48,7 +48,7 @@ import { reviews, reviewSummary, links } from '@/content/home'
       const open = button.getAttribute('aria-expanded') !== 'true'
       // Start from where it is right now, even mid-animation.
       const from = text.getBoundingClientRect().height
-      text.getAnimations().forEach((a) => a.cancel())
+      text.getAnimations().forEach((a) => { if (!(a instanceof CSSTransition)) a.cancel() })
       // Measure the other state, then animate to it. Closing keeps the text open until it has slid shut.
       text.classList.toggle('is-open', open)
       const to = text.offsetHeight
@@ -86,7 +86,7 @@ import { reviews, reviewSummary, links } from '@/content/home'
   .review__text.is-open { max-height: none; }
   .review__text.is-short { max-height: none; -webkit-mask-image: none; mask-image: none; }
   /* The shared .link text style (underlined, no background), just smaller and quieter. */
-  .review__more { align-self: flex-start; margin-top: calc(var(--space-5) * -1 + var(--space-1)); padding: 0; border: 0; background: none; cursor: pointer; font-family: inherit; font-size: var(--text-sm); color: var(--surface-muted); }
+  .review__more { align-self: flex-start; margin-top: calc(var(--space-5) * -1 + var(--space-1)); padding: 0; border: 0; background: none; cursor: pointer; font-family: inherit; font-size: var(--text-sm); color: var(--surface-muted); transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out); }
   .review__more[hidden] { display: none; }
   .review__more:hover { color: var(--surface-fg); }
   .review__who { margin-top: auto; padding-top: var(--space-5); border-top: 1px solid var(--surface-line); font-size: var(--text-sm); color: var(--surface-muted); display: grid; gap: var(--space-1); }
