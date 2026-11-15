@@ -75,15 +75,18 @@ import { slides, inbox } from '@/content/home'
       prev.setAttribute('aria-label', atStart() ? 'Go to the last slide' : 'Previous slide')
     }
     // Wrapping around fades the track out, jumps, and fades back in, instead of racing back across every slide.
+    let wrapping = false
     const wrapTo = (left: number) => {
       if (reduce) { track.scrollTo({ left }); return }
+      wrapping = true
       const fade = { duration: 220, easing: 'ease-out' }
       track.animate([{ opacity: 1 }, { opacity: 0 }], { ...fade, fill: 'forwards' }).finished.then((out) => {
         track.scrollTo({ left, behavior: 'auto' })
-        track.animate([{ opacity: 0 }, { opacity: 1 }], fade).finished.then(() => out.cancel())
+        track.animate([{ opacity: 0 }, { opacity: 1 }], fade).finished.then(() => { out.cancel(); wrapping = false })
       })
     }
     const go = (dir: number) => {
+      if (wrapping) return
       if (dir > 0 && atEnd()) wrapTo(0)
       else if (dir < 0 && atStart()) wrapTo(track.scrollWidth)
       else track.scrollBy({ left: dir * step(), behavior })

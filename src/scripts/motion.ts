@@ -14,6 +14,9 @@ if (root.classList.contains('motion')) {
   const ms = (name: string, fallback: number) => parseFloat(css.getPropertyValue(name)) || fallback
   const step = ms('--reveal-step', 110)
   const settle = ms('--dur-reveal', 1000) + 200
+  // Hidden items sit this far below their place, so the observer looks the same distance below
+  // the screen: an item starts the moment its real top edge comes into view.
+  const shift = (parseFloat(css.getPropertyValue('--reveal-shift')) || 2.5) * (parseFloat(css.fontSize) || 16)
 
   // Big numbers count up once: "$750,000+" runs from $0 to $750,000.
   const countUp = (el: HTMLElement) => {
@@ -59,7 +62,7 @@ if (root.classList.contains('motion')) {
       // Once it has landed, hand transitions back to the element's own hover effects.
       window.setTimeout(() => el.classList.add('is-done'), delay + settle)
     })
-  }, { rootMargin: '0px 0px -6% 0px', threshold: 0 })
+  }, { rootMargin: `0px 0px ${shift}px 0px`, threshold: 0 })
   const targets = [...document.querySelectorAll<HTMLElement>(SELECTOR)]
   targets.forEach((el) => reveal.observe(el))
 

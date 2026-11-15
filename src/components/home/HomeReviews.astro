@@ -19,7 +19,7 @@ import { reviews, reviewSummary, links } from '@/content/home'
               {[0, 1, 2, 3, 4].map(() => <Icon name="star" fill />)}
             </p>
             <div class="review__text" id={`review-${i}`}><p>{review.text}</p></div>
-            <button type="button" class="link review__more" aria-controls={`review-${i}`} aria-expanded="false" hidden>Show more</button>
+            <button type="button" class="link review__more" aria-controls={`review-${i}`} aria-expanded="false">Show more</button>
             <p class="review__who"><strong>{review.name}</strong><span>{review.detail}</span></p>
           </li>
         ))}
@@ -46,7 +46,9 @@ import { reviews, reviewSummary, links } from '@/content/home'
     document.fonts?.ready.then(check)
     button.addEventListener('click', () => {
       const open = button.getAttribute('aria-expanded') !== 'true'
-      const from = text.offsetHeight
+      // Start from where it is right now, even mid-animation.
+      const from = text.getBoundingClientRect().height
+      text.getAnimations().forEach((a) => a.cancel())
       // Measure the other state, then animate to it. Closing keeps the text open until it has slid shut.
       text.classList.toggle('is-open', open)
       const to = text.offsetHeight
@@ -55,7 +57,7 @@ import { reviews, reviewSummary, links } from '@/content/home'
       button.textContent = open ? 'Show less' : 'Show more'
       const animation = animateHeight(text, from, to)
       if (!open) {
-        if (animation) animation.addEventListener('finish', () => text.classList.remove('is-open'))
+        if (animation) animation.addEventListener('finish', () => { if (button.getAttribute('aria-expanded') !== 'true') text.classList.remove('is-open') })
         else text.classList.remove('is-open')
       }
     })

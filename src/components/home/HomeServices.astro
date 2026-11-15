@@ -47,14 +47,18 @@ import { services, links, hero } from '@/content/home'
   .services__actions { margin-top: var(--stack-actions); }
   .services__list { gap: var(--space-2); }
   .services__list details { border-radius: var(--radius-lg); }
-  .services__list details[open] { background: var(--color-white); color: var(--color-text); }
+  /* Colours change together with the open and close, never in a single frame. */
+  .services__list details, .services__list summary, .services__num, .services__list .icon-chip, .services__list .plus {
+    transition: background-color var(--dur-accordion) var(--ease-reveal), color var(--dur-accordion) var(--ease-reveal), transform var(--dur-base) var(--ease-out);
+  }
+  .services__list details[open]:not(.is-closing) { background: var(--color-white); color: var(--color-text); }
   .services__list summary { gap: var(--space-4); justify-content: flex-start; padding: var(--space-5) var(--space-6); }
   .services__num { font-size: var(--text-sm); color: var(--surface-muted); font-variant-numeric: tabular-nums; width: 1.5rem; flex: none; }
   .services__name { flex: 1; font-size: var(--text-h3); font-weight: var(--weight-heading); letter-spacing: var(--tracking-snug); line-height: 1.2; }
   .services__list .plus { background: var(--color-control-inverse); color: var(--color-white); }
-  .services__list details[open] .services__num { color: var(--color-text-muted); }
-  .services__list details[open] .icon-chip { background: var(--color-brand-deep); color: var(--color-white); }
-  .services__list details[open] .plus { background: var(--color-brand-deep); color: var(--color-white); }
+  .services__list details[open]:not(.is-closing) .services__num { color: var(--color-text-muted); }
+  .services__list details[open]:not(.is-closing) .icon-chip { background: var(--color-brand-deep); color: var(--color-white); }
+  .services__list details[open]:not(.is-closing) .plus { background: var(--color-brand-deep); color: var(--color-white); }
   .services__list .services__body { display: grid; gap: var(--space-4); justify-items: start; padding: 0 var(--space-6) var(--space-6) calc(var(--space-6) + 1.5rem + var(--space-4) + var(--icon-chip) + var(--space-4)); max-width: none; color: var(--color-text-muted); }
   .services__body p { font-size: var(--text-body-lg); color: var(--color-text-muted); }
   .services__body :global(.link) { color: var(--color-brand); }

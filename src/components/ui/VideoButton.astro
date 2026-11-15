@@ -58,11 +58,27 @@ const src = embed ? `${embed}${embed.includes('?') ? '&' : '?'}autoplay=1&rel=0&
       if (closing || !dialog.open) return
       if (reduce) { dialog.close(); return }
       closing = true
+      // Start from wherever the opening fade is, so a quick close never jumps.
+      const opacity = getComputedStyle(dialog).opacity
+      const backdrop = getComputedStyle(dialog, '::backdrop').opacity
+      dialog.getAnimations({ subtree: true }).forEach((a) => a.cancel())
       dialog.classList.add('is-closing')
-      dialog.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(0.96)' }], { duration: 220, easing: 'ease-in' })
-        .finished.then(() => { dialog.close(); dialog.classList.remove('is-closing'); closing = false })
+      const fade = { duration: 220, easing: 'ease-in', fill: 'forwards' as const }
+      try {
+        dialog.animate([{ opacity: backdrop }, { opacity: 0 }], { ...fade, pseudoElement: '::backdrop' })
+      } catch {
+        // Older browsers can't animate the backdrop; it simply goes with the dialog.
+      }
+      dialog.animate([{ opacity, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(0.96)' }], fade)
+        .finished.then(() => {
+          dialog.close()
+          dialog.getAnimations({ subtree: true }).forEach((a) => a.cancel())
+          dialog.classList.remove('is-closing')
+          closing = false
+        })
     }
-    // Escape uses the same fade.
+    // Escape uses the same fade (handled on keydown, so a second quick Escape can't skip it).
+    dialog.addEventListener('keydown', (event) => { if (event.key === 'Escape') { event.preventDefault(); close() } })
     dialog.addEventListener('cancel', (event) => { event.preventDefault(); close() })
     root.querySelector('[data-video-open]')?.addEventListener('click', () => {
       if (frame?.dataset.src) frame.src = frame.dataset.src
@@ -94,7 +110,7 @@ const src = embed ? `${embed}${embed.includes('?') ? '&' : '?'}autoplay=1&rel=0&
   .video-modal { margin: auto; inset: 0; max-height: none; width: min(64rem, calc(100vw - 2 * var(--container-padding-x))); max-width: none; padding: var(--space-16) 0 0; border: 0; background: transparent; overflow: visible; }
   .video-modal::backdrop { background: var(--color-overlay); }
   .video-modal[open]::backdrop { animation: backdrop-in var(--dur-base) var(--ease-out); }
-  .video-modal.is-closing::backdrop { opacity: 0; transition: opacity 220ms ease-in; }
+  .video-modal.is-closing, .video-modal.is-closing::backdrop { animation: none; }
   @keyframes backdrop-in { from { opacity: 0; } }
   .video-modal[open] { animation: video-in var(--dur-base) var(--ease-out); }
   @keyframes video-in { from { opacity: 0; transform: scale(0.96); } }

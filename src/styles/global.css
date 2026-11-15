@@ -195,6 +195,7 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   html {
+    scrollbar-gutter: stable; /* the page doesn't shift sideways when the menu or a pop-up locks scrolling */
     scroll-padding-top: calc(var(--header-h) + var(--space-6)); /* anchor links land below the sticky header */
     font-family: var(--font-body);
     font-variation-settings: var(--font-round);
@@ -555,24 +556,27 @@
    so the page never stays blank without JavaScript or with reduced motion. */
 @layer components {
   .motion :is(.section .section-head, .section .split > :not(.accordion, script), .section .grid-2 > *, .section .grid-3 > *, .section .grid-4 > *, .section .plan, .section .plan__own, .section .accordion > details, [data-reveal]):not(.is-in) {
-    opacity: 0; transform: translateY(var(--reveal-shift));
+    opacity: 0; translate: 0 var(--reveal-shift);
   }
+  /* The entrance uses the separate `translate` property, so hover moves (which use `transform`)
+     never restart or hold it up. While an item arrives it keeps its own hover and colour changes. */
   .motion .is-in:not(.is-done) {
-    transition: opacity var(--dur-reveal-fade) var(--ease-reveal), transform var(--dur-reveal) var(--ease-reveal);
-    transition-delay: var(--reveal-delay, 0ms);
-  }
-  /* Accordion rows keep their colour change while they arrive. */
-  .motion .accordion > details.is-in:not(.is-done) {
-    transition: opacity var(--dur-reveal-fade) var(--ease-reveal) var(--reveal-delay, 0ms), transform var(--dur-reveal) var(--ease-reveal) var(--reveal-delay, 0ms), background-color var(--dur-base) var(--ease-out);
+    transition:
+      opacity var(--dur-reveal-fade) var(--ease-reveal) var(--reveal-delay, 0ms),
+      translate var(--dur-reveal) var(--ease-reveal) var(--reveal-delay, 0ms),
+      transform var(--dur-base) var(--ease-out),
+      background-color var(--dur-base) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out);
   }
 
   /* Hero: the headline, copy and slider arrive in sequence on load. */
-  @keyframes rise { from { opacity: 0; transform: translateY(var(--reveal-shift)); } }
-  @keyframes slide-in { from { opacity: 0; transform: translateX(3rem); } }
+  @keyframes rise { from { opacity: 0; translate: 0 var(--reveal-shift); } 70% { opacity: 1; } }
+  @keyframes slide-in { from { opacity: 0; translate: 3rem 0; } 70% { opacity: 1; } }
   .motion .hero__top > :first-child > * { animation: rise var(--dur-reveal) var(--ease-reveal) both; }
   .motion .hero__top > :first-child > :nth-child(2) { animation-delay: 80ms; }
   .motion .hero__side { animation: rise var(--dur-reveal) var(--ease-reveal) 220ms both; }
-  .motion .hero .slide { animation: slide-in var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(320ms + var(--i, 0) * 90ms); }
+  /* The slide's contents move, not the slide itself, so scroll snapping can't fight the slide-in. */
+  .motion .hero .slide > * { animation: slide-in var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(320ms + var(--i, 0) * 90ms); }
   .motion .hero__trust li { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(600ms + var(--i, 0) * 80ms); }
 
   /* Micro interactions */
@@ -593,14 +597,14 @@
   .accordion details[open] summary:hover .plus { transform: rotate(45deg) scale(1.08); }
   /* While an item animates closed it is still [open]; turn its plus back straight away. */
   .accordion details.is-closing .plus { transform: none; background: var(--color-bg); color: inherit; }
-  .accordion details.is-closing > :not(summary) { opacity: 0; transition: opacity var(--dur-fast) var(--ease-out); }
+  .accordion details.is-closing > :not(summary) { opacity: 0; transition: opacity var(--dur-base) var(--ease-reveal); }
   .accordion details { transition: background-color var(--dur-base) var(--ease-out); }
   @keyframes open-in { from { opacity: 0; transform: translateY(-0.5rem); } }
   .motion .accordion details[open]:not(.is-closing) > :not(summary) { animation: open-in var(--dur-accordion) var(--ease-out); }
 
   .media img { transition: transform 1.2s var(--ease-out), opacity var(--dur-reveal-fade) var(--ease-reveal); }
   /* Photos that are still downloading fade in when they arrive, instead of popping in. */
-  .motion .media img.is-loading { opacity: 0; }
+  .motion .media img.is-loading { opacity: 0; transition: none; }
   .media:hover img { transform: scale(1.04); }
 
   .site-header { transition: box-shadow var(--dur-base) var(--ease-out); }
