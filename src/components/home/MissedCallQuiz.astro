@@ -173,7 +173,7 @@ import { consent, PRIVACY_PATH } from '@/content/legal'
         input.setAttribute('aria-invalid', bad ? 'true' : 'false')
         const error = document.getElementById(`${input.id}-error`)
         const label = input.closest('label')?.querySelector('span')?.textContent?.trim().toLowerCase()
-        if (error) error.textContent = !bad ? '' : input.type === 'email' && !empty ? 'Please enter a valid email.' : label ? `Enter your ${label}.` : 'Please fill this in.'
+        if (error) error.textContent = !bad ? '' : input.type === 'email' && !empty ? 'Enter a valid email, like you@yourshop.com.' : label ? `Enter your ${label}.` : 'Please fill this in.'
         if (bad && ok) { input.focus(); ok = false }
       })
       if (!ok) return
@@ -261,7 +261,7 @@ import { consent, PRIVACY_PATH } from '@/content/legal'
   .quiz :global(.quiz__q:focus) { outline: none; }
   .quiz :global(.quiz__option[aria-pressed='true']) { background: var(--color-brand-deep); color: var(--color-white); border-color: var(--color-brand-deep); }
   .quiz :global(.quiz__key) { flex: none; width: 1.625rem; height: 1.625rem; border-radius: var(--radius-full); display: grid; place-items: center; font-size: var(--text-2xs); font-weight: var(--weight-strong); background: var(--color-white); color: var(--color-green-900); }
-  .quiz :global(.quiz__back) { margin-top: var(--space-4); min-height: 44px; background: none; border: 0; font-size: var(--text-sm); text-decoration: underline; text-underline-offset: 3px; color: var(--color-text-muted); }
+  .quiz :global(.quiz__back) { margin-top: var(--space-4); min-height: 44px; min-width: 44px; padding-inline: var(--space-3); margin-left: calc(var(--space-3) * -1); background: none; border: 0; font-size: var(--text-sm); text-decoration: underline; text-underline-offset: 3px; color: var(--color-text-muted); }
   .quiz :global(.quiz__ready) { font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-2); }
   .quiz :global(.quiz__fields) { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); align-items: start; margin-bottom: var(--space-5); }
   .quiz :global(.field) { display: grid; gap: var(--space-2); font-size: var(--text-sm); font-weight: var(--weight-medium); }

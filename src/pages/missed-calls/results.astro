@@ -20,7 +20,7 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
 ---
 
 <BaseLayout layout={layout} title="Your missed call results | Ascend AI Marketing" description="Your estimate of what missed calls may cost your shop each month, your call handling score and 3 fixes, from Ascend AI Marketing." seo={{ noIndex: true }}>
-  <section class="results-hero surface-deep" data-results data-key={RESULT_KEY} data-grades={JSON.stringify(GRADES)}>
+  <section class="results-hero surface-deep" data-results data-quiz={links.quiz} data-quiz-label={hero.primary} data-key={RESULT_KEY} data-grades={JSON.stringify(GRADES)}>
     <div class="container">
       <!-- Shown until the result loads, and to anyone who opens the page without taking the quiz. -->
       <div class="results-empty" data-empty>
@@ -89,7 +89,17 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
   const root = document.querySelector<HTMLElement>('[data-results]')
   let result: QuizResult | null = null
   try { result = JSON.parse(sessionStorage.getItem(root?.dataset.key ?? '') ?? 'null') } catch { result = null }
-  if (!(root && result?.first && result.range)) document.querySelectorAll<HTMLElement>('[data-filled]').forEach((el) => el.remove())
+  if (!(root && result?.first && result.range)) {
+    document.querySelectorAll<HTMLElement>('[data-filled]').forEach((el) => el.remove())
+    // No result yet: the quiz comes first, so the header and footer buttons offer it instead of the call.
+    document.querySelectorAll<HTMLAnchorElement>(':is(.site-header, .site-footer) a[href="#calendar"]').forEach((a) => {
+      a.href = root?.dataset.quiz ?? '/missed-calls'
+      const walker = document.createTreeWalker(a, NodeFilter.SHOW_TEXT)
+      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+        if (/book/i.test(node.textContent ?? '')) { node.textContent = a.classList.contains('site-header__quick') ? 'Take the quiz' : (root?.dataset.quizLabel ?? 'Take the quiz'); break }
+      }
+    })
+  }
   if (root && result?.first && result.range) {
     const grades = JSON.parse(root.dataset.grades ?? '{}') as Record<string, string>
     const set = (sel: string, text: string) => { const el = root.querySelector(sel); if (el) el.textContent = text }
@@ -152,5 +162,5 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
   .results__pricing { font-size: var(--text-body); color: var(--surface-muted); }
   .results-plan :global(.link) { justify-self: start; }
   @media (min-width: 960px) { .results-grid { grid-template-columns: 7fr 5fr; gap: var(--space-16); } }
-  @media (max-width: 640px) { .results-mark { grid-template-columns: 1fr; } .results-mark__photo { max-width: 9rem; } }
+  @media (max-width: 640px) { .results-mark { grid-template-columns: 6rem 1fr; gap: var(--space-4); align-items: start; } }
 </style>

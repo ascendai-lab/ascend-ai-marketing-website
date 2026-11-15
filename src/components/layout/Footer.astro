@@ -153,7 +153,7 @@ import { PRIVACY_PATH } from '@/content/legal'
     .site-footer__services { grid-template-columns: repeat(5, minmax(0, 1fr)); }
   }
   /* Touch screens: every footer link is at least a 44px tap target. */
-  @media (pointer: coarse) {
+  @media (pointer: coarse), (max-width: 959px) {
     .site-footer :is(.site-footer__cols, .site-footer__services ul, .site-footer__bottom) a { display: flex; align-items: center; min-height: 44px; padding-block: 0; }
     .site-footer__services .site-footer__heading a { display: inline-flex; align-items: center; min-height: 44px; }
   }

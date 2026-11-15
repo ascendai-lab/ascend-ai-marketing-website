@@ -490,6 +490,7 @@
   .accordion details { background: var(--surface-card, var(--color-surface)); border-radius: var(--radius-md); }
   .accordion summary { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: var(--space-5); padding: var(--space-5) var(--space-6); font-size: var(--text-h4); font-weight: var(--weight-medium); letter-spacing: -0.01em; line-height: var(--leading-snug); cursor: pointer; }
   .accordion summary::-webkit-details-marker { display: none; }
+  .accordion summary:focus-visible { border-radius: var(--radius-md); }
   .accordion .plus { width: 2.125rem; height: 2.125rem; border-radius: var(--radius-full); background: var(--color-bg); display: grid; place-items: center; flex: none; }
   .accordion details[open] .plus { background: var(--color-brand-deep); color: var(--color-white); transform: rotate(45deg); }
   .accordion details > :not(summary) { padding: 0 var(--space-6) var(--space-6); font-size: var(--text-body); color: var(--surface-muted); max-width: 62ch; }

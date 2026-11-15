@@ -18,12 +18,12 @@ import { included, links, hero } from '@/content/home'
     ))}
     <li class="card surface-deep included__cta">
       <p class="lead">{included.cta}</p>
-      <Btn href={links.quiz} icon="arrow">{hero.primary}</Btn>
+      <Btn href={links.quiz} icon="arrow">{hero.primary.replace(/(\d)-(?=[a-z])/g, "$1\u2011")}</Btn>
     </li>
   </ul>
 </Section>
 
 <style>
   .included__cta { display: flex; flex-direction: column; justify-content: space-between; gap: var(--space-6); }
-  .included__cta :global(.btn) { align-self: flex-start; max-width: 100%; white-space: normal; text-align: left; height: auto; min-height: var(--control-h); }
+  .included__cta :global(.btn) { align-self: stretch; justify-content: space-between; max-width: 100%; white-space: normal; text-align: left; height: auto; min-height: var(--control-h); }
 </style>

@@ -39,5 +39,5 @@ const body = close && !bold ? paragraphs.slice(0, -1) : paragraphs
   .problem__close { margin-top: var(--space-4); font-weight: var(--weight-medium); max-width: 32ch; }
   .problem__aside { display: grid; gap: var(--space-10); }
   .problem__panel { margin-top: var(--space-6); }
-  .problem__panel :global(.missed) { justify-self: start; }
+  .problem__panel :global(.missed) { justify-self: stretch; max-width: none; }
 </style>
