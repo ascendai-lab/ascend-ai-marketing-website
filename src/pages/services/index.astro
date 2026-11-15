@@ -17,48 +17,46 @@ const [layout, services] = await Promise.all([
   loadQuery(draftMode, layoutQuery).catch(() => emptyLayout),
   loadQuery(draftMode, servicesIndexQuery).catch(() => []),
 ])
+// CMS services show first; the copy pages fill in every service the CMS doesn't have yet.
+const cmsSlugs = new Set(services.map((service) => service.slug))
+const groups = servicesByCategory.map(({ look, pages }) => ({ look, pages: pages.filter((page) => !cmsSlugs.has(page.slug)) })).filter((group) => group.pages.length)
 const seo = { metaTitle: `HVAC Marketing Services | ${brand.name}`, metaDescription: 'Websites, lead systems, local SEO, ads, AI agents and custom software for HVAC shops. Get any service on its own, or add it to your plan.' }
 ---
 
 <BaseLayout layout={layout} seo={seo}>
-  {
-    services.length ? (
-      <Section surface="cream">
-        <SectionHead heading="Our services" as="h1" />
-        <div class="grid-3">{services.map((service) => <ServiceCard service={service} />)}</div>
-      </Section>
-    ) : (
-      <>
-        <section class="svc-index-hero surface-deep">
-          <div class="container">
-            <p class="eyebrow">Services</p>
-            <h1 class="t-display">Everything your shop needs to <em>book more jobs.</em></h1>
-            <p class="svc-index-hero__sub">{hero.body}</p>
-            <div class="actions">
-              <Btn href={links.quiz} icon="arrow">{hero.primary}</Btn>
-              <Btn href={links.book} variant="secondary">{hero.secondary}</Btn>
-            </div>
-          </div>
-        </section>
-        {servicesByCategory.map(({ look, pages }, i) => (
-          <Section surface={i % 2 ? 'white' : 'cream'} anchorId={categoryId(look.name)}>
-            <SectionHead eyebrow={`${pages.length} services`} heading={look.name} />
-            <ul class="grid-3">
-              {pages.map((page) => (
-                <li class="card card--feature svc-card">
-                  <span class="icon-chip"><Icon name={look.icon} /></span>
-                  <h2 class="t-h4"><a href={serviceHref(page.slug)} class="svc-card__link">{page.title}</a></h2>
-                  <p>{page.short}</p>
-                  <span class="link svc-card__more" aria-hidden="true">Learn more<Icon name="arrow" /></span>
-                </li>
-              ))}
-            </ul>
-          </Section>
+  <section class="svc-index-hero surface-deep">
+    <div class="container">
+      <p class="eyebrow">Services</p>
+      <h1 class="t-display">Everything your shop needs to <em>book more jobs.</em></h1>
+      <p class="svc-index-hero__sub">{hero.body}</p>
+      <div class="actions">
+        <Btn href={links.quiz} icon="arrow">{hero.primary}</Btn>
+        <Btn href={links.book} variant="secondary">{hero.secondary}</Btn>
+      </div>
+    </div>
+  </section>
+  {services.length > 0 && (
+    <Section surface="white">
+      <SectionHead eyebrow="Featured" heading="Our services" />
+      <div class="grid-3">{services.map((service) => <ServiceCard service={service} />)}</div>
+    </Section>
+  )}
+  {groups.map(({ look, pages }, i) => (
+    <Section surface={i % 2 ? 'white' : 'cream'} anchorId={categoryId(look.name)}>
+      <SectionHead eyebrow={`${pages.length} services`} heading={look.name} />
+      <ul class="grid-3">
+        {pages.map((page) => (
+          <li class="card card--feature svc-card">
+            <span class="icon-chip"><Icon name={look.icon} /></span>
+            <h3 class="t-h4"><a href={serviceHref(page.slug)} class="svc-card__link">{page.title}</a></h3>
+            <p>{page.short}</p>
+            <span class="link svc-card__more" aria-hidden="true">Learn more<Icon name="arrow" /></span>
+          </li>
         ))}
-        <QuizSection heading={finalCta.heading} />
-      </>
-    )
-  }
+      </ul>
+    </Section>
+  ))}
+  <QuizSection heading={finalCta.heading} />
 </BaseLayout>
 
 <style>

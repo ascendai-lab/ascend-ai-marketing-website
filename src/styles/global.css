@@ -587,7 +587,7 @@
   .motion .svc-hero__copy > :nth-child(4) { --n: 3; }
   .motion .svc-hero__copy > :nth-child(5) { --n: 4; }
   .motion .svc-hero__photo { animation: rise var(--dur-reveal) var(--ease-reveal) 240ms both; }
-  .motion .svc-hero__notes li { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(620ms + var(--i, 0) * 120ms); }
+  .motion .svc-hero__notes li { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(900ms + var(--i, 0) * 120ms); }
   .motion .hero__trust li { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(700ms + var(--i, 0) * 80ms); }
   /* The slide's contents move, not the slide itself, so scroll snapping can't fight the slide-in. */
   .motion .hero .slide > * { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(320ms + var(--i, 0) * 90ms); }

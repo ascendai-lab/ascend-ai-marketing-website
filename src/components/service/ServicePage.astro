@@ -14,6 +14,7 @@ import NationwideSection from '@components/sections/NationwideSection.astro'
 import FaqSection from '@components/sections/FaqSection.astro'
 import QuizSection from '@components/sections/QuizSection.astro'
 import type { IconName } from '@components/ui/Icon.astro'
+import { inline } from '@/lib/inline'
 import { lookFor, roleOf, splitStep, type Role, type ServiceCopy, type ServiceSectionCopy } from '@/content/services'
 
 interface Props {
@@ -80,7 +81,7 @@ const teardownRest = teardown && teardownFirst ? teardown.text.slice(teardownFir
   })
 }
 <QuizSection
-  heading={page.closing.heading}
+  heading={inline(page.closing.heading)}
   body={page.closing.body || undefined}
   teardown={teardown && teardownFirst ? `${teardown.lead} ${teardownFirst}` : undefined}
   teardownNote={teardownRest || undefined}

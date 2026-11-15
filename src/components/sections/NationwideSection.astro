@@ -1,7 +1,7 @@
 ---
 /** "Serving HVAC shops nationwide": the copy on the left, three climate cards on the right. */
 import Section from '@components/ui/Section.astro'
-import Icon from '@components/ui/Icon.astro'
+import Icon, { type IconName } from '@components/ui/Icon.astro'
 import { nationwide } from '@/content/home'
 
 interface Props {
@@ -9,24 +9,36 @@ interface Props {
   heading: string
   body: string[]
   surface?: 'cream' | 'white'
+  /** Climate cards on the right. Without them, the copy sits on the right of the heading. */
+  climates?: { icon: IconName; title: string; text: string }[]
 }
 
-const { eyebrow = nationwide.eyebrow, heading, body, surface = 'white' } = Astro.props
+const { eyebrow = nationwide.eyebrow, heading, body, surface = 'white', climates } = Astro.props
 ---
 
 <Section surface={surface}>
-  <div class="split">
-    <div>
-      <p class="eyebrow">{eyebrow}</p>
-      <h2 class="t-h2">{heading}</h2>
-      <div class="nation__body">{body.map((p) => <p class="body-lg">{p}</p>)}</div>
+  {climates ? (
+    <div class="split">
+      <div>
+        <p class="eyebrow">{eyebrow}</p>
+        <h2 class="t-h2">{heading}</h2>
+        <div class="nation__body">{body.map((p) => <p class="body-lg">{p}</p>)}</div>
+      </div>
+      <ul class="nation__list">
+        {climates.map((c) => (
+          <li class="card card--row"><span class="icon-chip"><Icon name={c.icon} /></span><div><strong>{c.title}</strong><span>{c.text}</span></div></li>
+        ))}
+      </ul>
     </div>
-    <ul class="nation__list">
-      {nationwide.climates.map((c) => (
-        <li class="card card--row"><span class="icon-chip"><Icon name={c.icon} /></span><div><strong>{c.title}</strong><span>{c.text}</span></div></li>
-      ))}
-    </ul>
-  </div>
+  ) : (
+    <div class="split split--top">
+      <div>
+        <p class="eyebrow">{eyebrow}</p>
+        <h2 class="t-h2">{heading}</h2>
+      </div>
+      <div>{body.map((p) => <p class="body-lg">{p}</p>)}</div>
+    </div>
+  )}
 </Section>
 
 <style>

@@ -37,8 +37,10 @@ const push = (group: Group) => {
   else groups.push(group)
 }
 // A bold-led paragraph is a card only when it sits with others like it; a lone one stays in the prose with its lead in bold.
+// Only a lead that ends in ":" or "." is a title. "**Answers calls,** so homeowners…" is one sentence, so it stays together.
+const titled = (lead?: string) => !!lead && /[:.]$/.test(lead)
 const leadRun = (i: number) => {
-  const isLead = (b?: Block) => b?.type === 'p' && !!b.lead
+  const isLead = (b?: Block) => b?.type === 'p' && titled(b.lead)
   return isLead(blocks[i]) && (isLead(blocks[i - 1]) || isLead(blocks[i + 1]))
 }
 for (const [i, block] of blocks.entries()) {
@@ -48,7 +50,7 @@ for (const [i, block] of blocks.entries()) {
     else if (/^You own /.test(block.text)) groups.push({ kind: 'own', text: block.text })
     else push({ kind: 'prose', items: [block.text] })
   } else if (block.type === 'ul' || block.type === 'ol') {
-    if (block.items.every((item) => item.lead)) push({ kind: 'points', items: block.items })
+    if (block.items.every((item) => titled(item.lead))) push({ kind: 'points', items: block.items })
     else push({ kind: 'ticks', items: block.items.map((item) => (item.lead ? `**${item.lead}** ${item.text}` : item.text)) })
   } else if (block.type === 'price') groups.push({ kind: 'price', text: block.text })
   else if (block.type === 'result') push({ kind: 'proof', items: [{ text: block.text }] })
@@ -126,6 +128,7 @@ for (const [i, block] of blocks.entries()) {
   @media (min-width: 641px) {
     .grid-points-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .grid-points-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-points-3 > :last-child:nth-child(odd) { grid-column: 1 / -1; }
     .blocks__proof { grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
   }
 </style>

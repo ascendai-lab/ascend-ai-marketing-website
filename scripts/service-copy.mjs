@@ -101,6 +101,8 @@ function parsePage(chunk) {
       if (last?.type === 'faq' && last.items.at(-1).a === '') { last.items.at(-1).a = line; continue }
     }
 
+    if (/^\*\*[A-Z][^*]*:\*\*\s/.test(line) && !/faq|questions/i.test(section.label) && !boldLead(line).text) throw new Error(`Unknown field "${line}" in ${section.label}`)
+    if (last?.type === 'faq') throw new Error(`Extra FAQ text after an answer in ${section.label}: "${line}"`)
     section.blocks.push({ type: 'p', ...boldLead(line) })
   }
 
@@ -118,9 +120,21 @@ const pages = FILES.flatMap((file) =>
     .map((chunk) => ({ title: chunk.split('\n')[0].replace(/\s*\(\/services\/.*\)\s*$/, '').trim(), ...parsePage(chunk) })),
 )
 
+// The fixed sections (problem, about, stakes, story, nationwide) show plain paragraphs only; about may add results and quotes.
+// Fail loudly if the copy ever gives them something they would drop.
+const plainOnly = (s, allowed = ['p']) => s.blocks.every((b) => allowed.includes(b.type) && !(b.type === 'p' && b.lead))
 for (const page of pages) {
   if (!page.slug || !page.hero.headline || !page.closing.heading) throw new Error(`Incomplete page: ${page.title}`)
-  for (const s of page.sections) if (!s.heading) throw new Error(`Section without a heading: ${page.title} / ${s.label}`)
+  page.sections.forEach((s, i) => {
+    if (!s.heading) throw new Error(`Section without a heading: ${page.title} / ${s.label}`)
+    const next = page.sections[i + 1]
+    const fixed = i === 0 || /cost of waiting|why it matters|nationwide/i.test(s.label) || (next && /cost of waiting|why it matters/i.test(next.label))
+    if (fixed && !plainOnly(s)) throw new Error(`"${s.label}" on ${page.title} has content the template would drop`)
+    if (i === 1 && !plainOnly(s, ['p', 'result', 'quote'])) throw new Error(`"${s.label}" on ${page.title} has content the template would drop`)
+    s.blocks.forEach((b, j) => {
+      if (b.type === 'quote' && s.blocks[j - 1]?.type !== 'result') throw new Error(`A quote on ${page.title} / ${s.label} doesn't follow a client result`)
+    })
+  })
 }
 
 writeFileSync(OUT, JSON.stringify(pages, null, 2) + '\n')
