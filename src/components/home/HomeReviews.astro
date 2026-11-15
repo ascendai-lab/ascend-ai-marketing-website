@@ -47,11 +47,17 @@ import { reviews, reviewSummary, links } from '@/content/home'
     button.addEventListener('click', () => {
       const open = button.getAttribute('aria-expanded') !== 'true'
       const from = text.offsetHeight
+      // Measure the other state, then animate to it. Closing keeps the text open until it has slid shut.
       text.classList.toggle('is-open', open)
       const to = text.offsetHeight
+      if (!open) text.classList.add('is-open')
       button.setAttribute('aria-expanded', String(open))
       button.textContent = open ? 'Show less' : 'Show more'
-      animateHeight(text, from, to)
+      const animation = animateHeight(text, from, to)
+      if (!open) {
+        if (animation) animation.addEventListener('finish', () => text.classList.remove('is-open'))
+        else text.classList.remove('is-open')
+      }
     })
   })
 </script>

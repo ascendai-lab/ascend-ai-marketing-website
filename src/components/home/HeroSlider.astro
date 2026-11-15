@@ -6,17 +6,17 @@ import { slides, inbox } from '@/content/home'
 <div class="slider" data-slider data-autoplay="3500">
   <ul class="slider__track" data-track aria-label="What the system does" tabindex="0">
     {
-      slides.map((slide) => (
-        <li class:list={['slide', `slide--${slide.kind}`]}>
+      slides.map((slide, i) => (
+        <li class:list={['slide', `slide--${slide.kind}`]} style={`--i: ${i}`}>
           {slide.kind === 'photo' && (
             <figure class="media slide__media">
-              <img src={slide.src} alt={slide.alt} width="1000" height="800" loading="lazy" />
+              <img src={slide.src} alt={slide.alt} width="1000" height="800" loading={i < 3 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : 'auto'} />
               {slide.caption && <figcaption class="slide__caption">{slide.caption}</figcaption>}
             </figure>
           )}
           {slide.kind === 'booked' && (
             <figure class="media slide__media">
-              <img src={slide.src} alt={slide.alt} width="1000" height="800" loading="lazy" />
+              <img src={slide.src} alt={slide.alt} width="1000" height="800" loading={i < 3 ? 'eager' : 'lazy'} />
               <div class="float-note slide__note">
                 <span class="icon-chip icon-chip--ui"><Icon name="cal" /></span>
                 <div><strong>New job booked</strong><span>On your calendar by lunch</span></div>
@@ -74,9 +74,18 @@ import { slides, inbox } from '@/content/home'
       next.setAttribute('aria-label', atEnd() ? 'Back to the first slide' : 'Next slide')
       prev.setAttribute('aria-label', atStart() ? 'Go to the last slide' : 'Previous slide')
     }
+    // Wrapping around fades the track out, jumps, and fades back in, instead of racing back across every slide.
+    const wrapTo = (left: number) => {
+      if (reduce) { track.scrollTo({ left }); return }
+      const fade = { duration: 220, easing: 'ease-out' }
+      track.animate([{ opacity: 1 }, { opacity: 0 }], { ...fade, fill: 'forwards' }).finished.then((out) => {
+        track.scrollTo({ left, behavior: 'auto' })
+        track.animate([{ opacity: 0 }, { opacity: 1 }], fade).finished.then(() => out.cancel())
+      })
+    }
     const go = (dir: number) => {
-      if (dir > 0 && atEnd()) track.scrollTo({ left: 0, behavior })
-      else if (dir < 0 && atStart()) track.scrollTo({ left: track.scrollWidth, behavior })
+      if (dir > 0 && atEnd()) wrapTo(0)
+      else if (dir < 0 && atStart()) wrapTo(track.scrollWidth)
       else track.scrollBy({ left: dir * step(), behavior })
     }
 

@@ -51,7 +51,19 @@ const src = embed ? `${embed}${embed.includes('?') ? '&' : '?'}autoplay=1&rel=0&
     const dialog = root.querySelector<HTMLDialogElement>('[data-video-dialog]')
     const frame = root.querySelector<HTMLIFrameElement>('iframe[data-src]')
     if (!dialog) return
-    const close = () => dialog.close()
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    let closing = false
+    // Closing fades the player and the dark backdrop out together, then closes the dialog.
+    const close = () => {
+      if (closing || !dialog.open) return
+      if (reduce) { dialog.close(); return }
+      closing = true
+      dialog.classList.add('is-closing')
+      dialog.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(0.96)' }], { duration: 220, easing: 'ease-in' })
+        .finished.then(() => { dialog.close(); dialog.classList.remove('is-closing'); closing = false })
+    }
+    // Escape uses the same fade.
+    dialog.addEventListener('cancel', (event) => { event.preventDefault(); close() })
     root.querySelector('[data-video-open]')?.addEventListener('click', () => {
       if (frame?.dataset.src) frame.src = frame.dataset.src
       dialog.showModal()
@@ -81,6 +93,9 @@ const src = embed ? `${embed}${embed.includes('?') ? '&' : '?'}autoplay=1&rel=0&
 
   .video-modal { margin: auto; inset: 0; max-height: none; width: min(64rem, calc(100vw - 2 * var(--container-padding-x))); max-width: none; padding: var(--space-16) 0 0; border: 0; background: transparent; overflow: visible; }
   .video-modal::backdrop { background: var(--color-overlay); }
+  .video-modal[open]::backdrop { animation: backdrop-in var(--dur-base) var(--ease-out); }
+  .video-modal.is-closing::backdrop { opacity: 0; transition: opacity 220ms ease-in; }
+  @keyframes backdrop-in { from { opacity: 0; } }
   .video-modal[open] { animation: video-in var(--dur-base) var(--ease-out); }
   @keyframes video-in { from { opacity: 0; transform: scale(0.96); } }
   .video-modal__inner { position: relative; }
@@ -95,5 +110,5 @@ const src = embed ? `${embed}${embed.includes('?') ? '&' : '?'}autoplay=1&rel=0&
   .video-modal__soon { box-shadow: var(--shadow-lg); border-radius: var(--radius-lg); padding: clamp(var(--space-8), 6vw, var(--space-16)); display: grid; gap: var(--space-4); justify-items: start; }
   .video-modal__soon .btn { margin-top: var(--space-4); }
   @media (max-width: 640px) { .video-btn { flex: 1 1 100%; } .video-btn__open { width: 100%; } }
-  @media (prefers-reduced-motion: reduce) { .video-modal[open] { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .video-modal[open], .video-modal[open]::backdrop { animation: none; } }
 </style>

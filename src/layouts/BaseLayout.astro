@@ -94,7 +94,9 @@ const structuredData = [businessJsonLd, ...jsonLd].filter(Boolean)
       // If the motion script never loads, show everything after 3 seconds.
       if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
         document.documentElement.classList.add('motion')
-        setTimeout(function () { if (!window.__motionReady) document.documentElement.classList.remove('motion') }, 3000)
+        document.addEventListener('DOMContentLoaded', function () {
+          setTimeout(function () { if (!window.__motionReady) document.documentElement.classList.remove('motion') }, 3000)
+        })
       }
     </script>
     <title>{pageTitle}</title>

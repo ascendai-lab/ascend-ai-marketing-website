@@ -17,6 +17,8 @@ import { links } from '@/content/home'
 </div>
 
 <script>
+  import { animateHeight } from '@/scripts/animate-height'
+
   const QUESTIONS = [
     { q: 'In a busy week, how many calls come in?', a: ['Under 20', '20 to 50', '50 to 100', 'Over 100'] },
     { q: "When you can't pick up, what happens?", a: ['It goes to voicemail', 'Someone in the office answers', 'An answering service takes it', 'Not sure'] },
@@ -96,12 +98,20 @@ import { links } from '@/content/home'
     html += '<button type="button" class="quiz__back" hidden>Back</button>'
     root.innerHTML = html
 
+    // Moving between steps: the panel eases to its new height while the new step slides up into place.
+    let first = true
     const show = (step: number) => {
       current = step
-      root.querySelectorAll<HTMLElement>('.quiz__step').forEach((el) => { el.hidden = Number(el.dataset.step) !== step })
+      const from = root.offsetHeight
+      root.querySelectorAll<HTMLElement>('.quiz__step').forEach((el) => {
+        el.hidden = Number(el.dataset.step) !== step
+        el.classList.toggle('is-entering', !el.hidden && !first)
+      })
       root.querySelectorAll('.quiz__bar li').forEach((li, i) => { li.className = i < step ? 'done' : i === step ? 'now' : '' })
       root.querySelector('.quiz__count')!.textContent = step < 5 ? `Question ${step + 1} of 5` : step === 5 ? 'Last step' : 'Your results'
       root.querySelector<HTMLElement>('.quiz__back')!.hidden = step === 0 || step === 6
+      if (!first) animateHeight(root, from, root.offsetHeight)
+      first = false
     }
     // Moves keyboard focus to the step on screen, so it never drops to the page when a button hides.
     const focusStep = (step: number) => {
@@ -231,4 +241,8 @@ import { links } from '@/content/home'
   .quiz :global(.quiz__fixes li::before) { content: counter(fx); width: 1.375rem; height: 1.375rem; border-radius: var(--radius-full); display: grid; place-items: center; font-size: var(--text-2xs); font-weight: var(--weight-strong); background: var(--color-brand); color: var(--color-white); margin-top: 1px; }
   .quiz :global(.quiz__fixes strong) { color: var(--color-text); font-weight: var(--weight-strong); }
   @media (max-width: 640px) { .quiz :global(:is(.quiz__options, .quiz__fields)) { grid-template-columns: 1fr; } }
+  @keyframes quiz-step-in { from { opacity: 0; transform: translateY(var(--space-2)); } }
+  .quiz :global(.quiz__step.is-entering) { animation: quiz-step-in var(--dur-accordion) var(--ease-reveal); }
+  .quiz :global(.quiz__bar li) { transition: background-color var(--dur-base) var(--ease-out); }
+  @media (prefers-reduced-motion: reduce) { .quiz :global(.quiz__step.is-entering) { animation: none; } }
 </style>

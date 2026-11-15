@@ -15,61 +15,74 @@ if (root.classList.contains('motion')) {
   const step = ms('--reveal-step', 110)
   const settle = ms('--dur-reveal', 1000) + 200
 
-  // Items slide up as soon as their top edge comes into view. Items that arrive in the
-  // same moment (a row of cards) follow each other in reading order; nothing waits on
-  // an item that is still off screen.
+  // Big numbers count up once: "$750,000+" runs from $0 to $750,000.
+  const countUp = (el: HTMLElement) => {
+    const match = el.textContent?.match(/^(\D*)([\d,]+)(.*)$/)
+    if (!match || el.dataset.counted) return
+    el.dataset.counted = 'true'
+    const [, prefix, digits, suffix] = match
+    // Screen readers get the final number once, not every step of the count.
+    const final = document.createElement('span')
+    final.className = 'sr-only'
+    final.textContent = el.textContent ?? ''
+    el.setAttribute('aria-hidden', 'true')
+    el.after(final)
+    const target = Number(digits.replace(/,/g, ''))
+    const start = performance.now()
+    const duration = 1400
+    const tick = (now: number) => {
+      const t = Math.min((now - start) / duration, 1)
+      const eased = 1 - Math.pow(1 - t, 3)
+      el.textContent = `${prefix}${Math.round(target * eased).toLocaleString('en-US')}${suffix}`
+      if (t < 1) requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
+  }
+
+  // Items slide up as soon as their top edge comes into view. Items that arrive together
+  // follow each other in reading order. A big batch (after a jump down the page) shares the
+  // same short window, so nothing on screen waits long or lands in a clump at the end.
+  const maxStagger = step * 4
   const reveal = new IntersectionObserver((entries) => {
     const arriving = entries
       .filter((entry) => entry.isIntersecting)
-      .map((entry) => entry.target as HTMLElement)
-      .sort((a, b) => {
-        const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect()
-        return Math.round(ra.top - rb.top) || ra.left - rb.left
-      })
-    arriving.forEach((el, i) => {
+      .map((entry) => ({ el: entry.target as HTMLElement, box: entry.boundingClientRect }))
+      .sort((a, b) => Math.round(a.box.top - b.box.top) || a.box.left - b.box.left)
+    const gap = arriving.length > 1 ? Math.min(step, maxStagger / (arriving.length - 1)) : 0
+    arriving.forEach(({ el }, i) => {
       reveal.unobserve(el)
-      const delay = Math.min(i, 4) * step
+      const delay = Math.round(i * gap)
       el.style.setProperty('--reveal-delay', `${delay}ms`)
       el.classList.add('is-in')
+      // Numbers inside start counting as their card arrives.
+      el.querySelectorAll<HTMLElement>('[data-count]').forEach((n) => window.setTimeout(() => countUp(n), delay))
       // Once it has landed, hand transitions back to the element's own hover effects.
       window.setTimeout(() => el.classList.add('is-done'), delay + settle)
     })
   }, { rootMargin: '0px 0px -6% 0px', threshold: 0 })
-  document.querySelectorAll<HTMLElement>(SELECTOR).forEach((el) => reveal.observe(el))
+  const targets = [...document.querySelectorAll<HTMLElement>(SELECTOR)]
+  targets.forEach((el) => reveal.observe(el))
 
-  // Hero slides and trust items get their index for the load sequence.
-  document.querySelectorAll<HTMLElement>('.hero .slide, .hero__trust li').forEach((el) => {
-    el.style.setProperty('--i', String([...(el.parentElement?.children ?? [])].indexOf(el)))
-  })
-
-  // Big numbers count up the first time they are seen: "$750,000+" runs from $0 to $750,000.
+  // Numbers that aren't inside a sliding item count up when they come into view.
   const counters = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return
       counters.unobserve(entry.target)
-      const el = entry.target as HTMLElement
-      const match = el.textContent?.match(/^(\D*)([\d,]+)(.*)$/)
-      if (!match) return
-      const [, prefix, digits, suffix] = match
-      // Screen readers get the final number once, not every step of the count.
-      const final = document.createElement('span')
-      final.className = 'sr-only'
-      final.textContent = el.textContent ?? ''
-      el.setAttribute('aria-hidden', 'true')
-      el.after(final)
-      const target = Number(digits.replace(/,/g, ''))
-      const start = performance.now()
-      const duration = 1400
-      const tick = (now: number) => {
-        const t = Math.min((now - start) / duration, 1)
-        const eased = 1 - Math.pow(1 - t, 3)
-        el.textContent = `${prefix}${Math.round(target * eased).toLocaleString('en-US')}${suffix}`
-        if (t < 1) requestAnimationFrame(tick)
-      }
-      requestAnimationFrame(tick)
+      countUp(entry.target as HTMLElement)
     })
   }, { threshold: 0.6 })
-  document.querySelectorAll<HTMLElement>('[data-count]').forEach((el) => counters.observe(el))
+  document.querySelectorAll<HTMLElement>('[data-count]').forEach((el) => {
+    if (!targets.some((t) => t.contains(el))) counters.observe(el)
+  })
+
+  // Photos still downloading fade in once they arrive.
+  document.querySelectorAll<HTMLImageElement>('.media img').forEach((img) => {
+    if (img.complete) return
+    img.classList.add('is-loading')
+    const done = () => img.classList.remove('is-loading')
+    img.addEventListener('load', done, { once: true })
+    img.addEventListener('error', done, { once: true })
+  })
 }
 
 // The sticky header gets a soft shadow once the page scrolls.

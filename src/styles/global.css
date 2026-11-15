@@ -170,7 +170,7 @@
     --dur-reveal: 1000ms;
     --dur-reveal-fade: 700ms;  /* the fade finishes before the slide, so nothing looks ghosted */
     --dur-menu: 500ms;
-    --dur-accordion: 420ms;
+    --dur-accordion: 480ms;
     --reveal-shift: 2.5rem;
     --reveal-step: 110ms;
 
@@ -561,6 +561,10 @@
     transition: opacity var(--dur-reveal-fade) var(--ease-reveal), transform var(--dur-reveal) var(--ease-reveal);
     transition-delay: var(--reveal-delay, 0ms);
   }
+  /* Accordion rows keep their colour change while they arrive. */
+  .motion .accordion > details.is-in:not(.is-done) {
+    transition: opacity var(--dur-reveal-fade) var(--ease-reveal) var(--reveal-delay, 0ms), transform var(--dur-reveal) var(--ease-reveal) var(--reveal-delay, 0ms), background-color var(--dur-base) var(--ease-out);
+  }
 
   /* Hero: the headline, copy and slider arrive in sequence on load. */
   @keyframes rise { from { opacity: 0; transform: translateY(var(--reveal-shift)); } }
@@ -594,7 +598,9 @@
   @keyframes open-in { from { opacity: 0; transform: translateY(-0.5rem); } }
   .motion .accordion details[open]:not(.is-closing) > :not(summary) { animation: open-in var(--dur-accordion) var(--ease-out); }
 
-  .media img { transition: transform 1.2s var(--ease-out); }
+  .media img { transition: transform 1.2s var(--ease-out), opacity var(--dur-reveal-fade) var(--ease-reveal); }
+  /* Photos that are still downloading fade in when they arrive, instead of popping in. */
+  .motion .media img.is-loading { opacity: 0; }
   .media:hover img { transform: scale(1.04); }
 
   .site-header { transition: box-shadow var(--dur-base) var(--ease-out); }
