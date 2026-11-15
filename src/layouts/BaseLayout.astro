@@ -228,6 +228,21 @@ const structuredData = [businessJsonLd, ...jsonLd].filter(Boolean)
           if (tag && !url.searchParams.has('interest')) url.searchParams.set('interest', tag)
           a.setAttribute('href', url.pathname + url.search + url.hash)
         })
+        // A jump to the quiz or the calendar takes focus along, so keyboard and screen-reader users land in it.
+        // From the keyboard, focus goes to the first thing to fill in; after a tap, to the section itself,
+        // so a phone's keyboard doesn't pop up unasked.
+        document.addEventListener('click', function (event) {
+          var a = event.target.closest && event.target.closest('a[href="#calendar"], a[href="#quiz"]')
+          if (!a) return
+          var target = document.getElementById(a.getAttribute('href').slice(1))
+          if (!target) return
+          setTimeout(function () {
+            var field = event.detail === 0 && target.querySelector('.quiz__step:not([hidden]) :is([aria-pressed="true"], .quiz__option, input), input:not([type="hidden"]):not([tabindex="-1"]), select, textarea, iframe')
+            var el = field || target
+            if (!field && !el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1')
+            el.focus({ preventScroll: true })
+          }, 0)
+        })
       })()
     </script>
 

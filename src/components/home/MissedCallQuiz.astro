@@ -172,7 +172,8 @@ import { consent, PRIVACY_PATH } from '@/content/legal'
         const bad = empty || (input.type === 'email' && !/^\S+@\S+\.\S+$/.test(input.value))
         input.setAttribute('aria-invalid', bad ? 'true' : 'false')
         const error = document.getElementById(`${input.id}-error`)
-        if (error) error.textContent = !bad ? '' : input.type === 'email' && !empty ? 'Please enter a valid email.' : 'Please fill this in.'
+        const label = input.closest('label')?.querySelector('span')?.textContent?.trim().toLowerCase()
+        if (error) error.textContent = !bad ? '' : input.type === 'email' && !empty ? 'Please enter a valid email.' : label ? `Enter your ${label}.` : 'Please fill this in.'
         if (bad && ok) { input.focus(); ok = false }
       })
       if (!ok) return

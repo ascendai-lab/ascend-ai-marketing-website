@@ -126,5 +126,11 @@ const hasAside = tool
     .svc-hero { padding-top: var(--space-8); }
     .svc-hero__notes li:nth-child(n) { margin-left: 0; }
     .hero__trust { flex-direction: column; justify-content: flex-start; }
+    /* With a tool on a phone (the quiz, a form), it starts higher, so all its options show without a scroll.
+       The breadcrumb and the hero note give way; the tool repeats the note. */
+    .svc-hero--tool { padding-top: var(--space-5); }
+    .svc-hero--tool .svc-hero__crumbs, .svc-hero--tool .svc-hero__note { display: none; }
+    .svc-hero--tool .svc-hero__grid { gap: var(--space-6); }
+    .svc-hero--tool .svc-hero__sub { margin-bottom: 0; }
   }
 </style>

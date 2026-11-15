@@ -63,7 +63,8 @@ const types: Record<FieldName, { type: 'text' | 'url' | 'email' | 'tel'; auto: s
         const bad = empty || (value !== '' && input.type === 'email' && !/^\S+@\S+\.\S+$/.test(value)) || (value !== '' && input.type === 'url' && !/\S+\.\S+/.test(value))
         input.setAttribute('aria-invalid', bad ? 'true' : 'false')
         const error = document.getElementById(`${input.id}-error`)
-        if (error) error.textContent = !bad ? '' : empty ? 'Please fill this in.' : input.type === 'email' ? 'Please enter a valid email.' : 'Please enter your website address.'
+        const label = input.closest('label')?.querySelector('span')?.textContent?.replace(/\s*\(optional\)/i, '').trim().toLowerCase()
+        if (error) error.textContent = !bad ? '' : empty ? (label ? `Enter your ${label}.` : 'Please fill this in.') : input.type === 'email' ? 'Please enter a valid email.' : 'Please enter your website address.'
         if (bad && ok) { input.focus(); ok = false }
       })
       if (!ok) return

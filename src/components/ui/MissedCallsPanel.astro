@@ -21,4 +21,6 @@ const calls = ['9:12 AM', '11:40 AM', '2:14 PM']
   .missed .ui-row { padding: var(--space-3) 0; }
   .missed .ui-row + .ui-row { border-top: 1px solid var(--color-border); }
   @media (max-width: 959px) { .missed { justify-self: start; } }
+  /* Tablets: the column is wide, so the call log fills it instead of leaving half of it empty. */
+  @media (min-width: 641px) and (max-width: 959px) { .missed { max-width: none; } }
 </style>

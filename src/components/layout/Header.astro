@@ -253,6 +253,14 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
     if (!desktop.matches || event.pointerType !== 'mouse') return
     closeTimer = window.setTimeout(() => setServices(false), 180)
   })
+  // ArrowDown on the Services button opens the list and moves to its first link.
+  menuToggle?.addEventListener('keydown', (event) => {
+    if (event.key !== 'ArrowDown' || !desktop.matches) return
+    event.preventDefault()
+    openedByHover = false
+    setServices(true)
+    panel?.querySelector<HTMLElement>('a')?.focus()
+  })
   menu?.addEventListener('focusout', (event) => {
     if (desktop.matches && !menu.contains(event.relatedTarget as Node | null)) setServices(false)
   })
