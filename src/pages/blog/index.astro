@@ -2,10 +2,16 @@
 import BaseLayout from '@layouts/BaseLayout.astro'
 import PostCard from '@components/cards/PostCard.astro'
 import { loadQuery } from '@cms/lib/load'
+import { emptyLayout } from '@cms/lib/types'
 import { blogIndexQuery, layoutQuery } from '@cms/queries'
 
 const { draftMode } = Astro.locals
-const [layout, posts] = await Promise.all([loadQuery(draftMode, layoutQuery), loadQuery(draftMode, blogIndexQuery)])
+const [layout, posts] = await Promise.all([
+  loadQuery(draftMode, layoutQuery).catch(() => emptyLayout),
+  loadQuery(draftMode, blogIndexQuery).catch(() => []),
+])
+// Nothing in the CMS yet: this listing doesn't exist (and isn't in the sitemap).
+if (!posts.length) return Astro.rewrite('/404')
 ---
 
 <BaseLayout layout={layout} title="Blog">

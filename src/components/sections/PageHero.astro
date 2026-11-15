@@ -98,6 +98,11 @@ const hasAside = tool
   .svc-hero__crumbs li + li::before { content: '/'; margin-right: var(--space-2); color: var(--color-text-inverse-faint); }
   .svc-hero__crumbs a { color: var(--surface-body); transition: color var(--dur-fast) var(--ease-out); }
   .svc-hero__crumbs a:hover { color: var(--surface-fg); }
+  @media (pointer: coarse) {
+    .svc-hero__crumbs { margin-bottom: var(--space-5); }
+    .svc-hero__crumbs ol { align-items: center; }
+    .svc-hero__crumbs a { display: inline-flex; align-items: center; min-height: 44px; }
+  }
   .svc-hero__h { font-size: var(--text-display-sm); max-width: 17ch; }
   .svc-hero__sub { margin: var(--stack-body) 0 var(--stack-actions); font-size: var(--text-body-lg); line-height: var(--leading-body); max-width: 46ch; color: var(--surface-body); }
   .svc-hero__note { margin-top: var(--space-4); font-size: var(--text-sm); color: var(--surface-muted); }

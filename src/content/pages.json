@@ -2023,7 +2023,7 @@
           },
           {
             "type": "p",
-            "text": "Your website and lead system come in one simple monthly plan. See pricing (/hvac-lead-system)."
+            "text": "Your website and lead system come in one simple monthly plan. [See pricing](/hvac-lead-system)."
           }
         ]
       },
@@ -2265,7 +2265,7 @@
         "blocks": [
           {
             "type": "p",
-            "text": "Your lead system and your website come in one simple monthly plan. See pricing (/hvac-lead-system)."
+            "text": "Your lead system and your website come in one simple monthly plan. [See pricing](/hvac-lead-system)."
           },
           {
             "type": "label",
@@ -2555,7 +2555,7 @@
           },
           {
             "type": "p",
-            "text": "Get ads on their own, or add them to your plan. You don't need our website to start. Your website and lead system come in one simple monthly plan. See pricing (/hvac-lead-system)."
+            "text": "Get ads on their own, or add them to your plan. You don't need our website to start. Your website and lead system come in one simple monthly plan. [See pricing](/hvac-lead-system)."
           }
         ]
       },
@@ -2783,26 +2783,12 @@
                 "title": "AI agents for HVAC",
                 "href": "/services/ai-agents-hvac",
                 "text": "An agent can hold a conversation. It answers calls, replies to texts, follows up with leads and books jobs. Think of it as an AI receptionist. We set it up around how your shop works."
-              }
-            ]
-          },
-          {
-            "type": "links",
-            "items": [
+              },
               {
                 "title": "Automated workflows for HVAC",
                 "href": "/services/automated-workflows-hvac",
-                "text": "A workflow follows set rules. When one thing happens, the next step goes out."
-              }
-            ]
-          },
-          {
-            "type": "p",
-            "text": "Our plan already covers missed call text back, lead follow-up and review requests. Custom workflows go further. We build them around the tasks your team does by hand today."
-          },
-          {
-            "type": "links",
-            "items": [
+                "text": "A workflow follows set rules. When one thing happens, the next step goes out. Our plan already covers missed call text back, lead follow-up and review requests. Custom workflows go further. We build them around the tasks your team does by hand today."
+              },
               {
                 "title": "Custom software for HVAC",
                 "href": "/services/custom-software-hvac",
@@ -2851,7 +2837,7 @@
           },
           {
             "type": "p",
-            "text": "Get them on their own, or add them to your plan. You don't need our website to start. Your website and lead system come in one simple monthly plan. See pricing (/hvac-lead-system)."
+            "text": "Get them on their own, or add them to your plan. You don't need our website to start. Your website and lead system come in one simple monthly plan. [See pricing](/hvac-lead-system)."
           }
         ]
       },

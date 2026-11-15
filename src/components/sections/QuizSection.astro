@@ -31,11 +31,13 @@ const first = QUESTIONS[0]
 ---
 
 <Section surface="deep" anchorId={onQuizPage ? 'take-the-quiz' : 'quiz'}>
-  <div class:list={['split', onQuizPage && 'final--solo']}>
-    <div>
+  <div class:list={['split final', onQuizPage && 'final--solo']}>
+    <div class="final__head">
       <p class="eyebrow">{eyebrow}</p>
       <h2 class:list={['t-h2 final__h', long && 'final__h--long']} set:html={heading} />
       {body && <p class="body-lg final__body">{body}</p>}
+    </div>
+    <div class="final__links">
       <div class="actions final__actions">
         {onQuizPage && <Btn href="#quiz" icon="arrow">{hero.primary}</Btn>}
         {extra && <Btn href={extra.href} icon="arrow">{extra.text}</Btn>}
@@ -45,7 +47,7 @@ const first = QUESTIONS[0]
       {teardownNote && <p class="text-sm text-muted final__note">{teardownNote}</p>}
     </div>
     {!onQuizPage && (
-      <div class="quiz-card surface-white">
+      <div class="quiz-card final__card surface-white">
         <div class="quiz-card__top">
           <p class="quiz-card__count">Question 1 of 5</p>
           <ol class="quiz-card__bar" aria-hidden="true">{QUESTIONS.map((_, i) => <li class:list={[i === 0 && 'now']} />)}</ol>
@@ -63,12 +65,22 @@ const first = QUESTIONS[0]
 </Section>
 
 <style>
-  .final--solo { grid-template-columns: minmax(0, 1fr); }
+  /* Phones and tablets: heading, then the quiz card, then the other ways in. Desktop: the card on the right. */
+  .final { grid-template-areas: 'head' 'card' 'links'; row-gap: var(--space-8); }
+  .final__head { grid-area: head; }
+  .final__card { grid-area: card; }
+  .final__links { grid-area: links; }
+  .final--solo { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'head' 'links'; row-gap: 0; }
+  @media (min-width: 1101px) {
+    .final:not(.final--solo) { grid-template-areas: '. card' 'head card' 'links card' '. card'; grid-template-rows: 1fr auto auto 1fr; row-gap: 0; align-items: start; }
+  }
   .final__h { font-size: var(--text-cta); max-width: 13ch; }
   .final__h--long { font-size: var(--text-h2); max-width: 20ch; }
   .final__body { margin-top: var(--stack-body); }
   .final__note { margin-top: var(--space-3); max-width: 44ch; }
-  .final__actions { margin: var(--stack-actions) 0 var(--space-2); }
+  .final__actions { margin-bottom: var(--space-2); }
+  @media (min-width: 1101px) { .final__actions { margin-top: var(--stack-actions); } }
+  .final--solo .final__actions { margin-top: var(--stack-actions); }
 
   /* The quiz's first question, as a card. Each answer opens the quiz page at question 2. */
   .quiz-card { background: var(--color-white); color: var(--color-text); border-radius: var(--radius-xl); padding: clamp(var(--space-6), 3vw, var(--space-8)); box-shadow: var(--shadow-lg); }

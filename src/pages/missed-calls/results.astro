@@ -70,7 +70,8 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
       <div class="results-plan" data-reveal>
         <p class="eyebrow">Book your call</p>
         <h2 class="t-h2">{copy.calendarHeading}</h2>
-        <PlanBox heading={copy.plan.heading} steps={copy.plan.steps} after={copy.plan.after} />
+        <div data-filled hidden><PlanBox heading={copy.plan.heading} steps={copy.plan.steps} after={copy.plan.after} /></div>
+        <div data-empty><PlanBox heading={copy.plan.heading} steps={copy.plan.steps.map((step) => step.replace(/\s*\(Done\.\)$/, ''))} after={copy.plan.after} /></div>
         <p class="results__pricing">{copy.pricing.text} <a class="link" href={links.plan}>{copy.pricing.link}</a></p>
         <Btn href={links.teardown} variant="link" icon="arrow-ur">{copy.notReady}</Btn>
       </div>
@@ -100,15 +101,21 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
       li.append(strong, ` ${text}`)
       list?.append(li)
     })
-    root.querySelector<HTMLElement>('[data-empty]')!.hidden = true
-    root.querySelector<HTMLElement>('[data-filled]')!.hidden = false
+    document.querySelectorAll<HTMLElement>('[data-empty]').forEach((el) => { el.hidden = true })
+    document.querySelectorAll<HTMLElement>('[data-filled]').forEach((el) => { el.hidden = false })
+    // The call request form (shown when there's no calendar) comes filled in with what they gave the quiz.
+    const fill: Record<string, string | undefined> = { name: result.first, shop: result.shop, email: result.email, phone: result.phone }
+    document.querySelectorAll<HTMLInputElement>('#results-calendar input[name]').forEach((input) => {
+      const value = fill[input.name]
+      if (value && !input.value) input.value = value
+    })
   }
 </script>
 
 <style>
   .results-hero { padding-block: var(--space-12) var(--space-14); }
   .results-grid { display: grid; gap: var(--space-10); align-items: center; }
-  .results-grid[hidden], .results-empty[hidden] { display: none; }
+  .results-grid[hidden], .results-empty[hidden], [data-filled][hidden], [data-empty][hidden] { display: none; }
   .results__h { font-size: var(--text-display-sm); max-width: 20ch; }
   .results__sub { margin: var(--stack-body) 0 var(--stack-actions); font-size: var(--text-body-lg); color: var(--surface-body); max-width: 46ch; }
   .results__score { display: flex; gap: var(--space-4); align-items: center; margin: var(--space-8) 0; padding: var(--space-4) var(--space-5); border-radius: var(--radius-md); background: var(--color-control-inverse); max-width: 34rem; }

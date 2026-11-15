@@ -162,7 +162,24 @@ function parsePage(chunk, kind) {
       continue
     }
     if (/\[[A-Z][A-Z ]+[\]:]/.test(line) && !line.includes('[BUSINESS PHONE]')) throw new Error(`Placeholder left in the copy on ${page.path}: "${line}"`)
-    blocks.push({ type: 'p', ...boldLead(line) })
+    // "See pricing (links to /hvac-lead-system)" inside a paragraph becomes a real link.
+    blocks.push({ type: 'p', ...boldLead(line.replace(/(See [^.()]+?)\s*\((?:links to\s*)?(\/[a-z0-9\-/#]*)\)/g, '[$1]($2)')) })
+  }
+
+  // A note that sits between two linked paragraphs belongs to the one above it ("[Workflows](…): … Our plan already covers…").
+  for (const s of page.sections) {
+    const merged = []
+    for (const b of s.blocks) {
+      const prev = merged.at(-1)
+      const prev2 = merged.at(-2)
+      if (b.type === 'links' && prev?.type === 'p' && !prev.lead && prev2?.type === 'links') {
+        merged.pop()
+        prev2.items.at(-1).text += ` ${prev.text}`
+        prev2.items.push(...b.items)
+      } else if (b.type === 'links' && prev?.type === 'links') prev.items.push(...b.items)
+      else merged.push(b)
+    }
+    s.blocks = merged
   }
 
   // The first section is the hero and the last is the closing call to action.

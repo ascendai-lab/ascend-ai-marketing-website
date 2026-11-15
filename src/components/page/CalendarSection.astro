@@ -20,7 +20,9 @@ interface Props {
 const { section, phone, surface } = Astro.props
 const fields = section.fields ?? {}
 const callLine = fields['Under the calendar']
-const notReady = fields['Not ready to book?']
+const hasCalendar = Boolean(import.meta.env.PUBLIC_GHL_CALENDAR_URL)
+// Without a calendar (a request form shows instead), the line about the calendar waiting doesn't fit.
+const notReady = hasCalendar ? fields['Not ready to book?'] : fields['Not ready to book?']?.replace(/\s*When you're ready to talk, this calendar[^.]*\./, '')
 const tel = phone?.replace(/[^\d+]/g, '')
 ---
 

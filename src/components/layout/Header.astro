@@ -22,6 +22,8 @@ const announcement = settings?.announcement
 const announcementLink = resolveLink(announcement?.link)
 const useFallbackNav = !navigation?.headerLinks?.length
 const isCurrent = (href: string | undefined) => href !== undefined && (href.replace(/\/$/, '') || '/') === currentPath
+/** On /services, a category hub or a service page, the Services button shows as the current section. */
+const inServices = currentPath.startsWith('/services') || servicesByCategory.some(({ look }) => isCurrent(look.href))
 ---
 
 {
@@ -54,7 +56,7 @@ const isCurrent = (href: string | undefined) => href !== undefined && (href.repl
       <ul class="site-nav__list">
         {useFallbackNav && fallbackNav.map((item, index) => item.menu === 'services' ? (
           <li class="site-nav__item svc-menu" style={`--i:${index}`} data-svc-menu>
-            <button type="button" class="svc-menu__toggle" aria-expanded="false" aria-controls="svc-menu-panel">
+            <button type="button" class:list={['svc-menu__toggle', inServices && 'is-current']} aria-expanded="false" aria-controls="svc-menu-panel">
               {item.label}<Icon name="chevron-down" />
             </button>
             <div class="svc-menu__panel" id="svc-menu-panel">
@@ -63,7 +65,7 @@ const isCurrent = (href: string | undefined) => href !== undefined && (href.repl
                   {servicesByCategory.map(({ look, pages }) => (
                     <li class="svc-menu__group">
                       <a class="svc-menu__cat" href={look.href} aria-current={isCurrent(look.href) ? 'page' : undefined}>
-                        <span class="icon-chip icon-chip--ui"><Icon name={look.icon} /></span>{look.name}
+                        <span class="icon-chip"><Icon name={look.icon} /></span>{look.name}
                       </a>
                       <ul class="svc-menu__links">
                         {pages.map((page) => (
@@ -268,7 +270,7 @@ const isCurrent = (href: string | undefined) => href !== undefined && (href.repl
   .site-nav__dropdown summary::-webkit-details-marker { display: none; }
   .site-nav__dropdown summary::after { content: ' ▾'; font-size: 0.8em; }
   .site-nav__dropdown ul { padding-left: var(--space-4); }
-  .site-nav__dropdown ul a { display: block; padding: var(--space-2) 0; }
+  .site-nav__dropdown ul a { display: flex; align-items: center; min-height: 44px; }
   /* Services menu, mobile: a nested list that opens under its button. */
   .svc-menu__toggle { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: var(--space-2); padding: var(--space-4) 0; background: none; border: 0; font: inherit; font-size: 1.375rem; letter-spacing: -0.01em; color: var(--surface-fg); cursor: pointer; text-align: left; }
   .svc-menu__toggle :global(.icon) { width: 1.25rem; height: 1.25rem; transition: transform var(--dur-accordion) var(--ease-height); }
@@ -277,13 +279,13 @@ const isCurrent = (href: string | undefined) => href !== undefined && (href.repl
   .svc-menu.is-open .svc-menu__panel { height: auto; }
   .svc-menu__inner { padding-bottom: var(--space-5); }
   .svc-menu__groups { display: grid; gap: var(--space-5); }
-  .svc-menu__cat { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-body); font-weight: var(--weight-medium); color: var(--surface-fg); }
+  .svc-menu__cat { display: flex; align-items: center; gap: var(--space-3); min-height: 44px; font-size: var(--text-body); font-weight: var(--weight-medium); color: var(--surface-fg); }
   .svc-menu__cat .icon-chip { width: 2rem; height: 2rem; }
   .svc-menu__links { display: grid; margin-top: var(--space-2); padding-left: calc(2rem + var(--space-3)); }
-  .svc-menu__links a { display: block; padding: var(--space-2) 0; font-size: var(--text-body); color: var(--surface-body); }
+  .svc-menu__links a { display: flex; align-items: center; min-height: 44px; padding: var(--space-1) 0; font-size: var(--text-body); color: var(--surface-body); }
   .svc-menu__links a[aria-current='page'], .svc-menu__cat[aria-current='page'] { color: var(--color-accent); }
   .svc-menu__foot { display: grid; gap: var(--space-2); margin-top: var(--space-5); }
-  .svc-menu__all { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-body); font-weight: var(--weight-medium); color: var(--surface-fg); }
+  .svc-menu__all { display: inline-flex; align-items: center; gap: var(--space-2); min-height: 44px; font-size: var(--text-body); font-weight: var(--weight-medium); color: var(--surface-fg); }
   .svc-menu__all :global(.icon) { width: 1rem; height: 1rem; color: var(--color-accent); }
 
   .site-nav__cta { margin-top: var(--space-6); }
@@ -314,8 +316,9 @@ const isCurrent = (href: string | undefined) => href !== undefined && (href.repl
     .svc-menu__toggle { display: inline-flex; width: auto; gap: 0.375rem; padding: 0.5625rem 0.875rem 0.5625rem 1.125rem; border-radius: var(--radius-full); font-size: var(--text-sm); letter-spacing: 0; color: var(--surface-body); transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); }
     .svc-menu__toggle :global(.icon) { width: 0.875rem; height: 0.875rem; }
     .svc-menu__toggle:hover, .svc-menu.is-open .svc-menu__toggle { color: var(--surface-fg); background: var(--color-control-inverse); }
+    .svc-menu__toggle.is-current, .svc-menu.is-open .svc-menu__toggle.is-current { background: var(--color-white); color: var(--color-text); }
     .svc-menu__panel {
-      position: absolute; top: calc(100% - 0.5rem); left: 50%; width: min(72rem, calc(100vw - 2 * var(--container-padding-x)));
+      position: absolute; top: calc(100% - 0.5rem); left: 50%; width: min(var(--container-max), calc(100vw - 2 * var(--container-padding-x)));
       height: auto; overflow: visible; padding-top: var(--space-3);
       opacity: 0; visibility: hidden; translate: -50% -0.5rem;
       transition: opacity var(--dur-base) var(--ease-height), translate var(--dur-base) var(--ease-height), visibility 0s linear var(--dur-base);
@@ -323,14 +326,14 @@ const isCurrent = (href: string | undefined) => href !== undefined && (href.repl
     .svc-menu.is-open .svc-menu__panel { opacity: 1; visibility: visible; translate: -50% 0; transition: opacity var(--dur-base) var(--ease-height), translate var(--dur-base) var(--ease-height), visibility 0s; }
     .svc-menu__inner { padding: var(--space-8); border-radius: var(--radius-lg); background: var(--color-white); color: var(--color-text); box-shadow: var(--shadow-lg); }
     .svc-menu__groups { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-6); }
-    .svc-menu__cat { align-items: flex-start; flex-direction: column; gap: var(--space-3); font-size: var(--text-ui); color: var(--color-text); }
+    .svc-menu__cat { align-items: flex-start; flex-direction: column; gap: var(--space-3); min-height: 0; font-size: var(--text-ui); color: var(--color-text); }
     .svc-menu__cat:hover { color: var(--color-brand); }
     .svc-menu__links { padding-left: 0; margin-top: var(--space-3); }
-    .svc-menu__links a { padding: 0.375rem 0; font-size: var(--text-sm); line-height: 1.4; color: var(--color-text-muted); transition: color var(--dur-fast) var(--ease-out); }
+    .svc-menu__links a { display: block; min-height: 0; padding: 0.375rem 0; font-size: var(--text-sm); line-height: 1.4; color: var(--color-text-muted); transition: color var(--dur-fast) var(--ease-out); }
     .svc-menu__links a:hover { color: var(--color-text); }
     .svc-menu__links a[aria-current='page'], .svc-menu__cat[aria-current='page'] { color: var(--color-brand); }
     .svc-menu__foot { display: flex; gap: var(--space-8); margin-top: var(--space-6); padding-top: var(--space-5); border-top: 1px solid var(--color-border); }
-    .svc-menu__all { font-size: var(--text-sm); color: var(--color-text); }
+    .svc-menu__all { min-height: 0; font-size: var(--text-sm); color: var(--color-text); }
     .svc-menu__all:hover { color: var(--color-brand); }
     .svc-menu__all :global(.icon) { color: var(--color-brand); }
     .site-nav__dropdown { position: relative; }

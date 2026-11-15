@@ -214,7 +214,7 @@ import { RESULTS_PATH } from '@/content/quiz'
         return
       }
 
-      const result: QuizResult = { first, shop, range, grade, fixes: FIXES.filter((f) => f.when(answers)).slice(0, 3).map(({ fix }) => fix) }
+      const result: QuizResult = { first, shop, range, grade, fixes: FIXES.filter((f) => f.when(answers)).slice(0, 3).map(({ fix }) => fix), email: String(data.get('email')).trim(), phone: String(data.get('mobile') || '').trim() || undefined }
       try { sessionStorage.setItem(RESULT_KEY, JSON.stringify(result)) } catch { /* the results page shows its general version */ }
       track('quiz_complete', { quiz_interest: interest, quiz_grade: grade })
       window.location.assign(root.dataset.results ?? '/missed-calls/results')

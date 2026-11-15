@@ -50,7 +50,7 @@ const seo = { metaTitle: `HVAC Marketing Services | ${brand.name}`, metaDescript
           <Btn href={look.href} variant="link" icon="arrow">{`More on ${look.name}`}</Btn>
         </div>
       </SectionHead>
-      <ul class="grid-3">
+      <ul class={pages.length % 3 === 0 ? 'grid-3' : 'grid-2 grid-2--fill'}>
         {pages.map((page) => (
           <li class="card card--feature svc-card">
             <span class="icon-chip"><Icon name={look.icon} /></span>

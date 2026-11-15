@@ -31,6 +31,9 @@ export interface QuizResult {
   range: string
   grade: string
   fixes: [string, string][]
+  /** Kept so the booking form on the results page comes filled in. Only in this browser tab. */
+  email?: string
+  phone?: string
 }
 
 /** The quiz results page (/missed-calls/results). Not indexed. Approved copy, used as written. */

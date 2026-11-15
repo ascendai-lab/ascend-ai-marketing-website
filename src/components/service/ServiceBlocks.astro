@@ -42,7 +42,8 @@ const groups: Group[] = []
 const push = (group: Group) => {
   const last = groups.at(-1)
   if (last && last.kind === group.kind && 'items' in last && 'items' in group) (last.items as unknown[]).push(...group.items)
-  else groups.push(group)
+  // A copy, so merging never changes the page's copy data (it's shared by every request).
+  else groups.push('items' in group ? ({ ...group, items: [...group.items] } as Group) : group)
 }
 // A bold-led paragraph is a card only when it sits with others like it; a lone one stays in the prose with its lead in bold.
 // Only a lead that ends in ":" or "." is a title. "**Answers calls,** so homeowners…" is one sentence, so it stays together.
@@ -183,7 +184,7 @@ for (const [i, block] of blocks.entries()) {
   .blocks__link--go { padding-right: calc(var(--space-6) + 2.5rem); transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
   .blocks__link--go h3 a::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
   .blocks__link--go:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
-  .blocks__link--go:has(a:focus-visible) { outline: 3px solid var(--color-ui); outline-offset: 3px; }
+  .blocks__link--go:has(a:focus-visible) { outline: 3px solid var(--surface-fg, var(--color-text)); outline-offset: 3px; }
   .blocks__link--go a:focus-visible { outline: none; }
   .blocks__go { position: absolute; top: var(--space-6); right: var(--space-6); width: 2.25rem; height: 2.25rem; border-radius: var(--radius-full); display: grid; place-items: center; background: var(--color-bg); color: var(--color-brand-deep); transition: background-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out); }
   .blocks__go :global(.icon) { width: 1rem; height: 1rem; }
