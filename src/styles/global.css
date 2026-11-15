@@ -10,11 +10,24 @@
   font-style: normal;
   font-display: optional;
 }
-/* Sized to match Google Sans Flex, so the fallback reads at about the same size and length. */
+/* Fallbacks sized to match Google Sans Flex, so a page that renders before the font arrives wraps the
+   same way. Headings (large optical size) run narrower than text, so they get their own face. */
 @font-face {
   font-family: 'Google Sans Flex Fallback';
   src: local('Arial'), local('Helvetica Neue'), local('Helvetica'), local('Liberation Sans');
-  size-adjust: 94.5%;
+  font-weight: 300 549;
+  size-adjust: 100%;
+}
+@font-face {
+  font-family: 'Google Sans Flex Fallback';
+  src: local('Arial Bold'), local('Arial-BoldMT'), local('Helvetica Neue Bold'), local('Liberation Sans Bold');
+  font-weight: 550 800;
+  size-adjust: 100%;
+}
+@font-face {
+  font-family: 'Google Sans Flex Fallback Display';
+  src: local('Arial'), local('Helvetica Neue'), local('Helvetica'), local('Liberation Sans');
+  size-adjust: 97.8%;
 }
 
 /*
@@ -104,7 +117,7 @@
     --color-error: var(--color-red-600);
 
     /* Type */
-    --font-heading: var(--font-sans);
+    --font-heading: 'Google Sans Flex', 'Google Sans Flex Fallback Display', system-ui, -apple-system, 'Segoe UI', sans-serif;
     --font-body: var(--font-sans);
     --font-round: "ROND" 20;
 

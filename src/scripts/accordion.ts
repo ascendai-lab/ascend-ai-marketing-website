@@ -81,6 +81,11 @@ document.querySelectorAll<HTMLElement>('.accordion').forEach((group) => {
       setOpen(details, open)
       // Whatever else in the group opens or closes, the clicked question stays under the pointer.
       if (!reduce) holdInPlace(summary, top, group)
+      else {
+        // No motion: the item above closes at once, so put the clicked question straight back under the pointer.
+        const shift = summary.getBoundingClientRect().top - top
+        if (Math.abs(shift) >= 1) window.scrollBy(0, Math.round(shift))
+      }
     })
   })
 })
