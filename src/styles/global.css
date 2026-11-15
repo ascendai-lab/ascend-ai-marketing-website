@@ -566,6 +566,7 @@
       translate var(--dur-reveal) var(--ease-reveal) var(--reveal-delay, 0ms),
       transform var(--dur-base) var(--ease-out),
       background-color var(--dur-base) var(--ease-out),
+      color var(--dur-base) var(--ease-out),
       box-shadow var(--dur-base) var(--ease-out);
   }
 
@@ -577,7 +578,6 @@
   .motion .hero__side { animation: rise var(--dur-reveal) var(--ease-reveal) 220ms both; }
   /* The slide's contents move, not the slide itself, so scroll snapping can't fight the slide-in. */
   .motion .hero .slide > * { animation: slide-in var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(320ms + var(--i, 0) * 90ms); }
-  .motion .hero__trust li { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(600ms + var(--i, 0) * 80ms); }
 
   /* Micro interactions */
   .btn { transition: background-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out); }
@@ -596,11 +596,9 @@
   .accordion summary:hover .plus { transform: scale(1.08); }
   .accordion details[open] summary:hover .plus { transform: rotate(45deg) scale(1.08); }
   /* While an item animates closed it is still [open]; turn its plus back straight away. */
+  .accordion details.is-closing summary:hover .plus { transform: scale(1.08); }
   .accordion details.is-closing .plus { transform: none; background: var(--color-bg); color: inherit; }
-  .accordion details.is-closing > :not(summary) { opacity: 0; transition: opacity var(--dur-base) var(--ease-reveal); }
   .accordion details { transition: background-color var(--dur-base) var(--ease-out); }
-  @keyframes open-in { from { opacity: 0; transform: translateY(-0.5rem); } }
-  .motion .accordion details[open]:not(.is-closing) > :not(summary) { animation: open-in var(--dur-accordion) var(--ease-out); }
 
   .media img { transition: transform 1.2s var(--ease-out), opacity var(--dur-reveal-fade) var(--ease-reveal); }
   /* Photos that are still downloading fade in when they arrive, instead of popping in. */

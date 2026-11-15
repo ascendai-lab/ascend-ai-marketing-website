@@ -17,7 +17,9 @@ import { links } from '@/content/home'
 </div>
 
 <script>
-  import { animateHeight } from '@/scripts/animate-height'
+  import { animateHeight, motionTiming } from '@/scripts/animate-height'
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   const QUESTIONS = [
     { q: 'In a busy week, how many calls come in?', a: ['Under 20', '20 to 50', '50 to 100', 'Over 100'] },
@@ -98,10 +100,25 @@ import { links } from '@/content/home'
     html += '<button type="button" class="quiz__back" hidden>Back</button>'
     root.innerHTML = html
 
-    // Moving between steps: the panel eases to its new height while the new step slides up into place.
+    // Moving between steps: the old step fades out, then the panel eases to its new height
+    // while the new step slides up into place. `after` runs once the new step is on screen.
     let first = true
-    const show = (step: number) => {
+    let swapId = 0
+    const show = (step: number, after?: () => void) => {
       current = step
+      const id = ++swapId
+      const old = root.querySelector<HTMLElement>('.quiz__step:not([hidden])')
+      if (first || reduceMotion || !old || Number(old.dataset.step) === step) { swap(step); after?.(); return }
+      const opacity = getComputedStyle(old).opacity
+      old.getAnimations().forEach((a) => a.cancel())
+      old.animate([{ opacity }, { opacity: 0 }], { duration: 150, easing: motionTiming().easing, fill: 'forwards' }).finished.then((fade) => {
+        if (id !== swapId) return
+        swap(step)
+        fade.cancel()
+        after?.()
+      }, () => {})
+    }
+    const swap = (step: number) => {
       const from = root.getBoundingClientRect().height
       root.getAnimations().forEach((a) => a.cancel())
       root.querySelectorAll<HTMLElement>('.quiz__step').forEach((el) => {
@@ -127,12 +144,11 @@ import { links } from '@/content/home'
         const step = Number(opt.closest<HTMLElement>('.quiz__step')!.dataset.step)
         answers[step] = Number(opt.dataset.answer)
         opt.parentElement!.querySelectorAll('.quiz__option').forEach((b) => b.setAttribute('aria-pressed', b === opt ? 'true' : 'false'))
-        show(step + 1)
-        focusStep(step + 1)
+        show(step + 1, () => focusStep(step + 1))
       }
       if (target.closest('.quiz__back')) {
-        show(Math.max(0, current - 1))
-        focusStep(current)
+        const back = Math.max(0, current - 1)
+        show(back, () => focusStep(back))
       }
     })
 
@@ -197,8 +213,7 @@ import { links } from '@/content/home'
         .map(({ fix }) => `<li><span><strong>${fix[0]}</strong> ${fix[1]}</span></li>`).join('')
       root.querySelector('.quiz__grade')!.textContent = grade[0]
       root.querySelector('.quiz__grade-line')!.textContent = grade[1]
-      show(6)
-      root.querySelector<HTMLElement>('.quiz__result')!.focus({ preventScroll: true })
+      show(6, () => root.querySelector<HTMLElement>('.quiz__result')!.focus({ preventScroll: true }))
     })
 
     show(0)

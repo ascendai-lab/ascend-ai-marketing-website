@@ -2,7 +2,7 @@
  * Accordions (.accordion > details) open and close with a smooth height animation.
  * Groups marked [data-one-open] keep one item open at a time. No animation for reduced motion.
  */
-import { animateHeight } from './animate-height'
+import { animateHeight, motionTiming } from './animate-height'
 
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -14,19 +14,35 @@ function setOpen(details: HTMLDetailsElement, open: boolean) {
   if (reduce) { details.open = open; return }
 
   const from = details.getBoundingClientRect().height
-  details.getAnimations().forEach((a) => { if (a instanceof Animation && !(a instanceof CSSTransition)) a.cancel() })
+  const wasMoving = details.getAnimations().length > 0
+  details.getAnimations().forEach((a) => { if (!(a instanceof CSSTransition)) a.cancel() })
   details.classList.toggle('is-closing', !open)
   details.open = true
   const to = open ? details.getBoundingClientRect().height : summary.getBoundingClientRect().height
-  details.style.overflow = 'hidden'
+
+  // The answer fades with the height, starting from wherever it is now, so a quick reversal never blinks.
+  const timing = motionTiming()
+  ;[...details.children].filter((el) => el !== summary).forEach((el) => {
+    const current = Number(getComputedStyle(el).opacity)
+    el.getAnimations().forEach((a) => a.cancel())
+    const start = wasMoving ? current : open ? 0 : 1
+    el.animate(
+      open
+        ? [{ opacity: start, translate: `0 ${(1 - start) * -8}px` }, { opacity: 1, translate: '0 0' }]
+        : [{ opacity: start }, { opacity: 0 }],
+      { ...timing, duration: open ? timing.duration : timing.duration * 0.6, fill: 'forwards' },
+    )
+  })
+
   const animation = animateHeight(details, from, to)
-  if (!animation) return
-  animation.onfinish = () => {
+  const done = () => {
     details.open = open
     details.classList.remove('is-closing')
-    details.style.overflow = ''
     delete details.dataset.state
+    ;[...details.children].forEach((el) => { if (el !== summary) el.getAnimations().forEach((a) => a.cancel()) })
   }
+  if (!animation) { done(); return }
+  animation.onfinish = done
 }
 
 document.querySelectorAll<HTMLElement>('.accordion').forEach((group) => {

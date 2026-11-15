@@ -133,7 +133,7 @@ const isCurrent = (href: string | undefined) => href !== undefined && (href.repl
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && nav?.classList.contains('is-open')) {
       setMenu(false)
-      toggle?.focus()
+      toggle?.focus({ preventScroll: true })
     }
   })
   // Following a link (including #anchors on the same page) closes the menu.
@@ -169,7 +169,7 @@ const isCurrent = (href: string | undefined) => href !== undefined && (href.repl
     transition: clip-path var(--dur-menu) var(--ease-out), visibility 0s linear var(--dur-menu);
   }
   .site-nav.is-open { visibility: visible; clip-path: inset(0 0 0 0); transition: clip-path var(--dur-menu) var(--ease-out), visibility 0s; }
-  .site-nav__item, .site-nav__cta { opacity: 0; transform: translateY(-14px); transition: opacity var(--dur-fast) ease, transform var(--dur-fast) ease; }
+  .site-nav__item, .site-nav__cta { opacity: 0; transform: translateY(-14px); transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out); }
   .site-nav.is-open .site-nav__item, .site-nav.is-open .site-nav__cta { opacity: 1; transform: none; transition: opacity var(--dur-menu) ease, transform var(--dur-menu) var(--ease-out); transition-delay: calc(100ms + var(--i, 0) * 40ms); }
   :global(html.menu-open body) { overflow: hidden; }
   @media (prefers-reduced-motion: reduce) {

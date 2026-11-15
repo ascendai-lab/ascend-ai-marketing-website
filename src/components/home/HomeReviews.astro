@@ -53,6 +53,7 @@ import { reviews, reviewSummary, links } from '@/content/home'
       text.classList.toggle('is-open', open)
       const to = text.offsetHeight
       if (!open) text.classList.add('is-open')
+      text.classList.toggle('is-expanded', open)
       button.setAttribute('aria-expanded', String(open))
       button.textContent = open ? 'Show less' : 'Show more'
       const animation = animateHeight(text, from, to)
@@ -70,14 +71,20 @@ import { reviews, reviewSummary, links } from '@/content/home'
   .review__stars :global(.icon) { width: 1.125rem; height: 1.125rem; }
   /* Shows about 6 lines. The last line is cut through the middle and fades into the card,
      with a plain "Show more" link right under it. */
+  @property --review-fade { syntax: '<length>'; inherits: false; initial-value: 0px; }
   .review__text {
     --line: 1.55em;
+    --review-fade: calc(var(--line) * 1.1);
     max-height: calc(var(--line) * 6.6); overflow: hidden;
-    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - var(--line) * 1.1), transparent);
-    mask-image: linear-gradient(to bottom, #000 calc(100% - var(--line) * 1.1), transparent);
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - var(--review-fade)), transparent);
+    mask-image: linear-gradient(to bottom, #000 calc(100% - var(--review-fade)), transparent);
+    transition: --review-fade var(--dur-accordion) var(--ease-reveal);
   }
+  /* The faded last line eases in and out with the open and close, instead of switching. */
+  .review__text.is-expanded { --review-fade: 0px; }
   .review__text p { font-size: var(--text-body); line-height: 1.55; color: var(--surface-fg); }
-  .review__text.is-open, .review__text.is-short { max-height: none; -webkit-mask-image: none; mask-image: none; }
+  .review__text.is-open { max-height: none; }
+  .review__text.is-short { max-height: none; -webkit-mask-image: none; mask-image: none; }
   /* The shared .link text style (underlined, no background), just smaller and quieter. */
   .review__more { align-self: flex-start; margin-top: calc(var(--space-5) * -1 + var(--space-1)); padding: 0; border: 0; background: none; cursor: pointer; font-family: inherit; font-size: var(--text-sm); color: var(--surface-muted); }
   .review__more[hidden] { display: none; }

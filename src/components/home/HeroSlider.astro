@@ -66,7 +66,6 @@ import { slides, inbox } from '@/content/home'
       const gap = parseFloat(getComputedStyle(track).columnGap) || 16
       return (first?.offsetWidth ?? 300) + gap
     }
-    const behavior: ScrollBehavior = reduce ? 'auto' : 'smooth'
     const atStart = () => track.scrollLeft <= 2
     const atEnd = () => track.scrollLeft >= track.scrollWidth - track.clientWidth - 2
     // The slider loops: Next at the end goes back to the first slide, Prev at the start goes to the last.
@@ -74,22 +73,62 @@ import { slides, inbox } from '@/content/home'
       next.setAttribute('aria-label', atEnd() ? 'Back to the first slide' : 'Next slide')
       prev.setAttribute('aria-label', atStart() ? 'Go to the last slide' : 'Previous slide')
     }
-    // Wrapping around fades the track out, jumps, and fades back in, instead of racing back across every slide.
+    const css = getComputedStyle(document.documentElement)
+    const easing = css.getPropertyValue('--ease-reveal').trim() || 'ease-out'
+    const fadeMs = parseFloat(css.getPropertyValue('--dur-base')) || 260
+    const maxLeft = () => track.scrollWidth - track.clientWidth
+
+    // Slides glide with the site's soft ease-out. Extra clicks move the target further
+    // instead of restarting the motion. Snapping is paused while it glides.
+    const ease = (t: number) => 1 - Math.pow(1 - t, 3)
+    let target: number | null = null
+    let raf = 0
+    const glideTo = (left: number) => {
+      left = Math.max(0, Math.min(maxLeft(), left))
+      if (reduce) { track.scrollTo({ left }); return }
+      target = left
+      const from = track.scrollLeft
+      const start = performance.now()
+      const duration = 650
+      cancelAnimationFrame(raf)
+      track.style.scrollSnapType = 'none'
+      const frame = (now: number) => {
+        const t = Math.min((now - start) / duration, 1)
+        track.scrollLeft = from + (left - from) * ease(t)
+        if (t < 1) raf = requestAnimationFrame(frame)
+        else { target = null; track.style.scrollSnapType = ''; update() }
+      }
+      raf = requestAnimationFrame(frame)
+    }
+
+    // Wrapping around fades the track out, jumps, and fades back in, instead of racing back
+    // across every slide. A click during the fade is kept and played right after.
     let wrapping = false
+    let queued = 0
     const wrapTo = (left: number) => {
       if (reduce) { track.scrollTo({ left }); return }
       wrapping = true
-      const fade = { duration: 220, easing: 'ease-out' }
+      cancelAnimationFrame(raf)
+      target = null
+      const fade = { duration: fadeMs, easing }
       track.animate([{ opacity: 1 }, { opacity: 0 }], { ...fade, fill: 'forwards' }).finished.then((out) => {
+        track.style.scrollSnapType = ''
         track.scrollTo({ left, behavior: 'auto' })
-        track.animate([{ opacity: 0 }, { opacity: 1 }], fade).finished.then(() => { out.cancel(); wrapping = false })
+        track.animate([{ opacity: 0 }, { opacity: 1 }], fade).finished.then(() => {
+          out.cancel()
+          wrapping = false
+          const next = queued
+          queued = 0
+          if (next) go(next)
+        })
       })
     }
     const go = (dir: number) => {
-      if (wrapping) return
-      if (dir > 0 && atEnd()) wrapTo(0)
-      else if (dir < 0 && atStart()) wrapTo(track.scrollWidth)
-      else track.scrollBy({ left: dir * step(), behavior })
+      if (wrapping) { queued = dir; return }
+      const base = target ?? track.scrollLeft
+      if (dir > 0 && base >= maxLeft() - 2) wrapTo(0)
+      else if (dir < 0 && base <= 2) wrapTo(maxLeft())
+      else glideTo(base + dir * step())
     }
 
     // Autoplay: moves one slide every few seconds. It waits while someone hovers, focuses
