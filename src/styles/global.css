@@ -572,13 +572,12 @@
 
   /* Hero: the headline, copy and slider arrive in sequence on load. */
   @keyframes rise { from { opacity: 0; translate: 0 var(--reveal-shift); } 70% { opacity: 1; } }
-  @keyframes slide-in { from { opacity: 0; translate: 3rem 0; } 70% { opacity: 1; } }
   .motion .hero__top > :first-child > * { animation: rise var(--dur-reveal) var(--ease-reveal) both; }
   .motion .hero__top > :first-child > :nth-child(2) { animation-delay: 80ms; }
   .motion .hero__side { animation: rise var(--dur-reveal) var(--ease-reveal) 220ms both; }
   .motion .hero__trust li { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(700ms + var(--i, 0) * 80ms); }
   /* The slide's contents move, not the slide itself, so scroll snapping can't fight the slide-in. */
-  .motion .hero .slide > * { animation: slide-in var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(320ms + var(--i, 0) * 90ms); }
+  .motion .hero .slide > * { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(320ms + var(--i, 0) * 90ms); }
 
   /* Micro interactions */
   .btn { transition: background-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out); }

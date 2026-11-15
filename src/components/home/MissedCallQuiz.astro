@@ -108,9 +108,16 @@ import { links } from '@/content/home'
       current = step
       const id = ++swapId
       const old = root.querySelector<HTMLElement>('.quiz__step:not([hidden])')
-      if (first || reduceMotion || !old || Number(old.dataset.step) === step) { swap(step); after?.(); return }
-      const opacity = getComputedStyle(old).opacity
-      old.getAnimations().forEach((a) => a.cancel())
+      const opacity = old ? getComputedStyle(old).opacity : '1'
+      // Stop any fade still running on the visible step (for example Back right after an answer).
+      old?.getAnimations().forEach((a) => { if (!(a instanceof CSSAnimation)) a.cancel() })
+      if (old && Number(old.dataset.step) === step) {
+        // Staying on the same step: bring it back from wherever its fade had got to.
+        if (!reduceMotion && Number(opacity) < 1) old.animate([{ opacity }, { opacity: 1 }], { duration: 160, easing: 'ease-out' })
+        after?.()
+        return
+      }
+      if (first || reduceMotion || !old) { swap(step); after?.(); return }
       old.animate([{ opacity }, { opacity: 0 }], { duration: 110, easing: 'linear', fill: 'forwards' }).finished.then((fade) => {
         if (id !== swapId) return
         swap(step)
