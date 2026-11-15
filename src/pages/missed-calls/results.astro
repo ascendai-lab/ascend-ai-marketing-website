@@ -19,7 +19,7 @@ import { GRADES, RESULT_KEY, results as copy } from '@/content/quiz'
 const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => emptyLayout)
 ---
 
-<BaseLayout layout={layout} title="Your missed call results | Ascend AI Marketing" description="Your missed call estimate, call handling score and fixes." seo={{ noIndex: true }}>
+<BaseLayout layout={layout} title="Your missed call results | Ascend AI Marketing" description="Your estimate of what missed calls may cost your shop each month, your call handling score and 3 fixes, from Ascend AI Marketing." seo={{ noIndex: true }}>
   <section class="results-hero surface-deep" data-results data-key={RESULT_KEY} data-grades={JSON.stringify(GRADES)}>
     <div class="container">
       <!-- Shown until the result loads, and to anyone who opens the page without taking the quiz. -->
@@ -89,6 +89,7 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
   const root = document.querySelector<HTMLElement>('[data-results]')
   let result: QuizResult | null = null
   try { result = JSON.parse(sessionStorage.getItem(root?.dataset.key ?? '') ?? 'null') } catch { result = null }
+  if (!(root && result?.first && result.range)) document.querySelectorAll<HTMLElement>('[data-filled]').forEach((el) => el.remove())
   if (root && result?.first && result.range) {
     const grades = JSON.parse(root.dataset.grades ?? '{}') as Record<string, string>
     const set = (sel: string, text: string) => { const el = root.querySelector(sel); if (el) el.textContent = text }
@@ -111,7 +112,8 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
       li.append(body)
       list?.append(li)
     })
-    document.querySelectorAll<HTMLElement>('[data-empty]').forEach((el) => { el.hidden = true })
+    // Only one version stays in the page, so it has a single h1.
+    document.querySelectorAll<HTMLElement>('[data-empty]').forEach((el) => el.remove())
     document.querySelectorAll<HTMLElement>('[data-filled]').forEach((el) => { el.hidden = false })
     // The call request form (shown when there's no calendar) comes filled in with what they gave the quiz.
     const fill: Record<string, string | undefined> = { name: result.first, shop: result.shop, email: result.email, phone: result.phone }

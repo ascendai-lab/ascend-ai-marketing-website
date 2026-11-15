@@ -24,11 +24,11 @@ const body = close && !bold ? paragraphs.slice(0, -1) : paragraphs
         <p class="eyebrow">The problem</p>
         <h2 class="t-h2">{section.heading}</h2>
       </div>
-      <div data-reveal><MissedCallsPanel /></div>
     </div>
     <div class="problem__body" data-reveal>
       {body.map((p) => <p class="body-lg">{p}</p>)}
       {close && <p class="lead strong problem__close">{close}</p>}
+      <div class="problem__panel"><MissedCallsPanel /></div>
     </div>
   </div>
 </Section>
@@ -38,5 +38,6 @@ const body = close && !bold ? paragraphs.slice(0, -1) : paragraphs
   .problem__body .body-lg + .body-lg { margin-top: 0; }
   .problem__close { margin-top: var(--space-4); font-weight: var(--weight-medium); max-width: 32ch; }
   .problem__aside { display: grid; gap: var(--space-10); }
-  .problem__aside :global(.missed) { justify-self: start; }
+  .problem__panel { margin-top: var(--space-6); }
+  .problem__panel :global(.missed) { justify-self: start; }
 </style>

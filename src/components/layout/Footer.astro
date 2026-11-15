@@ -15,6 +15,9 @@ interface Props {
 }
 
 const { settings, navigation, footerPages } = Astro.props.layout
+// After the quiz and on the booking page, the footer button books the call too.
+const footerPath = Astro.url.pathname.replace(/\/$/, '')
+const bookingPage = footerPath === '/book' || footerPath === '/missed-calls/results'
 const year = new Date().getFullYear()
 const name = stegaClean(settings?.siteName) || brand.name
 const copyright = settings?.copyrightName || name
@@ -37,7 +40,7 @@ import { PRIVACY_PATH } from '@/content/legal'
       <div class="site-footer__brand">
         {settings?.logo?.asset ? <SanityImage image={settings.logo} width={210} sizes="210px" /> : <img src="/brand/logo.svg" alt={name} width="210" height="36" />}
         <p>{settings?.footerText || brand.tagline}</p>
-        <Btn href={links.quiz} variant="secondary" icon="arrow">{hero.primary}</Btn>
+        {bookingPage ? <Btn href="#calendar" variant="secondary" icon="arrow">{hero.secondary}</Btn> : <Btn href={links.quiz} variant="secondary" icon="arrow">{hero.primary}</Btn>}
         {
           settings?.socialLinks?.length ? (
             <ul class="site-footer__social">
@@ -136,6 +139,11 @@ import { PRIVACY_PATH } from '@/content/legal'
   .site-footer__bottom { margin-top: var(--space-14); padding-top: var(--space-6); border-top: 1px solid var(--surface-line); display: flex; flex-wrap: wrap; gap: var(--space-4); justify-content: space-between; font-size: var(--text-sm); }
   .site-footer__bottom p { color: var(--surface-muted); }
   .site-footer__bottom ul { display: flex; flex-wrap: wrap; gap: var(--space-5); color: var(--surface-muted); }
+  /* Phones: two columns; a third column on its own takes the full row. */
+  @media (max-width: 640px) {
+    .site-footer__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .site-footer__cols > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+  }
   @media (min-width: 641px) {
     .site-footer__cols { grid-template-columns: repeat(3, 1fr); }
     .site-footer__services { grid-template-columns: repeat(3, minmax(0, 1fr)); }

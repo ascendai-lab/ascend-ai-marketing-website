@@ -110,8 +110,8 @@ for (const [i, block] of blocks.entries()) {
     if (group.kind === 'links')
       return (
         <ul class:list={['blocks__links', group.items.length === 3 && 'blocks__links--stack']} data-reveal>
-          {group.items.map((item) => (
-            <li class:list={['card blocks__link', item.href && 'blocks__link--go']}>
+          {[...group.items].sort((a, b) => Number(Boolean(b.href)) - Number(Boolean(a.href))).map((item) => (
+            <li class:list={['card blocks__link', item.href ? 'blocks__link--go' : 'blocks__link--plain']}>
               <h3 class="t-h4">{item.href ? <a href={item.href}>{item.title}</a> : item.title}</h3>
               <p set:html={inline(item.text)} />
               {item.href && <span class="blocks__go" aria-hidden="true"><Icon name="arrow" /></span>}
@@ -186,6 +186,8 @@ for (const [i, block] of blocks.entries()) {
   .blocks__pricing { font-size: var(--text-body); color: var(--surface-muted); }
   .blocks__links { display: grid; gap: var(--grid-gap); }
   .blocks__link { position: relative; display: grid; gap: var(--space-2); align-content: start; }
+  /* Cards without a page of their own are flat, so they don't look clickable. */
+  .blocks__link--plain { background: none; box-shadow: none; border: 1px solid var(--surface-line); }
   .blocks__link p { font-size: var(--text-body); line-height: 1.55; color: var(--surface-muted); }
   .blocks__link--go { padding-right: calc(var(--space-6) + 2.5rem); transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
   .blocks__link--go h3 a::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }

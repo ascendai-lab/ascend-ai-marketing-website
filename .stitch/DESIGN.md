@@ -189,7 +189,7 @@ White panel, radius `xl`, shadow `lg`. Four-option answers on cream-100. The lea
 `/api/contact`.
 
 ### Layout breakpoints
-- Two columns (`.split`, `.columns`, split section heads, heroes) from 960px, all on one 5fr / 7fr grid so column edges line up from section to section. Three-across card grids from 900px. The header shows its full nav from 1024px.
+- Two columns (`.split`, `.columns`, split section heads, heroes) from 960px, all on one 5fr / 7fr grid so column edges line up from section to section. Three-across card grids from 760px. The header shows its full nav from 1024px.
 - An odd card left alone in a two-column grid spans the row; lists of exactly three stack as wide rows.
 
 ### Header and footer
@@ -224,7 +224,7 @@ White panel, radius `xl`, shadow `lg`. Four-option answers on cream-100. The lea
 - Lead forms use `ui/LeadForm` (posts to `/api/contact`). The plan steps use `ui/PlanBox`.
 
 ### Layout breakpoints
-- Two columns (`.split`, `.columns`, split section heads, heroes) from 960px, all on one 5fr / 7fr grid so column edges line up from section to section. Three-across card grids from 900px. The header shows its full nav from 1024px.
+- Two columns (`.split`, `.columns`, split section heads, heroes) from 960px, all on one 5fr / 7fr grid so column edges line up from section to section. Three-across card grids from 760px. The header shows its full nav from 1024px.
 - An odd card left alone in a two-column grid spans the row; lists of exactly three stack as wide rows.
 
 ### Header and footer

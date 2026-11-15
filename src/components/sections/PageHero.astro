@@ -95,7 +95,8 @@ const hasAside = tool
   .svc-hero__grid { display: grid; gap: var(--space-10); align-items: center; }
   .svc-hero__crumbs { margin-bottom: var(--space-8); }
   .svc-hero__crumbs ol { display: flex; flex-wrap: wrap; gap: var(--space-2); font-size: var(--text-sm); color: var(--surface-muted); }
-  .svc-hero__crumbs li + li::before { content: '/'; margin-right: var(--space-2); color: var(--color-text-inverse-faint); }
+  /* The separator ends the item before it, so a wrapped line never starts with "/". */
+  .svc-hero__crumbs li:not(:last-child)::after { content: '/'; margin-left: var(--space-2); color: var(--color-text-inverse-faint); }
   .svc-hero__crumbs a { color: var(--surface-body); transition: color var(--dur-fast) var(--ease-out); }
   .svc-hero__crumbs a:hover { color: var(--surface-fg); }
   @media (pointer: coarse) {
@@ -111,6 +112,7 @@ const hasAside = tool
   .svc-hero__notes li:nth-child(2) { margin-left: var(--space-8); }
   .svc-hero__tool { min-width: 0; }
   .hero__trust { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3) var(--space-10); padding-top: var(--space-12); }
+  @media (max-width: 959px) { .hero__trust { flex-direction: column; justify-content: flex-start; } }
   .hero__trust li { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-body); color: var(--surface-body); }
   .hero__trust :global(.icon) { width: var(--icon-size); height: var(--icon-size); color: var(--color-accent); flex: none; }
   @media (min-width: 960px) {
