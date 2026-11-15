@@ -220,6 +220,8 @@
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
   }
+  /* A field that gets focus (after a failed submit) scrolls into view with its label clear of the sticky header. */
+  :is(input, select, textarea) { scroll-margin-top: calc(var(--header-h) + var(--space-12)); }
   body { background: var(--color-bg); font-size: var(--text-body); line-height: var(--leading-body); }
 
   h1, h2, h3, h4, h5, h6 {

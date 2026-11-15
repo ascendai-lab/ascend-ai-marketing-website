@@ -91,6 +91,8 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
   try { result = JSON.parse(sessionStorage.getItem(root?.dataset.key ?? '') ?? 'null') } catch { result = null }
   if (!(root && result?.first && result.range)) {
     document.querySelectorAll<HTMLElement>('[data-filled]').forEach((el) => el.remove())
+    // "What it means" explains a result, so without one it goes too.
+    document.querySelector('.results-why')?.closest('section')?.remove()
     // No result yet: the quiz comes first, so the header and footer buttons offer it instead of the call.
     document.querySelectorAll<HTMLAnchorElement>(':is(.site-header, .site-footer) a[href="#calendar"]').forEach((a) => {
       a.href = root?.dataset.quiz ?? '/missed-calls'

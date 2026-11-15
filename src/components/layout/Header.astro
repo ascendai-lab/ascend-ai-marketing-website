@@ -25,6 +25,8 @@ const isCurrent = (href: string | undefined) => href !== undefined && (href.repl
 /** On /services, a category hub or a service page, the Services button shows as the current section. */
 // After the quiz (results) and on the booking page, the header button books the call.
 const bookingPage = currentPath === '/book' || currentPath === '/missed-calls/results'
+// On the quiz page the quiz is already on screen, so the phone button offers the call instead.
+const quizPage = currentPath === '/missed-calls'
 const inServices = currentPath.startsWith('/services') || servicesByCategory.some(({ look }) => isCurrent(look.href))
 ---
 
@@ -140,7 +142,7 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
     </nav>
 
     {/* Phones and tablets: the main action stays one tap away, next to the menu button. */}
-    <a href={bookingPage ? '#calendar' : links.quiz} class="btn btn--primary btn--sm site-header__quick">{bookingPage ? 'Book a call' : 'Take the quiz'}</a>
+    <a href={bookingPage ? '#calendar' : quizPage ? links.book : links.quiz} class="btn btn--primary btn--sm site-header__quick">{bookingPage || quizPage ? 'Book a call' : 'Take the quiz'}</a>
     <button class="site-header__toggle" type="button" aria-controls="site-nav" aria-expanded="false">
       <span class="sr-only">Menu</span>
       <span aria-hidden="true" class="bars"></span>
@@ -174,6 +176,15 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
   }
   let resetTimer = 0
   toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'))
+  // While the menu is open, Tab loops between the menu button and the menu's own links.
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Tab' || !nav?.classList.contains('is-open') || desktop.matches || !toggle) return
+    const items = [...nav.querySelectorAll<HTMLElement>('a, button')].filter((el) => el.offsetParent !== null && !el.closest('[inert]'))
+    if (!items.length) return
+    if (!event.shiftKey && document.activeElement === toggle) { event.preventDefault(); items[0].focus() }
+    else if (event.shiftKey && document.activeElement === items[0]) { event.preventDefault(); toggle.focus() }
+    else if (!event.shiftKey && document.activeElement === items[items.length - 1]) { event.preventDefault(); toggle.focus() }
+  })
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && nav?.classList.contains('is-open')) {
       // Inside the open Services list, Escape folds the list first.

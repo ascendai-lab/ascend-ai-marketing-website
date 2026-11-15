@@ -8,7 +8,7 @@ import { included, links, hero } from '@/content/home'
 
 <Section surface="cream" anchorId="included">
   <SectionHead eyebrow={included.eyebrow} heading={included.heading} align="center" />
-  <ul class="grid-3">
+  <ul class="grid-3 included__grid">
     {included.items.map((item) => (
       <li class="card card--feature">
         <span class="icon-chip"><Icon name={item.icon} /></span>
@@ -26,4 +26,11 @@ import { included, links, hero } from '@/content/home'
 <style>
   .included__cta { display: flex; flex-direction: column; justify-content: space-between; gap: var(--space-6); }
   .included__cta :global(.btn) { align-self: stretch; justify-content: space-between; max-width: 100%; white-space: normal; text-align: left; height: auto; min-height: var(--control-h); }
+  /* Three narrow columns (tablets, small laptops): a slimmer button, so the label stays on one line. */
+  /* Twelve tiles: two columns until there's room for three wide enough for the button. */
+  @media (min-width: 760px) and (max-width: 959px) { .included__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 960px) and (max-width: 1279px) {
+    .included__cta { padding-inline: var(--space-5); }
+    .included__cta :global(.btn) { white-space: nowrap; font-size: var(--text-sm); padding-inline: var(--space-4); gap: var(--space-2); }
+  }
 </style>
