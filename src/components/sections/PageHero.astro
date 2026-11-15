@@ -81,7 +81,7 @@ const hasAside = tool
   </div>
   {trust.length > 0 && (
     <div class="container">
-      <ul class="hero__trust">
+      <ul class="hero__trust" data-reveal>
         {trust.map((item, i) => (
           <li style={`--i: ${i}`}><Icon name={item.icon} />{item.text}</li>
         ))}

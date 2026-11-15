@@ -596,15 +596,12 @@
   .motion .hero__top > :first-child > * { animation: rise var(--dur-reveal) var(--ease-reveal) both; }
   .motion .hero__top > :first-child > :nth-child(2) { animation-delay: 80ms; }
   .motion .hero__side { animation: rise var(--dur-reveal) var(--ease-reveal) 220ms both; }
-  /* Service hero: breadcrumb, eyebrow, headline, copy and buttons rise one after another, then the photo and its notes. */
-  .motion .svc-hero__copy > * { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(var(--n, 0) * 80ms); }
-  .motion .svc-hero__copy > :nth-child(3) { --n: 1; }
-  .motion .svc-hero__copy > :nth-child(4) { --n: 2; }
-  .motion .svc-hero__copy > :nth-child(n + 5) { --n: 3; }
-  .motion :is(.svc-hero__photo, .svc-hero__tool) { animation: rise var(--dur-reveal) var(--ease-reveal) 240ms both; }
-  /* The notes follow just behind the photo, so the hero settles as one group. */
-  .motion .svc-hero__notes li { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(360ms + var(--i, 0) * 80ms); }
-  .motion .hero__trust { animation: rise var(--dur-reveal) var(--ease-reveal) 300ms both; }
+  /* Service hero, in three quick groups: breadcrumb, eyebrow and headline; then the copy and buttons; then the photo and its notes. */
+  .motion .svc-hero__copy > * { animation: rise var(--dur-reveal) var(--ease-reveal) both; }
+  .motion .svc-hero__copy > :nth-child(n + 4) { animation-delay: 100ms; }
+  .motion :is(.svc-hero__photo, .svc-hero__tool) { animation: rise var(--dur-reveal) var(--ease-reveal) 200ms both; }
+  /* The notes arrive with the photo. The trust strip below slides in when it scrolls into view ([data-reveal]). */
+  .motion .svc-hero__notes li { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(200ms + var(--i, 0) * 40ms); }
   /* The slide's contents move, not the slide itself, so scroll snapping can't fight the slide-in. */
   .motion .hero .slide:nth-child(-n + 4) > * { animation: rise var(--dur-reveal) var(--ease-reveal) 220ms both; }
 

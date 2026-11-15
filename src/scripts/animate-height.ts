@@ -16,8 +16,30 @@ export function motionTiming(fallbackMs = 420) {
   }
 }
 
-/** Pass `interrupted` when the caller already stopped a running animation on `el` before measuring. */
-export function animateHeight(el: HTMLElement, from: number, to: number, options: { interrupted?: boolean } = {}): Animation | null {
+/**
+ * How fast `el`'s running height animation is moving right now, in px per ms (0 when it isn't).
+ * Call it before cancelling that animation, and pass the result to animateHeight as `velocity`.
+ */
+export function heightVelocity(el: HTMLElement): number {
+  const running = el.getAnimations().find((a) => heightAnimations.has(a) && a.playState === 'running')
+  if (!running || running.currentTime === null) return 0
+  const t = Number(running.currentTime)
+  if (t < 16) return 0
+  const now = el.getBoundingClientRect().height
+  running.currentTime = t - 16
+  const before = el.getBoundingClientRect().height
+  running.currentTime = t
+  return (now - before) / 16
+}
+
+/** How long a reversal coasts to a stop before it turns around. */
+const COAST_MS = 110
+
+/**
+ * Pass `interrupted` when the caller already stopped a running animation on `el` before measuring,
+ * and `velocity` (from heightVelocity) so a reversal slows to a stop instead of stopping dead.
+ */
+export function animateHeight(el: HTMLElement, from: number, to: number, options: { interrupted?: boolean; velocity?: number } = {}): Animation | null {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || from === to) return null
   // Remember the element's own overflow only once, so overlapping animations never save a stale "hidden".
   if (!savedOverflow.has(el)) savedOverflow.set(el, el.style.overflow)
@@ -40,8 +62,22 @@ export function animateHeight(el: HTMLElement, from: number, to: number, options
   }
   el.getAnimations().forEach((a) => { if (heightAnimations.has(a)) a.cancel() })
   if (!interrupted) lastDistance.set(el, distance)
-  const animation = el.animate([{ height: `${from}px` }, { height: `${to}px` }], { duration, easing })
+  // Turning around: first coast to a stop the way it was going (a gentle deceleration that starts at
+  // its current speed), then head to the target. Going the same way, it just carries on.
+  const v = options.velocity ?? 0
+  const reversing = interrupted && Math.abs(v) > 0.05 && Math.sign(v) !== Math.sign(to - from)
+  const coastTo = Math.max(0, from + (v * COAST_MS) / 2)
+  const keyframes: Keyframe[] = reversing
+    ? [
+        { height: `${from}px`, offset: 0, easing: 'cubic-bezier(0.333, 0.667, 0.667, 1)' },
+        { height: `${coastTo}px`, offset: COAST_MS / (COAST_MS + duration), easing },
+        { height: `${to}px`, offset: 1 },
+      ]
+    : [{ height: `${from}px` }, { height: `${to}px` }]
+  const animation = el.animate(keyframes, reversing ? { duration: COAST_MS + duration, easing: 'linear' } : { duration, easing })
   heightAnimations.add(animation)
+  // A reversal starts one frame in: the click's own frame already showed `from`, so starting at 0 would hold still for a frame.
+  if (interrupted) animation.currentTime = 16
   const restore = () => {
     // Only the last running height animation hands overflow back.
     const running = el.getAnimations().some((a) => a !== animation && heightAnimations.has(a) && a.playState === 'running')

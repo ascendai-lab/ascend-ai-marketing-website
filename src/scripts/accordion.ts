@@ -2,7 +2,7 @@
  * Accordions (.accordion > details) open and close with a smooth height animation.
  * Groups marked [data-one-open] keep one item open at a time. No animation for reduced motion.
  */
-import { animateHeight, motionTiming } from './animate-height'
+import { animateHeight, heightVelocity, motionTiming } from './animate-height'
 
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -15,6 +15,7 @@ function setOpen(details: HTMLDetailsElement, open: boolean) {
 
   const from = details.getBoundingClientRect().height
   const wasMoving = details.getAnimations().length > 0
+  const velocity = heightVelocity(details)
   details.getAnimations().forEach((a) => { if (!(a instanceof CSSTransition)) a.cancel() })
   details.classList.toggle('is-closing', !open)
   details.open = true
@@ -35,7 +36,7 @@ function setOpen(details: HTMLDetailsElement, open: boolean) {
     })
   })
 
-  const animation = animateHeight(details, from, to, { interrupted: wasMoving })
+  const animation = animateHeight(details, from, to, { interrupted: wasMoving, velocity })
   const done = () => {
     details.open = open
     details.classList.remove('is-closing')
@@ -46,15 +47,35 @@ function setOpen(details: HTMLDetailsElement, open: boolean) {
   animation.onfinish = done
 }
 
+function holdInPlace(el: HTMLElement, top: number) {
+  const until = performance.now() + motionTiming().duration * 1.8
+  const step = () => {
+    const shift = el.getBoundingClientRect().top - top
+    if (Math.abs(shift) >= 0.5) window.scrollBy(0, shift)
+    if (performance.now() < until) requestAnimationFrame(step)
+  }
+  requestAnimationFrame(step)
+}
+
 document.querySelectorAll<HTMLElement>('.accordion').forEach((group) => {
   group.querySelectorAll<HTMLDetailsElement>(':scope > details').forEach((details) => {
     details.querySelector('summary')?.addEventListener('click', (event) => {
       event.preventDefault()
       const open = !(details.dataset.state ? details.dataset.state === 'open' : details.open)
+      const summary = details.querySelector('summary')!
+      const top = summary.getBoundingClientRect().top
+      let closedAbove = false
       if (open && group.hasAttribute('data-one-open')) {
-        group.querySelectorAll<HTMLDetailsElement>(':scope > details').forEach((other) => { if (other !== details) setOpen(other, false) })
+        group.querySelectorAll<HTMLDetailsElement>(':scope > details').forEach((other) => {
+          if (other === details) return
+          const wasOpen = other.dataset.state ? other.dataset.state === 'open' : other.open
+          if (wasOpen && other.compareDocumentPosition(details) & Node.DOCUMENT_POSITION_FOLLOWING) closedAbove = true
+          setOpen(other, false)
+        })
       }
       setOpen(details, open)
+      // An item closing above would pull the clicked question up and out from under the pointer: keep it in place.
+      if (closedAbove && !reduce) holdInPlace(summary, top)
     })
   })
 })

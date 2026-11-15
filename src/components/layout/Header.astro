@@ -144,7 +144,7 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
 </header>
 
 <script>
-  import { animateHeight } from '@/scripts/animate-height'
+  import { animateHeight, heightVelocity } from '@/scripts/animate-height'
 
   const header = document.querySelector<HTMLElement>('.site-header')
   const toggle = document.querySelector<HTMLButtonElement>('.site-header__toggle')
@@ -190,18 +190,23 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
     menuToggle.setAttribute('aria-expanded', String(open))
     if (desktop.matches) { menu.classList.toggle('is-open', open); return }
     // Measure where it is now (mid-animation, if it's moving), then stop that animation before measuring the target.
-    const from = panel.getBoundingClientRect().height
+    let from = panel.getBoundingClientRect().height
+    const velocity = heightVelocity(panel)
     const running = panel.getAnimations()
     const wasMoving = running.length > 0
     running.forEach((a) => a.cancel())
     menu.classList.toggle('is-open', open)
     panel.style.height = 'auto'
-    const to = open ? panel.getBoundingClientRect().height : 0
+    const full = open ? panel.getBoundingClientRect().height : 0
     panel.style.height = ''
-    const animation = animateHeight(panel, from, to, { interrupted: wasMoving })
+    // Only the part on screen animates: the list is taller than the phone, and the rest is out of sight.
+    const visible = Math.max(0, window.innerHeight - panel.getBoundingClientRect().top + 40)
+    from = Math.min(from, visible)
+    const to = Math.min(full, visible)
+    const animation = animateHeight(panel, from, to, { interrupted: wasMoving, velocity })
     if (animation) {
       panel.style.height = `${to}px`
-      // Only the newest animation clears the fixed height, so an older one finishing never snaps the panel.
+      // Only the newest animation hands the height back, so an older one finishing never snaps the panel.
       animation.addEventListener('finish', () => { if (panel.getAnimations().length === 0) panel.style.height = '' })
     }
   }
@@ -258,11 +263,12 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
     background: var(--surface-bg);
     padding: var(--space-5) var(--container-padding-x) var(--space-10);
     visibility: hidden; clip-path: inset(0 0 100% 0);
-    transition: clip-path var(--dur-menu) var(--ease-out), visibility 0s linear var(--dur-menu);
+    /* Closing: a quicker, even ease, so it doesn't rush off in the first frames. */
+    transition: clip-path 300ms var(--ease-height), visibility 0s linear 300ms;
   }
   .site-nav.is-open { visibility: visible; clip-path: inset(0 0 0 0); transition: clip-path var(--dur-menu) var(--ease-out), visibility 0s; }
   .site-nav__item, .site-nav__cta { opacity: 0; transform: translateY(-14px); transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out); }
-  .site-nav.is-open .site-nav__item, .site-nav.is-open .site-nav__cta { opacity: 1; transform: none; transition: opacity var(--dur-menu) var(--ease-out), transform var(--dur-menu) var(--ease-out); transition-delay: calc(100ms + var(--i, 0) * 40ms); }
+  .site-nav.is-open .site-nav__item, .site-nav.is-open .site-nav__cta { opacity: 1; transform: none; transition: opacity 300ms var(--ease-out), transform 300ms var(--ease-out); transition-delay: calc(60ms + var(--i, 0) * 25ms); }
   :global(html.menu-open body) { overflow: hidden; }
   @media (prefers-reduced-motion: reduce) {
     .site-nav, .site-nav.is-open { clip-path: none; opacity: 0; transition: opacity 0.15s, visibility 0s linear 0.15s; }
