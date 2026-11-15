@@ -16,7 +16,8 @@ import { hero, links } from '@/content/home'
       <p>{hero.body}</p>
       <div class="actions">
         <Btn href={links.quiz} icon="arrow">{hero.primary}</Btn>
-        <VideoButton url={hero.video.url} label={hero.video.label} title={hero.video.title} fallbackHref={links.book} fallbackLabel={hero.secondary} />
+        {/* Until the video is recorded, the second button books a call instead of promising a video. */}
+        {hero.video.url ? <VideoButton url={hero.video.url} label={hero.video.label} title={hero.video.title} fallbackHref={links.book} fallbackLabel={hero.secondary} /> : <Btn href={links.book} variant="secondary">{hero.secondary}</Btn>}
       </div>
     </div>
   </div>
@@ -39,6 +40,6 @@ import { hero, links } from '@/content/home'
   .hero__trust { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3) var(--space-10); padding-top: var(--space-8); }
   .hero__trust li { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-body); color: var(--surface-body); }
   .hero__trust .icon { width: var(--icon-size); height: var(--icon-size); color: var(--color-accent); }
-  @media (min-width: 1101px) { .hero__top { grid-template-columns: 7fr 4fr; gap: var(--space-14); padding-block: var(--space-20) var(--space-16); } }
+  @media (min-width: 960px) { .hero__top { grid-template-columns: 7fr 4fr; gap: var(--space-14); padding-block: var(--space-20) var(--space-16); } }
   @media (max-width: 640px) { .hero__top { padding-block: var(--space-10); } .hero__trust { flex-direction: column; justify-content: flex-start; } }
 </style>

@@ -109,7 +109,7 @@ for (const [i, block] of blocks.entries()) {
       return <p class="blocks__pricing">{group.text} <a class="link" href={group.link.href || links.plan}>{group.link.text}</a></p>
     if (group.kind === 'links')
       return (
-        <ul class="blocks__links" data-reveal>
+        <ul class:list={['blocks__links', group.items.length === 3 && 'blocks__links--stack']} data-reveal>
           {group.items.map((item) => (
             <li class:list={['card blocks__link', item.href && 'blocks__link--go']}>
               <h3 class="t-h4">{item.href ? <a href={item.href}>{item.title}</a> : item.title}</h3>
@@ -121,7 +121,7 @@ for (const [i, block] of blocks.entries()) {
       )
     if (group.kind === 'points')
       return (
-        <ul class:list={['blocks__points', group.items.length > 2 && group.items.length !== 4 ? 'grid-points-3' : 'grid-points-2']} data-reveal>
+        <ul class:list={['blocks__points', group.items.length === 3 ? 'grid-points-1' : group.items.length > 2 && group.items.length !== 4 ? 'grid-points-3' : 'grid-points-2']} data-reveal>
           {group.items.map((item, i) => (
             <li class="card blocks__point">
               {numbered && <span class="blocks__num">{twoDigit(i)}</span>}
@@ -196,7 +196,8 @@ for (const [i, block] of blocks.entries()) {
   .blocks__go :global(.icon) { width: 1rem; height: 1rem; }
   .blocks__link--go:hover .blocks__go { background: var(--color-brand-deep); color: var(--color-white); }
   @media (min-width: 641px) {
-    .blocks__links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    /* Three cards stack as wide rows; two columns would leave one alone under the other two. */
+    .blocks__links:not(.blocks__links--stack) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .blocks__links > :last-child:nth-child(odd) { grid-column: 1 / -1; }
     .grid-points-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .grid-points-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }

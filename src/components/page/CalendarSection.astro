@@ -28,9 +28,11 @@ const tel = phone?.replace(/[^\d+]/g, '')
 
 <Section surface={surface} anchorId="calendar">
   <div class="split split--top cal">
-    <div class="cal__side" data-reveal>
+    <div class="cal__head" data-reveal>
       <p class="eyebrow">{section.label}</p>
       <h2 class="t-h2">{section.heading}</h2>
+    </div>
+    <div class="cal__side" data-reveal>
       {fields['Tip line'] && (
         <p class="card cal__tip"><Icon name="zap" /><span>{fields['Tip line']} <a class="link" href={links.quiz}>{hero.primary}</a></span></p>
       )}
@@ -45,12 +47,17 @@ const tel = phone?.replace(/[^\d+]/g, '')
         </div>
       )}
     </div>
-    <div data-reveal><BookingCalendar id="book-calendar" /></div>
+    <div class="cal__form" data-reveal><BookingCalendar id="book-calendar" /></div>
   </div>
 </Section>
 
 <style>
-  .cal__side { display: grid; gap: var(--space-5); align-content: start; }
+  /* Phones: heading, then the form, then the extras. Desktop: the form on the right. */
+  .cal { grid-template-areas: 'head' 'form' 'side'; row-gap: var(--space-8); }
+  .cal__head { grid-area: head; }
+  .cal__form { grid-area: form; }
+  .cal__side { grid-area: side; display: grid; gap: var(--space-5); align-content: start; }
+  @media (min-width: 960px) { .cal { grid-template-areas: 'head form' 'side form'; grid-template-rows: auto 1fr; row-gap: var(--space-5); } }
   .cal__tip { display: flex; gap: var(--space-3); align-items: flex-start; font-size: var(--text-body); color: var(--surface-fg); background: var(--color-sage-100); }
   .cal__tip :global(.icon), .cal__call :global(.icon) { width: var(--icon-size); height: var(--icon-size); color: var(--color-brand); flex: none; margin-top: 0.15rem; }
   .cal__call { display: flex; gap: var(--space-3); font-size: var(--text-body); }

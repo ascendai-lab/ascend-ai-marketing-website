@@ -46,5 +46,5 @@ const cards = section.blocks.filter((b): b is { type: 'case' } & CaseCard => b.t
   .case__quote p { font-style: italic; color: var(--surface-body); }
   .case__quote footer { margin-top: var(--space-2); font-size: var(--text-sm); font-weight: var(--weight-strong); color: var(--surface-fg); }
   @media (min-width: 761px) { .cases { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (min-width: 1101px) { .cases { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (min-width: 960px) { .cases { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 </style>

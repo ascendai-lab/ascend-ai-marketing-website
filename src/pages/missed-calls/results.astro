@@ -104,7 +104,11 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
       const li = document.createElement('li')
       const strong = document.createElement('strong')
       strong.textContent = title
-      li.append(strong, ` ${text}`)
+      const body = document.createElement('div')
+      const line = document.createElement('p')
+      line.textContent = text
+      body.append(strong, line)
+      li.append(body)
       list?.append(li)
     })
     document.querySelectorAll<HTMLElement>('[data-empty]').forEach((el) => { el.hidden = true })
@@ -132,7 +136,7 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
   .results__fixes ol { counter-reset: fx; display: grid; gap: var(--space-4); }
   .results__fixes li { counter-increment: fx; display: grid; grid-template-columns: 2rem 1fr; gap: var(--space-3); font-size: var(--text-body); line-height: 1.5; color: var(--color-text-body); }
   .results__fixes li::before { content: counter(fx); width: 1.75rem; height: 1.75rem; border-radius: var(--radius-full); display: grid; place-items: center; font-size: var(--text-xs); font-weight: var(--weight-strong); background: var(--color-brand-deep); color: var(--color-white); }
-  .results__fixes :global(strong) { color: var(--color-text); }
+  .results__fixes :global(strong) { display: block; color: var(--color-text); }
   .results__meaning { max-width: 30ch; margin-top: var(--space-2); }
   .results__picture { margin-top: var(--space-6); max-width: 46ch; }
   .results-mark { display: grid; grid-template-columns: 9rem 1fr; gap: var(--space-6); align-items: center; }
@@ -142,9 +146,9 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
   .results-book__head { grid-area: head; }
   .results-book__cal { grid-area: cal; }
   .results-plan { grid-area: plan; display: grid; gap: var(--space-6); align-content: start; }
-  @media (min-width: 1101px) { .results-book { grid-template-areas: 'head cal' 'plan cal'; grid-template-rows: auto 1fr; row-gap: var(--space-6); } }
+  @media (min-width: 960px) { .results-book { grid-template-areas: 'head cal' 'plan cal'; grid-template-rows: auto 1fr; row-gap: var(--space-6); } }
   .results__pricing { font-size: var(--text-body); color: var(--surface-muted); }
   .results-plan :global(.link) { justify-self: start; }
-  @media (min-width: 1101px) { .results-grid { grid-template-columns: 7fr 5fr; gap: var(--space-16); } }
+  @media (min-width: 960px) { .results-grid { grid-template-columns: 7fr 5fr; gap: var(--space-16); } }
   @media (max-width: 640px) { .results-mark { grid-template-columns: 1fr; } .results-mark__photo { max-width: 9rem; } }
 </style>

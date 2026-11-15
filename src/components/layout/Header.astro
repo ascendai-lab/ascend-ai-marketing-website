@@ -23,6 +23,8 @@ const announcementLink = resolveLink(announcement?.link)
 const useFallbackNav = !navigation?.headerLinks?.length
 const isCurrent = (href: string | undefined) => href !== undefined && (href.replace(/\/$/, '') || '/') === currentPath
 /** On /services, a category hub or a service page, the Services button shows as the current section. */
+// After the quiz (results) and on the booking page, the header button books the call.
+const bookingPage = currentPath === '/book' || currentPath === '/missed-calls/results'
 const inServices = currentPath.startsWith('/services') || servicesByCategory.some(({ look }) => isCurrent(look.href))
 ---
 
@@ -132,8 +134,8 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
         }
       </ul>
       <div class="site-nav__cta" style={`--i:${navigation?.headerLinks?.length ?? fallbackNav.length}`}>
-        {navigation?.headerCta ? <Button button={navigation.headerCta} /> : <Btn href={links.quiz} size="sm">{hero.primary}</Btn>}
-        <a href={links.book} class="site-nav__book">Or book a 15-minute call</a>
+        {navigation?.headerCta && !bookingPage ? <Button button={navigation.headerCta} /> : bookingPage ? <Btn href="#calendar" size="sm">{hero.secondary}</Btn> : <Btn href={links.quiz} size="sm">{hero.primary}</Btn>}
+        {!bookingPage && <a href={links.book} class="site-nav__book">Or book a 15-minute call</a>}
       </div>
     </nav>
 
@@ -190,6 +192,8 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
     if (!menu || !menuToggle || !panel || menu.classList.contains('is-open') === open) return
     menuToggle.setAttribute('aria-expanded', String(open))
     if (desktop.matches) { menu.classList.toggle('is-open', open); return }
+    // Collapsed on phones, its links are out of the tab order too.
+    if (open) panel.inert = false
     // Measure where it is now (mid-animation, if it's moving), then stop that animation before measuring the target.
     let from = panel.getBoundingClientRect().height
     const velocity = heightVelocity(panel)
@@ -208,9 +212,13 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
     if (animation) {
       panel.style.height = `${to}px`
       // Only the newest animation hands the height back, so an older one finishing never snaps the panel.
-      animation.addEventListener('finish', () => { if (panel.getAnimations().length === 0) panel.style.height = '' })
-    }
+      animation.addEventListener('finish', () => {
+        if (panel.getAnimations().length === 0) panel.style.height = ''
+        if (!menu.classList.contains('is-open')) panel.inert = true
+      })
+    } else if (!open) panel.inert = true
   }
+  if (panel && !desktop.matches) panel.inert = true
   menuToggle?.addEventListener('click', () => {
     // The first click after a hover-open keeps it open; the next click closes it as usual.
     if (desktop.matches && openedByHover) { openedByHover = false; return }
@@ -238,7 +246,11 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
   document.addEventListener('click', (event) => {
     if (menu && desktop.matches && !menu.contains(event.target as Node)) setServices(false)
   })
-  desktop.addEventListener('change', () => { menu?.classList.remove('is-open'); menuToggle?.setAttribute('aria-expanded', 'false') })
+  desktop.addEventListener('change', () => {
+    menu?.classList.remove('is-open')
+    menuToggle?.setAttribute('aria-expanded', 'false')
+    if (panel) panel.inert = !desktop.matches
+  })
 
   // Close dropdowns when clicking elsewhere.
   document.addEventListener('click', (event) => {

@@ -56,7 +56,7 @@ export function animateHeight(el: HTMLElement, from: number, to: number, options
   const interrupted = options.interrupted || el.getAnimations().some((a) => heightAnimations.has(a) && a.playState === 'running')
   if (interrupted) {
     const share = Math.min(1, distance / (lastDistance.get(el) || distance || 1))
-    duration = Math.max(180, duration * Math.max(0.45, share))
+    duration = Math.max(260, duration * Math.max(0.7, Math.sqrt(share)))
     // A gentle start, so the turn-around doesn't jump straight to full speed the other way.
     easing = 'cubic-bezier(0.3, 0, 0.2, 1)'
   }

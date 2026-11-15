@@ -188,6 +188,10 @@ about …" link to its service page. No prices. Ends with a "View all services" 
 White panel, radius `xl`, shadow `lg`. Four-option answers on cream-100. The lead posts to
 `/api/contact`.
 
+### Layout breakpoints
+- Two columns (`.split`, `.columns`, split section heads, heroes) from 960px, all on one 5fr / 7fr grid so column edges line up from section to section. Three-across card grids from 900px. The header shows its full nav from 1024px.
+- An odd card left alone in a two-column grid spans the row; lists of exactly three stack as wide rows.
+
 ### Header and footer
 - Header: sticky, green-900, logo left, pill nav centered, primary button right. On phones: a full-screen green menu.
 - Footer: cream, logo and quiz button, three link columns, then the copyright line, then **Ascend AI Marketing** across the full width as a watermark: light weight, wide letter spacing, green at 20% fading to nothing at the bottom edge (no logo mark).
@@ -219,9 +223,14 @@ White panel, radius `xl`, shadow `lg`. Four-option answers on cream-100. The lea
 - Finishing the quiz lands on `/missed-calls/results` (not indexed). The booking calendar's redirect is `/book/confirmed` (not indexed). Both push a dataLayer event (`quiz_complete`, `call_booked`; also `quiz_start`, `teardown_request`, `call_request`).
 - Lead forms use `ui/LeadForm` (posts to `/api/contact`). The plan steps use `ui/PlanBox`.
 
+### Layout breakpoints
+- Two columns (`.split`, `.columns`, split section heads, heroes) from 960px, all on one 5fr / 7fr grid so column edges line up from section to section. Three-across card grids from 900px. The header shows its full nav from 1024px.
+- An odd card left alone in a two-column grid spans the row; lists of exactly three stack as wide rows.
+
 ### Header and footer
 - The header Services menu lists every service under its category (the category name links to its hub page). Desktop: a white panel under the header, opening on hover or click. Mobile: a nested list in the menu that opens with the same height easing as the FAQ.
-- The footer lists every service by category above the bottom row.
+- The footer lists every service by category above the bottom row, and links the privacy policy.
+- On `/book` and the quiz results, the header button books the call (`#calendar`) instead of starting the quiz.
 
 ### Motion
 - Height changes (FAQ, quiz, menu) use `--ease-height` (ease-in-out) over `--dur-accordion`, so they never snap open or stop hard. Content inside only fades.

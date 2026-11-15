@@ -45,5 +45,5 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
   .booked__before { font-size: var(--text-body); color: var(--surface-fg); max-width: 40ch; }
   .booked__note { font-size: var(--text-sm); color: var(--surface-muted); }
   .booked__plan { border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-lg); }
-  @media (min-width: 1101px) { .booked__grid { grid-template-columns: 7fr 5fr; gap: var(--space-16); } }
+  @media (min-width: 960px) { .booked__grid { grid-template-columns: 7fr 5fr; gap: var(--space-16); } }
 </style>

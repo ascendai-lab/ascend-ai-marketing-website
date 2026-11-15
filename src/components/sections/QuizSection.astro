@@ -71,7 +71,7 @@ const first = QUESTIONS[0]
   .final__card { grid-area: card; }
   .final__links { grid-area: links; }
   .final--solo { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'head' 'links'; row-gap: 0; }
-  @media (min-width: 1101px) {
+  @media (min-width: 960px) {
     .final:not(.final--solo) { grid-template-areas: '. card' 'head card' 'links card' '. card'; grid-template-rows: 1fr auto auto 1fr; row-gap: 0; align-items: start; }
   }
   .final__h { font-size: var(--text-cta); max-width: 13ch; }
@@ -79,7 +79,7 @@ const first = QUESTIONS[0]
   .final__body { margin-top: var(--stack-body); }
   .final__note { margin-top: var(--space-3); max-width: 44ch; }
   .final__actions { margin-bottom: var(--space-2); }
-  @media (min-width: 1101px) { .final__actions { margin-top: var(--stack-actions); } }
+  @media (min-width: 960px) { .final__actions { margin-top: var(--stack-actions); } }
   .final--solo .final__actions { margin-top: var(--stack-actions); }
 
   /* The quiz's first question, as a card. Each answer opens the quiz page at question 2. */
