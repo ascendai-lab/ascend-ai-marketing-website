@@ -45,7 +45,7 @@ if (root.classList.contains('motion')) {
   // Items slide up as soon as their top edge comes into view. Items that arrive together
   // follow each other in reading order. A big batch (after a jump down the page) shares the
   // same short window, so nothing on screen waits long or lands in a clump at the end.
-  const maxStagger = step * 2
+  const maxStagger = step * 1.25
   const reveal = new IntersectionObserver((entries) => {
     const arriving = entries
       .filter((entry) => entry.isIntersecting)

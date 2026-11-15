@@ -117,7 +117,8 @@ import { links } from '@/content/home'
         after?.()
         return
       }
-      if (first || reduceMotion || !old) { swap(step); after?.(); return }
+      // Already mostly faded (for example Back pressed again during a fade): swap straight away.
+      if (first || reduceMotion || !old || Number(opacity) < 0.3) { swap(step); after?.(); return }
       old.animate([{ opacity }, { opacity: 0 }], { duration: 110, easing: 'linear', fill: 'forwards' }).finished.then((fade) => {
         if (id !== swapId) return
         swap(step)

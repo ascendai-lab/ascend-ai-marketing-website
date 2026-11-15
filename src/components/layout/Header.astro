@@ -170,7 +170,7 @@ const isCurrent = (href: string | undefined) => href !== undefined && (href.repl
   }
   .site-nav.is-open { visibility: visible; clip-path: inset(0 0 0 0); transition: clip-path var(--dur-menu) var(--ease-out), visibility 0s; }
   .site-nav__item, .site-nav__cta { opacity: 0; transform: translateY(-14px); transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out); }
-  .site-nav.is-open .site-nav__item, .site-nav.is-open .site-nav__cta { opacity: 1; transform: none; transition: opacity var(--dur-menu) ease, transform var(--dur-menu) var(--ease-out); transition-delay: calc(100ms + var(--i, 0) * 40ms); }
+  .site-nav.is-open .site-nav__item, .site-nav.is-open .site-nav__cta { opacity: 1; transform: none; transition: opacity var(--dur-menu) var(--ease-out), transform var(--dur-menu) var(--ease-out); transition-delay: calc(100ms + var(--i, 0) * 40ms); }
   :global(html.menu-open body) { overflow: hidden; }
   @media (prefers-reduced-motion: reduce) {
     .site-nav, .site-nav.is-open { clip-path: none; opacity: 0; transition: opacity 0.15s, visibility 0s linear 0.15s; }
