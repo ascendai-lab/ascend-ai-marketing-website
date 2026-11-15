@@ -16,9 +16,9 @@ const cards = section.blocks.filter((b): b is { type: 'case' } & CaseCard => b.t
 
 <Section surface={surface} anchorId="results">
   <SectionHead eyebrow="Past client results" heading={section.heading} />
-  <ul class="cases">
+  <ul class="cases" data-reveal>
     {cards.map((card) => (
-      <li class="card case" data-reveal>
+      <li class="card case">
         <p class="tag">{card.kind}</p>
         <h3 class="case__name">{card.name}</h3>
         <p class="case__headline">{card.headline}</p>

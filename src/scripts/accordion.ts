@@ -28,14 +28,14 @@ function setOpen(details: HTMLDetailsElement, open: boolean) {
     el.getAnimations().forEach((a) => a.cancel())
     const start = wasMoving ? current : open ? 0 : 1
     el.animate([{ opacity: start }, { opacity: open ? 1 : 0 }], {
-      duration: open ? timing.duration * 0.75 : timing.duration * 0.5,
+      duration: open ? timing.duration * 0.75 : timing.duration * 0.8,
       delay: open && !wasMoving ? timing.duration * 0.25 : 0,
       easing: 'ease-out',
       fill: 'both',
     })
   })
 
-  const animation = animateHeight(details, from, to)
+  const animation = animateHeight(details, from, to, { interrupted: wasMoving })
   const done = () => {
     details.open = open
     details.classList.remove('is-closing')

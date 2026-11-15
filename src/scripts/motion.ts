@@ -5,8 +5,8 @@
 const root = document.documentElement
 // Keep in step with the matching list under "Entrance" in global.css, which hides these before they arrive.
 const SELECTOR = [
-  '.section .section-head', '.section .split > :not(script)', '.section .grid-2 > *', '.section .grid-3 > *',
-  '.section .grid-4 > *', '.section .plan', '[data-reveal]',
+  '.section .section-head', '.section .split > :not(script)', '.section .grid-2', '.section .grid-3',
+  '.section .grid-4', '.section .plan', '[data-reveal]',
 ].join(', ')
 
 if (root.classList.contains('motion')) {

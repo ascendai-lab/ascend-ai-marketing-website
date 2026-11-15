@@ -180,7 +180,10 @@ const isCurrent = (href: string | undefined) => href !== undefined && (href.repl
   const menuToggle = menu?.querySelector<HTMLButtonElement>('.svc-menu__toggle')
   const panel = menu?.querySelector<HTMLElement>('.svc-menu__panel')
   let closeTimer = 0
+  // Opened by the pointer resting on it: a click that follows (the natural next move) keeps it open.
+  let openedByHover = false
   const setServices = (open: boolean) => {
+    if (!open) openedByHover = false
     if (!menu || !menuToggle || !panel || menu.classList.contains('is-open') === open) return
     menuToggle.setAttribute('aria-expanded', String(open))
     if (desktop.matches) { menu.classList.toggle('is-open', open); return }
@@ -195,10 +198,14 @@ const isCurrent = (href: string | undefined) => href !== undefined && (href.repl
       animation.addEventListener('finish', () => { panel.style.height = '' })
     }
   }
-  menuToggle?.addEventListener('click', () => setServices(!menu!.classList.contains('is-open')))
+  menuToggle?.addEventListener('click', () => {
+    if (desktop.matches && openedByHover) return
+    setServices(!menu!.classList.contains('is-open'))
+  })
   menu?.addEventListener('pointerenter', (event) => {
     if (!desktop.matches || event.pointerType !== 'mouse') return
     clearTimeout(closeTimer)
+    if (!menu.classList.contains('is-open')) openedByHover = true
     setServices(true)
   })
   menu?.addEventListener('pointerleave', (event) => {
@@ -311,9 +318,9 @@ const isCurrent = (href: string | undefined) => href !== undefined && (href.repl
       position: absolute; top: calc(100% - 0.5rem); left: 50%; width: min(72rem, calc(100vw - 2 * var(--container-padding-x)));
       height: auto; overflow: visible; padding-top: var(--space-3);
       opacity: 0; visibility: hidden; translate: -50% -0.5rem;
-      transition: opacity var(--dur-base) var(--ease-out), translate var(--dur-base) var(--ease-out), visibility 0s linear var(--dur-base);
+      transition: opacity var(--dur-base) var(--ease-height), translate var(--dur-base) var(--ease-height), visibility 0s linear var(--dur-base);
     }
-    .svc-menu.is-open .svc-menu__panel { opacity: 1; visibility: visible; translate: -50% 0; transition: opacity var(--dur-base) var(--ease-out), translate var(--dur-base) var(--ease-out), visibility 0s; }
+    .svc-menu.is-open .svc-menu__panel { opacity: 1; visibility: visible; translate: -50% 0; transition: opacity var(--dur-base) var(--ease-height), translate var(--dur-base) var(--ease-height), visibility 0s; }
     .svc-menu__inner { padding: var(--space-8); border-radius: var(--radius-lg); background: var(--color-white); color: var(--color-text); box-shadow: var(--shadow-lg); }
     .svc-menu__groups { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-6); }
     .svc-menu__cat { align-items: flex-start; flex-direction: column; gap: var(--space-3); font-size: var(--text-ui); color: var(--color-text); }
@@ -332,5 +339,8 @@ const isCurrent = (href: string | undefined) => href !== undefined && (href.repl
     .site-nav__dropdown ul a:hover { background: var(--color-surface-muted); }
     .site-nav__cta { margin: 0; justify-self: end; }
     .site-nav__cta :global(.btn) { width: auto; height: var(--control-h-sm); font-size: var(--text-sm); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .svc-menu__panel, .svc-menu.is-open .svc-menu__panel, .svc-menu__toggle :global(.icon) { transition: none; }
   }
 </style>

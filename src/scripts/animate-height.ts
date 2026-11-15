@@ -5,6 +5,8 @@
  */
 const savedOverflow = new WeakMap<HTMLElement, string>()
 const heightAnimations = new WeakSet<Animation>()
+/** The distance each element's last height animation covered, so a reversal can be sized to match. */
+const lastDistance = new WeakMap<HTMLElement, number>()
 
 export function motionTiming(fallbackMs = 420) {
   const css = getComputedStyle(document.documentElement)
@@ -14,12 +16,28 @@ export function motionTiming(fallbackMs = 420) {
   }
 }
 
-export function animateHeight(el: HTMLElement, from: number, to: number): Animation | null {
+/** Pass `interrupted` when the caller already stopped a running animation on `el` before measuring. */
+export function animateHeight(el: HTMLElement, from: number, to: number, options: { interrupted?: boolean } = {}): Animation | null {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || from === to) return null
   // Remember the element's own overflow only once, so overlapping animations never save a stale "hidden".
   if (!savedOverflow.has(el)) savedOverflow.set(el, el.style.overflow)
   el.style.overflow = 'hidden'
-  const animation = el.animate([{ height: `${from}px` }, { height: `${to}px` }], motionTiming())
+  const timing = motionTiming()
+  const distance = Math.abs(to - from)
+  // Long distances (a tall menu) get a little more time, so they glide instead of rushing past.
+  let duration = timing.duration * Math.min(1.7, Math.max(1, Math.sqrt(distance / 300)))
+  let easing = timing.easing
+  // Reversing mid-way: the element is already moving, so it eases out from speed instead of
+  // stopping dead and starting again, and takes only as long as the share of the way it goes back.
+  const interrupted = options.interrupted || el.getAnimations().some((a) => heightAnimations.has(a) && a.playState === 'running')
+  if (interrupted) {
+    const share = Math.min(1, distance / (lastDistance.get(el) || distance || 1))
+    duration = Math.max(180, duration * Math.max(0.45, share))
+    easing = getComputedStyle(document.documentElement).getPropertyValue('--ease-out').trim() || 'ease-out'
+  }
+  el.getAnimations().forEach((a) => { if (heightAnimations.has(a)) a.cancel() })
+  if (!interrupted) lastDistance.set(el, distance)
+  const animation = el.animate([{ height: `${from}px` }, { height: `${to}px` }], { duration, easing })
   heightAnimations.add(animation)
   const restore = () => {
     // Only the last running height animation hands overflow back.

@@ -561,7 +561,7 @@
    Hidden only while html has .motion, which is set in <head> when motion is allowed,
    so the page never stays blank without JavaScript or with reduced motion. */
 @layer components {
-  .motion :is(.section .section-head, .section .split > :not(script), .section .grid-2 > *, .section .grid-3 > *, .section .grid-4 > *, .section .plan, [data-reveal]):not(.is-in) {
+  .motion :is(.section .section-head, .section .split > :not(script), .section .grid-2, .section .grid-3, .section .grid-4, .section .plan, [data-reveal]):not(.is-in) {
     opacity: 0; translate: 0 var(--reveal-shift);
   }
   /* The entrance uses the separate `translate` property, so hover moves (which use `transform`)
@@ -583,14 +583,13 @@
   .motion .hero__side { animation: rise var(--dur-reveal) var(--ease-reveal) 220ms both; }
   /* Service hero: breadcrumb, eyebrow, headline, copy and buttons rise one after another, then the photo and its notes. */
   .motion .svc-hero__copy > * { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(var(--n, 0) * 80ms); }
-  .motion .svc-hero__copy > :nth-child(2) { --n: 1; }
-  .motion .svc-hero__copy > :nth-child(3) { --n: 2; }
-  .motion .svc-hero__copy > :nth-child(4) { --n: 3; }
-  .motion .svc-hero__copy > :nth-child(5) { --n: 4; }
-  .motion .svc-hero__copy > :nth-child(n + 6) { --n: 5; }
+  .motion .svc-hero__copy > :nth-child(3) { --n: 1; }
+  .motion .svc-hero__copy > :nth-child(4) { --n: 2; }
+  .motion .svc-hero__copy > :nth-child(n + 5) { --n: 3; }
   .motion :is(.svc-hero__photo, .svc-hero__tool) { animation: rise var(--dur-reveal) var(--ease-reveal) 240ms both; }
-  .motion .svc-hero__notes li { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(240ms + var(--dur-reveal) + var(--i, 0) * 120ms); }
-  .motion .hero__trust li { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(700ms + var(--i, 0) * 80ms); }
+  /* The notes follow the photo once it has mostly landed, so they never ride along with it. */
+  .motion .svc-hero__notes li { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(240ms + var(--dur-reveal) * 0.55 + var(--i, 0) * 120ms); }
+  .motion .hero__trust { animation: rise var(--dur-reveal) var(--ease-reveal) 600ms both; }
   /* The slide's contents move, not the slide itself, so scroll snapping can't fight the slide-in. */
   .motion .hero .slide > * { animation: rise var(--dur-reveal) var(--ease-reveal) both; animation-delay: calc(320ms + var(--i, 0) * 90ms); }
 

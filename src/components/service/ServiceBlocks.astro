@@ -95,7 +95,7 @@ for (const [i, block] of blocks.entries()) {
   {groups.map((group) => {
     if (group.kind === 'prose') return <div class="blocks__prose" data-reveal>{group.items.map((text) => <p class="body-lg" set:html={inline(text)} />)}</div>
     if (group.kind === 'own') return <OwnNote text={group.text} />
-    if (group.kind === 'bold') return <p class="lead strong blocks__bold" data-reveal set:html={inline(group.text)} />
+    if (group.kind === 'bold') return <p class="lead strong blocks__bold" set:html={inline(group.text)} />
     if (group.kind === 'note') return <p class="card blocks__note" data-reveal set:html={inline(group.text)} />
     if (group.kind === 'label') return <h3 class="t-h4 blocks__label">{group.text.replace(/:$/, '')}</h3>
     if (group.kind === 'cta') return <div class="actions"><Btn href={group.href} icon="arrow" variant={quizLike(group.text) ? 'primary' : 'secondary'}>{group.text}</Btn></div>
@@ -103,9 +103,9 @@ for (const [i, block] of blocks.entries()) {
       return <p class="blocks__pricing">{group.text} <a class="link" href={group.link.href || links.plan}>{group.link.text}</a></p>
     if (group.kind === 'links')
       return (
-        <ul class="blocks__links">
+        <ul class="blocks__links" data-reveal>
           {group.items.map((item) => (
-            <li class:list={['card blocks__link', item.href && 'blocks__link--go']} data-reveal>
+            <li class:list={['card blocks__link', item.href && 'blocks__link--go']}>
               <h3 class="t-h4">{item.href ? <a href={item.href}>{item.title}</a> : item.title}</h3>
               <p set:html={inline(item.text)} />
               {item.href && <span class="blocks__go" aria-hidden="true"><Icon name="arrow" /></span>}
@@ -115,9 +115,9 @@ for (const [i, block] of blocks.entries()) {
       )
     if (group.kind === 'points')
       return (
-        <ul class:list={['blocks__points', group.items.length > 2 && group.items.length !== 4 ? 'grid-points-3' : 'grid-points-2']}>
+        <ul class:list={['blocks__points', group.items.length > 2 && group.items.length !== 4 ? 'grid-points-3' : 'grid-points-2']} data-reveal>
           {group.items.map((item, i) => (
-            <li class="card blocks__point" data-reveal>
+            <li class="card blocks__point">
               {numbered && <span class="blocks__num">{twoDigit(i)}</span>}
               <h3 class="t-h4" set:html={inline((item.lead ?? '').replace(/:$/, ''))} />
               {item.text && <p set:html={inline(item.text)} />}
@@ -140,9 +140,9 @@ for (const [i, block] of blocks.entries()) {
         </div>
       )
     return (
-      <ul class="blocks__proof">
+      <ul class="blocks__proof" data-reveal>
         {group.items.map((item) => (
-          <li class="card blocks__result" data-reveal>
+          <li class="card blocks__result">
             <p class="tag">Past client</p>
             <p class="blocks__result-text">{item.text}</p>
             {item.quote && <blockquote><p>"{item.quote.text}"</p><footer>{item.quote.who}</footer></blockquote>}

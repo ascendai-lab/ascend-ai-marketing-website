@@ -207,6 +207,21 @@ White panel, radius `xl`, shadow `lg`. Four-option answers on cream-100. The lea
 - Order: hero (deep, breadcrumb, category eyebrow, `--text-display-sm` headline, photo with two notes, trust row) → the problem (cream, missed-call panel) → about us (white, founder photo, past client cards) → three steps (deeper) → the page's own sections → the story (photo with notes) → what's at stake (deep, centered) → nationwide (white) → FAQ (cream) → the quiz (deep).
 - The page's own sections all use one layout (`ServiceDetail`): eyebrow and heading on the left, sticky on desktop, content on the right in `.columns`. Light sections alternate cream and white.
 - Content blocks (`ServiceBlocks`): paragraphs as body copy; a run of two or more paragraphs whose bold leads are titles (ending in ":" or ".") as cards, numbered in "how it works" sections; any other bold lead stays inline in the sentence; plain bullets as a tick list in a card; the price note as a dark callout with the call button; "You own…" as the ownership line with the key icon.
-- Long content reveals piece by piece (`[data-reveal]` on each card or paragraph), never as one tall column.
+- Long content reveals in a few calm pieces: a card grid card by card, a block of paragraphs as one block. Small things (the ownership line, each FAQ item, single lines) don't get their own entrance. The FAQ list arrives as one block.
 - Category photos and notes live in `categories` in `src/content/services.ts` (stand-ins until Mark picks photos).
 - Never write a raw color, font size, radius or spacing value in a component. Use a token.
+
+### Category and core pages (`src/components/page/CopyPage.astro`)
+- Copy: `docs/copy/A-core.md` and `B-categories.md` become `src/content/pages.json` through `npm run pages:copy`. Never edit the JSON by hand.
+- Route: the catch-all `[...slug].astro`. A Sanity `page` with the same slug wins; otherwise the copy page draws.
+- They share the service pages' hero (`sections/PageHero`) and sections (`sections/CopySections`, which picks each section's layout by its role). Extra roles: founder (about), past client cards (work), the booking calendar (book).
+- The quiz lives only on `/missed-calls` (its hero holds the quiz). Every other page ends with the quiz's first question (`QuizSection`); an answer opens the quiz at question 2. Quiz links carry the page's interest tag (`?interest=`), which goes to n8n as `interest-<tag>`.
+- Finishing the quiz lands on `/missed-calls/results` (not indexed). The booking calendar's redirect is `/book/confirmed` (not indexed). Both push a dataLayer event (`quiz_complete`, `call_booked`; also `quiz_start`, `teardown_request`, `call_request`).
+- Lead forms use `ui/LeadForm` (posts to `/api/contact`). The plan steps use `ui/PlanBox`.
+
+### Header and footer
+- The header Services menu lists every service under its category (the category name links to its hub page). Desktop: a white panel under the header, opening on hover or click. Mobile: a nested list in the menu that opens with the same height easing as the FAQ.
+- The footer lists every service by category above the bottom row.
+
+### Motion
+- Height changes (FAQ, quiz, menu) use `--ease-height` (ease-in-out) over `--dur-accordion`, so they never snap open or stop hard. Content inside only fades.
