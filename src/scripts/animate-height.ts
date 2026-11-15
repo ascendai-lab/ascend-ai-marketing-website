@@ -26,14 +26,17 @@ export function animateHeight(el: HTMLElement, from: number, to: number, options
   const distance = Math.abs(to - from)
   // Long distances (a tall menu) get a little more time, so they glide instead of rushing past.
   let duration = timing.duration * Math.min(1.7, Math.max(1, Math.sqrt(distance / 300)))
+  // Taller than the screen: most of the movement is out of sight, so don't make the visitor wait for it.
+  if (distance > window.innerHeight) duration = Math.min(duration, timing.duration * 1.25)
   let easing = timing.easing
-  // Reversing mid-way: the element is already moving, so it eases out from speed instead of
-  // stopping dead and starting again, and takes only as long as the share of the way it goes back.
+  // Reversing mid-way: it eases into the new direction instead of flipping at top speed,
+  // and takes only as long as the share of the way it goes back.
   const interrupted = options.interrupted || el.getAnimations().some((a) => heightAnimations.has(a) && a.playState === 'running')
   if (interrupted) {
     const share = Math.min(1, distance / (lastDistance.get(el) || distance || 1))
     duration = Math.max(180, duration * Math.max(0.45, share))
-    easing = getComputedStyle(document.documentElement).getPropertyValue('--ease-out').trim() || 'ease-out'
+    // A gentle start, so the turn-around doesn't jump straight to full speed the other way.
+    easing = 'cubic-bezier(0.3, 0, 0.2, 1)'
   }
   el.getAnimations().forEach((a) => { if (heightAnimations.has(a)) a.cancel() })
   if (!interrupted) lastDistance.set(el, distance)

@@ -189,19 +189,25 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
     if (!menu || !menuToggle || !panel || menu.classList.contains('is-open') === open) return
     menuToggle.setAttribute('aria-expanded', String(open))
     if (desktop.matches) { menu.classList.toggle('is-open', open); return }
+    // Measure where it is now (mid-animation, if it's moving), then stop that animation before measuring the target.
     const from = panel.getBoundingClientRect().height
+    const running = panel.getAnimations()
+    const wasMoving = running.length > 0
+    running.forEach((a) => a.cancel())
     menu.classList.toggle('is-open', open)
     panel.style.height = 'auto'
     const to = open ? panel.getBoundingClientRect().height : 0
     panel.style.height = ''
-    const animation = animateHeight(panel, from, to)
+    const animation = animateHeight(panel, from, to, { interrupted: wasMoving })
     if (animation) {
       panel.style.height = `${to}px`
-      animation.addEventListener('finish', () => { panel.style.height = '' })
+      // Only the newest animation clears the fixed height, so an older one finishing never snaps the panel.
+      animation.addEventListener('finish', () => { if (panel.getAnimations().length === 0) panel.style.height = '' })
     }
   }
   menuToggle?.addEventListener('click', () => {
-    if (desktop.matches && openedByHover) return
+    // The first click after a hover-open keeps it open; the next click closes it as usual.
+    if (desktop.matches && openedByHover) { openedByHover = false; return }
     setServices(!menu!.classList.contains('is-open'))
   })
   menu?.addEventListener('pointerenter', (event) => {

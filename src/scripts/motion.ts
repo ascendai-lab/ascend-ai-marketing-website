@@ -63,7 +63,8 @@ if (root.classList.contains('motion')) {
       window.setTimeout(() => el.classList.add('is-done'), delay + settle)
     })
   }, { rootMargin: `0px 0px ${shift}px 0px`, threshold: 0 })
-  const targets = [...document.querySelectorAll<HTMLElement>(SELECTOR)]
+  // A piece inside something that already slides in arrives with it, not on its own.
+  const targets = [...document.querySelectorAll<HTMLElement>(SELECTOR)].filter((el) => !el.parentElement?.closest(SELECTOR))
   targets.forEach((el) => reveal.observe(el))
 
   // Numbers that aren't inside a sliding item count up when they come into view.
