@@ -138,8 +138,8 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
   .results-hero { padding-block: var(--space-12) var(--space-14); }
   .results-grid { display: grid; gap: var(--space-10); align-items: center; }
   .results-grid[hidden], .results-empty[hidden], [data-filled][hidden], [data-empty][hidden] { display: none; }
-  .results__h { font-size: var(--text-display-sm); max-width: 20ch; }
-  .results__sub { margin: var(--stack-body) 0 var(--stack-actions); font-size: var(--text-body-lg); color: var(--surface-body); max-width: 46ch; }
+  .results__h { font-size: var(--text-display-sm); max-width: calc(20 * var(--ch)); }
+  .results__sub { margin: var(--stack-body) 0 var(--stack-actions); font-size: var(--text-body-lg); color: var(--surface-body); max-width: calc(46 * var(--ch)); }
   .results__score { display: flex; gap: var(--space-4); align-items: center; margin: var(--space-8) 0; padding: var(--space-4) var(--space-5); border-radius: var(--radius-md); background: var(--color-control-inverse); max-width: 34rem; }
   .results__grade { flex: none; width: 3.5rem; height: 3.5rem; border-radius: var(--radius-full); display: grid; place-items: center; font-size: var(--text-figure); font-weight: var(--weight-strong); background: var(--color-accent); color: var(--color-green-950); }
   .results__score-line { font-size: var(--text-body); color: var(--surface-fg); }
@@ -149,8 +149,8 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
   .results__fixes li { counter-increment: fx; display: grid; grid-template-columns: 2rem 1fr; gap: var(--space-3); font-size: var(--text-body); line-height: 1.5; color: var(--color-text-body); }
   .results__fixes li::before { content: counter(fx); width: 1.75rem; height: 1.75rem; border-radius: var(--radius-full); display: grid; place-items: center; font-size: var(--text-xs); font-weight: var(--weight-strong); background: var(--color-brand-deep); color: var(--color-white); }
   .results__fixes :global(strong) { display: block; color: var(--color-text); }
-  .results__meaning { max-width: 30ch; margin-top: var(--space-2); }
-  .results__picture { margin-top: var(--space-6); max-width: 46ch; }
+  .results__meaning { max-width: calc(30 * var(--ch)); margin-top: var(--space-2); }
+  .results__picture { margin-top: var(--space-6); max-width: calc(46 * var(--ch)); }
   .results-mark { display: grid; grid-template-columns: 9rem 1fr; gap: var(--space-6); align-items: center; }
   .results-mark__photo { margin: 0; aspect-ratio: 1; border-radius: var(--radius-md); }
   .results-mark__copy { display: grid; gap: var(--space-3); font-size: var(--text-body); }

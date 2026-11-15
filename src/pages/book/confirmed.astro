@@ -42,7 +42,7 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
   .booked__check { background: var(--color-accent); color: var(--color-green-950); }
   .booked__h { font-size: var(--text-display-sm); }
   .booked__sub { font-size: var(--text-body-lg); color: var(--surface-body); }
-  .booked__before { font-size: var(--text-body); color: var(--surface-fg); max-width: 40ch; }
+  .booked__before { font-size: var(--text-body); color: var(--surface-fg); max-width: calc(40 * var(--ch)); }
   .booked__note { font-size: var(--text-sm); color: var(--surface-muted); }
   .booked__plan { border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-lg); }
   @media (min-width: 960px) { .booked__grid { grid-template-columns: 7fr 5fr; gap: var(--space-16); } }

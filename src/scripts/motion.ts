@@ -65,7 +65,7 @@ if (root.classList.contains('motion')) {
       // Once it has landed, hand transitions back to the element's own hover effects.
       window.setTimeout(() => el.classList.add('is-done'), delay + settle)
     })
-  }, { rootMargin: `0px 0px ${shift}px 0px`, threshold: 0 })
+  }, { rootMargin: `0px 0px ${shift + 80}px 0px`, threshold: 0 })
   // A piece inside something that already slides in arrives with it, not on its own.
   const targets = [...document.querySelectorAll<HTMLElement>(SELECTOR)].filter((el) => !el.parentElement?.closest(SELECTOR))
   targets.forEach((el) => reveal.observe(el))

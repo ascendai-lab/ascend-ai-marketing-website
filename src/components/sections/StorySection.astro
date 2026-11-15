@@ -43,6 +43,6 @@ const { eyebrow = success.eyebrow, heading, body, close, photo = success.photo, 
   .story__notes li:nth-child(2) { margin-left: var(--space-6); }
   .story__notes li:nth-child(3) { margin-left: var(--space-12); }
   .story__body { margin-top: var(--stack-body); }
-  .story__close { margin-top: var(--space-6); font-weight: var(--weight-medium); max-width: 36ch; }
+  .story__close { margin-top: var(--space-6); font-weight: var(--weight-medium); max-width: calc(36 * var(--ch)); }
   @media (max-width: 640px) { .story__notes li:nth-child(n) { margin-left: 0; } }
 </style>

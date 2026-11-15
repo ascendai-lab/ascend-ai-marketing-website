@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+/* Sized to match Google Sans Flex, so lines wrap the same before and after the web font arrives
+   and the hero doesn't jump mid-entrance when it swaps in. */
+@font-face {
+  font-family: 'Google Sans Flex Fallback';
+  src: local('Arial'), local('Helvetica Neue'), local('Helvetica'), local('Liberation Sans');
+  size-adjust: 94.5%;
+}
+
 /*
   ─── Ascend AI Marketing · Evergreen design system ───────────────────────────
   .stitch/DESIGN.md is the source of truth. Every value below matches it.
@@ -40,7 +48,7 @@
   --color-red-100: #fde9e6;
 
   --font-*: initial;
-  --font-sans: 'Google Sans Flex', 'Google Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-sans: 'Google Sans Flex', 'Google Sans Flex Fallback', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: ui-monospace, 'SFMono-Regular', Menlo, monospace;
 
   --radius-*: initial;
@@ -148,7 +156,10 @@
     --stack-body: var(--space-6);     /* heading to its body copy */
     --stack-actions: var(--space-8);  /* body copy to its buttons */
     --card-pad: clamp(1.375rem, 1.1rem + 1vw, 2rem);
-    --measure: 58ch;
+    /* One "ch" of Google Sans Flex. Measures use it instead of ch, so they stay the same width
+       before and after the web font arrives (the fallback's digits are narrower). */
+    --ch: 0.6265em;
+    --measure: calc(58 * var(--ch));
 
     /* Controls */
     --control-h: 3.25rem;      /* 52px: every button */
@@ -329,14 +340,14 @@
 
 /* ─── Type ─────────────────────────────────────────────────────────────────── */
 @layer components {
-  .t-display { font-size: var(--text-display); line-height: var(--leading-display); letter-spacing: var(--tracking-display); font-weight: var(--weight-display); max-width: 15ch; }
-  .t-h2 { font-size: var(--text-h2); line-height: var(--leading-heading); letter-spacing: var(--tracking-heading); font-weight: var(--weight-heading); max-width: 22ch; }
+  .t-display { font-size: var(--text-display); line-height: var(--leading-display); letter-spacing: var(--tracking-display); font-weight: var(--weight-display); max-width: calc(15 * var(--ch)); }
+  .t-h2 { font-size: var(--text-h2); line-height: var(--leading-heading); letter-spacing: var(--tracking-heading); font-weight: var(--weight-heading); max-width: calc(22 * var(--ch)); }
   .t-h3 { font-size: var(--text-h3); line-height: 1.2; letter-spacing: -0.015em; font-weight: var(--weight-heading); }
   .t-h4 { font-size: var(--text-h4); line-height: var(--leading-snug); letter-spacing: -0.01em; font-weight: var(--weight-ui); }
   :is(.t-display, .t-h2) em { font-style: normal; color: var(--accent-word, var(--color-brand)); }
   .surface-deep, .surface-deeper { --accent-word: var(--color-accent); }
 
-  .lead { font-size: var(--text-lead); line-height: 1.45; letter-spacing: var(--tracking-snug); color: var(--surface-fg); max-width: 40ch; }
+  .lead { font-size: var(--text-lead); line-height: 1.45; letter-spacing: var(--tracking-snug); color: var(--surface-fg); max-width: calc(40 * var(--ch)); }
   .body-lg { font-size: var(--text-body-lg); line-height: 1.65; max-width: var(--measure); }
   .body-lg + .body-lg { margin-top: var(--space-4); }
   .text-sm { font-size: var(--text-sm); }
@@ -357,7 +368,7 @@
   .section-head--center { text-align: center; }
   .section-head--center :is(.t-h2, p) { margin-inline: auto; }
   .section-head--split { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: var(--space-6) var(--space-12); }
-  .section-head--split > p:not(.eyebrow) { margin-top: 0; max-width: 38ch; }
+  .section-head--split > p:not(.eyebrow) { margin-top: 0; max-width: calc(38 * var(--ch)); }
   @media (min-width: 960px) {
     .section-head--split { display: grid; grid-template-columns: 5fr 7fr; gap: var(--space-16); align-items: end; }
     .section-head--split > p:not(.eyebrow) { max-width: var(--measure); }
@@ -493,7 +504,7 @@
   .accordion summary:focus-visible { border-radius: var(--radius-md); }
   .accordion .plus { width: 2.125rem; height: 2.125rem; border-radius: var(--radius-full); background: var(--color-bg); display: grid; place-items: center; flex: none; }
   .accordion details[open] .plus { background: var(--color-brand-deep); color: var(--color-white); transform: rotate(45deg); }
-  .accordion details > :not(summary) { padding: 0 var(--space-6) var(--space-6); font-size: var(--text-body); color: var(--surface-muted); max-width: 62ch; }
+  .accordion details > :not(summary) { padding: 0 var(--space-6) var(--space-6); font-size: var(--text-body); color: var(--surface-muted); max-width: calc(62 * var(--ch)); }
   @media (max-width: 640px) { .accordion summary { padding: var(--space-4) var(--space-5); font-size: 1.0625rem; } .accordion details > :not(summary) { padding: 0 var(--space-5) var(--space-5); } }
 }
 

@@ -36,7 +36,7 @@ import { hero, links } from '@/content/home'
 <style>
   .hero { padding-bottom: var(--space-10); overflow: hidden; }
   .hero__top { display: grid; gap: var(--space-10); align-items: end; padding-block: var(--space-16) var(--space-14); }
-  .hero__side p { font-size: var(--text-body-lg); line-height: var(--leading-body); margin-bottom: var(--space-8); max-width: 42ch; }
+  .hero__side p { font-size: var(--text-body-lg); line-height: var(--leading-body); margin-bottom: var(--space-8); max-width: calc(42 * var(--ch)); }
   .hero__trust { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3) var(--space-10); padding-top: var(--space-8); }
   .hero__trust li { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-body); color: var(--surface-body); }
   .hero__trust .icon { width: var(--icon-size); height: var(--icon-size); color: var(--color-accent); }

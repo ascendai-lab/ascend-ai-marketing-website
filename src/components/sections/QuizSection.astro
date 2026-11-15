@@ -74,10 +74,10 @@ const first = QUESTIONS[0]
   @media (min-width: 960px) {
     .final:not(.final--solo) { grid-template-areas: '. card' 'head card' 'links card' '. card'; grid-template-rows: 1fr auto auto 1fr; row-gap: 0; align-items: start; }
   }
-  .final__h { font-size: var(--text-cta); max-width: 13ch; }
-  .final__h--long { font-size: var(--text-h2); max-width: 20ch; }
+  .final__h { font-size: var(--text-cta); max-width: calc(13 * var(--ch)); }
+  .final__h--long { font-size: var(--text-h2); max-width: calc(20 * var(--ch)); }
   .final__body { margin-top: var(--stack-body); }
-  .final__note { margin-top: var(--space-3); max-width: 44ch; }
+  .final__note { margin-top: var(--space-3); max-width: calc(44 * var(--ch)); }
   .final__actions { margin-bottom: var(--space-2); }
   @media (min-width: 960px) { .final__actions { margin-top: var(--stack-actions); } }
   .final--solo .final__actions { margin-top: var(--stack-actions); }

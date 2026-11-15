@@ -77,7 +77,7 @@ export function animateHeight(el: HTMLElement, from: number, to: number, options
   const animation = el.animate(keyframes, reversing ? { duration: COAST_MS + duration, easing: 'linear' } : { duration, easing })
   heightAnimations.add(animation)
   // A reversal starts one frame in: the click's own frame already showed `from`, so starting at 0 would hold still for a frame.
-  if (interrupted) animation.currentTime = 16
+  if (interrupted && Math.abs(v) > 0.3) animation.currentTime = 16
   const restore = () => {
     // Only the last running height animation hands overflow back.
     const running = el.getAnimations().some((a) => a !== animation && heightAnimations.has(a) && a.playState === 'running')

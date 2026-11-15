@@ -171,7 +171,7 @@ for (const [i, block] of blocks.entries()) {
   .blocks__ticks .ticks li span { color: var(--surface-fg); }
   .blocks__ticks .ticks .blocks__dot { flex: none; width: 0.375rem; height: 0.375rem; margin: 0.6em 0.4rem 0; border-radius: var(--radius-full); background: var(--surface-muted); }
   .blocks__price { display: grid; gap: var(--space-5); justify-items: start; }
-  .blocks__price-text { font-size: var(--text-body-lg); line-height: 1.55; color: var(--surface-fg); max-width: 52ch; }
+  .blocks__price-text { font-size: var(--text-body-lg); line-height: 1.55; color: var(--surface-fg); max-width: calc(52 * var(--ch)); }
   .blocks__price-text :global(.link) { color: var(--color-accent); }
   .blocks__proof { display: grid; gap: var(--grid-gap); }
   .blocks__result { display: grid; gap: var(--space-4); align-content: start; }
