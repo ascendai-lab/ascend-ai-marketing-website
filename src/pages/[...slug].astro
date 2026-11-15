@@ -2,13 +2,15 @@
 import BaseLayout from '@layouts/BaseLayout.astro'
 import PageBuilder from '@components/blocks/PageBuilder.astro'
 import { loadQuery } from '@cms/lib/load'
+import { emptyLayout } from '@cms/lib/types'
 import { layoutQuery, pageQuery } from '@cms/queries'
 
 const slug = Astro.params.slug?.replace(/\/$/, '')
 if (!slug) return Astro.rewrite('/404')
 
 const { draftMode } = Astro.locals
-const [layout, page] = await Promise.all([loadQuery(draftMode, layoutQuery), loadQuery(draftMode, pageQuery, { slug })])
+// If the CMS can't be reached, show the 404 page instead of an error.
+const [layout, page] = await Promise.all([loadQuery(draftMode, layoutQuery).catch(() => emptyLayout), loadQuery(draftMode, pageQuery, { slug }).catch(() => null)])
 if (!page) return Astro.rewrite('/404')
 
 const startsWithHero = page.pageBuilder?.[0]?._type === 'hero'

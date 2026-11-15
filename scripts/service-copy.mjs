@@ -32,7 +32,8 @@ function parsePage(chunk) {
   const page = { slug: '', category: '', seo: { title: '', description: '' }, short: '', hero: {}, sections: [], closing: {} }
   let section = null
   for (const raw of lines) {
-    const line = raw.trim()
+    // Outside link placeholders are notes for later, not page copy (they can also sit at the end of a line).
+    const line = raw.replace(/\s*\[OUTSIDE LINK:[^\]]*\]/g, '').trim()
     if (!line || line === '---' || line.startsWith('## ') || line.startsWith('# ')) continue
     if (line.startsWith('**Word count:**')) continue
     if (/^\[(OUTSIDE LINK|QUIZ TAG|PHOTO|IMAGE)[^\]]*\]$/.test(line)) continue
@@ -103,6 +104,7 @@ function parsePage(chunk) {
 
     if (/^\*\*[A-Z][^*]*:\*\*\s/.test(line) && !/faq|questions/i.test(section.label) && !boldLead(line).text) throw new Error(`Unknown field "${line}" in ${section.label}`)
     if (last?.type === 'faq') throw new Error(`Extra FAQ text after an answer in ${section.label}: "${line}"`)
+    if (/\[[A-Z][A-Z ]+:/.test(line)) throw new Error(`Placeholder left in the copy: "${line}"`)
     section.blocks.push({ type: 'p', ...boldLead(line) })
   }
 

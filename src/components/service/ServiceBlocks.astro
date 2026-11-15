@@ -39,9 +39,19 @@ const push = (group: Group) => {
 // A bold-led paragraph is a card only when it sits with others like it; a lone one stays in the prose with its lead in bold.
 // Only a lead that ends in ":" or "." is a title. "**Answers calls,** so homeowners…" is one sentence, so it stays together.
 const titled = (lead?: string) => !!lead && /[:.]$/.test(lead)
+// A run of bold-led paragraphs becomes cards only when it has two or more and every lead is a title.
+// Otherwise the whole run stays as prose, so a sequence never breaks halfway or restarts its numbers.
+const isLed = (b?: Block) => b?.type === 'p' && !!b.lead
+const runOf = (i: number) => {
+  let start = i
+  let end = i
+  while (isLed(blocks[start - 1])) start--
+  while (isLed(blocks[end + 1])) end++
+  return blocks.slice(start, end + 1)
+}
 const leadRun = (i: number) => {
-  const isLead = (b?: Block) => b?.type === 'p' && titled(b.lead)
-  return isLead(blocks[i]) && (isLead(blocks[i - 1]) || isLead(blocks[i + 1]))
+  const run = runOf(i)
+  return run.length > 1 && run.every((b) => b.type === 'p' && titled(b.lead))
 }
 for (const [i, block] of blocks.entries()) {
   if (block.type === 'p') {

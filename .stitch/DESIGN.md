@@ -206,7 +206,7 @@ White panel, radius `xl`, shadow `lg`. Four-option answers on cream-100. The lea
 - Route: `/services/<slug>`. A Sanity `service` document with the same slug wins; otherwise the page draws from the copy.
 - Order: hero (deep, breadcrumb, category eyebrow, `--text-display-sm` headline, photo with two notes, trust row) → the problem (cream, missed-call panel) → about us (white, founder photo, past client cards) → three steps (deeper) → the page's own sections → the story (photo with notes) → what's at stake (deep, centered) → nationwide (white) → FAQ (cream) → the quiz (deep).
 - The page's own sections all use one layout (`ServiceDetail`): eyebrow and heading on the left, sticky on desktop, content on the right in `.columns`. Light sections alternate cream and white.
-- Content blocks (`ServiceBlocks`): paragraphs as body copy; two or more bold-led paragraphs as cards (numbered in "how it works" sections); plain bullets as a tick list in a card; the price note as a dark callout with the call button; "You own…" as the ownership line with the key icon.
+- Content blocks (`ServiceBlocks`): paragraphs as body copy; a run of two or more paragraphs whose bold leads are titles (ending in ":" or ".") as cards, numbered in "how it works" sections; any other bold lead stays inline in the sentence; plain bullets as a tick list in a card; the price note as a dark callout with the call button; "You own…" as the ownership line with the key icon.
 - Long content reveals piece by piece (`[data-reveal]` on each card or paragraph), never as one tall column.
 - Category photos and notes live in `categories` in `src/content/services.ts` (stand-ins until Mark picks photos).
 - Never write a raw color, font size, radius or spacing value in a component. Use a token.
