@@ -66,6 +66,13 @@ if (root.classList.contains('motion')) {
   // A piece inside something that already slides in arrives with it, not on its own.
   const targets = [...document.querySelectorAll<HTMLElement>(SELECTOR)].filter((el) => !el.parentElement?.closest(SELECTOR))
   targets.forEach((el) => reveal.observe(el))
+  // Tabbing into something that hasn't slid in yet shows it at once, so focus never lands on an invisible link.
+  document.addEventListener('focusin', (event) => {
+    const el = targets.find((t) => !t.classList.contains('is-in') && t.contains(event.target as Node))
+    if (!el) return
+    reveal.unobserve(el)
+    el.classList.add('is-in', 'is-done')
+  })
 
   // Numbers that aren't inside a sliding item count up when they come into view.
   const counters = new IntersectionObserver((entries) => {

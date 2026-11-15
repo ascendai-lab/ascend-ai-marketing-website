@@ -116,7 +116,8 @@ const hasAside = tool
   @media (min-width: 960px) {
     .svc-hero { padding-block: var(--space-14) var(--space-12); }
     .svc-hero__grid { grid-template-columns: 7fr 5fr; gap: var(--space-16); }
-    .svc-hero--tool .svc-hero__grid { grid-template-columns: 6fr 6fr; gap: var(--space-12); }
+    /* With a tool (the quiz, a form) beside it, the copy stays at the top while the tool changes height. */
+    .svc-hero--tool .svc-hero__grid { grid-template-columns: 6fr 6fr; gap: var(--space-12); align-items: start; }
   }
   @media (max-width: 959px) { .svc-hero__photo { aspect-ratio: 4 / 3; } }
   @media (max-width: 640px) {

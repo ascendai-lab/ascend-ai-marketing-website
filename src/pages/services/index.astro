@@ -21,10 +21,19 @@ const [layout, services] = await Promise.all([
 // CMS services show first; the copy pages fill in every service the CMS doesn't have yet.
 const cmsSlugs = new Set(services.map((service) => service.slug))
 const groups = servicesByCategory.map(({ look, pages }) => ({ look, pages: pages.filter((page) => !cmsSlugs.has(page.slug)) })).filter((group) => group.pages.length)
+const origin = Astro.site ?? new URL(Astro.url.origin)
+const jsonLd = [{
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: new URL('/', origin).href },
+    { '@type': 'ListItem', position: 2, name: 'Services', item: new URL('/services', origin).href },
+  ],
+}]
 const seo = { metaTitle: `HVAC Marketing Services | ${brand.name}`, metaDescription: 'Websites, lead systems, local SEO, ads, AI agents and custom software for HVAC shops. Get any service on its own, or add it to your plan.' }
 ---
 
-<BaseLayout layout={layout} seo={seo}>
+<BaseLayout layout={layout} seo={seo} jsonLd={jsonLd}>
   <section class="svc-index-hero surface-deep">
     <div class="container">
       <p class="eyebrow">Services</p>

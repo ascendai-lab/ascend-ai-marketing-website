@@ -7,10 +7,19 @@ import { layoutQuery } from '@cms/queries'
 import { privacy } from '@/content/legal'
 
 const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => emptyLayout)
+const origin = Astro.site ?? new URL(Astro.url.origin)
+const jsonLd = [{
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: new URL('/', origin).href },
+    { '@type': 'ListItem', position: 2, name: 'Privacy policy', item: new URL('/privacy', origin).href },
+  ],
+}]
 const seo = { metaTitle: `Privacy policy | Ascend AI Marketing`, metaDescription: privacy.intro }
 ---
 
-<BaseLayout layout={layout} seo={seo}>
+<BaseLayout layout={layout} seo={seo} jsonLd={jsonLd}>
   <section class="legal-hero surface-deep">
     <div class="container">
       <p class="eyebrow">Last updated {privacy.updated}</p>

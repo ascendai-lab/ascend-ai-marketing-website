@@ -60,6 +60,8 @@ import { services, links, hero } from '@/content/home'
       color var(--dur-accordion) var(--ease-reveal);
   }
   .services__list details[open]:not(.is-closing) { --surface-fg: var(--color-text); background: var(--color-white); color: var(--color-text); }
+  /* Inside the open white card, the focus ring sits within the card so it shows. */
+  .services__list details[open] summary:focus-visible { outline-offset: -3px; border-radius: var(--radius-lg); }
   .services__list summary { gap: var(--space-4); justify-content: flex-start; padding: var(--space-5) var(--space-6); }
   .services__num { font-size: var(--text-sm); color: var(--surface-muted); font-variant-numeric: tabular-nums; width: 1.5rem; flex: none; }
   .services__name { flex: 1; font-size: var(--text-h3); font-weight: var(--weight-heading); letter-spacing: var(--tracking-snug); line-height: 1.2; }

@@ -139,6 +139,8 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
       </div>
     </nav>
 
+    {/* Phones and tablets: the main action stays one tap away, next to the menu button. */}
+    <a href={bookingPage ? '#calendar' : links.quiz} class="btn btn--primary btn--sm site-header__quick">{bookingPage ? 'Book a call' : 'Take the quiz'}</a>
     <button class="site-header__toggle" type="button" aria-controls="site-nav" aria-expanded="false">
       <span class="sr-only">Menu</span>
       <span aria-hidden="true" class="bars"></span>
@@ -165,10 +167,19 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
     // While the menu covers the page, the page behind can't be reached by keyboard or screen reader.
     document.querySelectorAll<HTMLElement>('body > :not(header):not(script)').forEach((el) => { el.inert = open })
     if (open) nav.querySelector<HTMLElement>('a, button')?.focus({ preventScroll: true })
+    // The menu always reopens with the Services list folded.
+    if (!open && !desktop.matches) resetServices()
   }
   toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'))
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && nav?.classList.contains('is-open')) {
+      // Inside the open Services list, Escape folds the list first.
+      const svc = document.querySelector<HTMLElement>('[data-svc-menu]')
+      if (svc?.classList.contains('is-open') && svc.contains(document.activeElement)) {
+        svc.querySelector<HTMLButtonElement>('.svc-menu__toggle')?.click()
+        svc.querySelector<HTMLButtonElement>('.svc-menu__toggle')?.focus()
+        return
+      }
       setMenu(false)
       toggle?.focus({ preventScroll: true })
     }
@@ -185,6 +196,14 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
   const menuToggle = menu?.querySelector<HTMLButtonElement>('.svc-menu__toggle')
   const panel = menu?.querySelector<HTMLElement>('.svc-menu__panel')
   let closeTimer = 0
+  function resetServices() {
+    if (!menu || !menuToggle || !panel) return
+    panel.getAnimations().forEach((a) => a.cancel())
+    menu.classList.remove('is-open')
+    menuToggle.setAttribute('aria-expanded', 'false')
+    panel.style.height = ''
+    panel.inert = true
+  }
   // Opened by the pointer resting on it: a click that follows (the natural next move) keeps it open.
   let openedByHover = false
   const setServices = (open: boolean) => {
@@ -318,7 +337,7 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
   /* Phones only: a quieter way in for owners ready to talk. */
   .site-nav__book { display: flex; align-items: center; justify-content: center; min-height: 44px; margin-top: var(--space-3); font-size: var(--text-body); color: var(--surface-body); text-decoration: underline; text-underline-offset: 4px; }
 
-  .site-header__toggle { display: inline-flex; width: var(--icon-chip); height: var(--icon-chip); align-items: center; justify-content: center; border-radius: var(--radius-full); background: var(--color-control-inverse); border: 0; cursor: pointer; color: inherit; }
+  .site-header__toggle { display: inline-flex; flex: none; width: max(var(--icon-chip), 44px); height: max(var(--icon-chip), 44px); align-items: center; justify-content: center; border-radius: var(--radius-full); background: var(--color-control-inverse); border: 0; cursor: pointer; color: inherit; }
   .bars, .bars::before, .bars::after { display: block; width: 1.25rem; height: 2px; background: currentColor; position: relative; }
   .bars::before, .bars::after { content: ''; position: absolute; }
   .bars::before { top: -6px; }
@@ -331,7 +350,7 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
   /* Desktop: logo, a pill of links in the middle, the quiz button on the right. */
   @media (min-width: 1024px) {
     .site-header__inner { display: grid; grid-template-columns: 1fr auto 1fr; }
-    .site-header__toggle { display: none; }
+    .site-header__toggle, .site-header__quick { display: none; }
     .site-nav { display: contents; position: static; visibility: visible; clip-path: none; padding: 0; background: none; }
     .site-nav__item, .site-nav__cta { opacity: 1; transform: none; }
     .site-nav__list { display: flex; gap: 2px; padding: 5px; border-radius: var(--radius-full); background: var(--color-control-inverse); }
@@ -373,5 +392,20 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
   }
   @media (prefers-reduced-motion: reduce) {
     .svc-menu__panel, .svc-menu.is-open .svc-menu__panel, .svc-menu__toggle :global(.icon) { transition: none; }
+  }
+  /* Phones and tablets: logo, then the main action and the menu button side by side. */
+  @media (max-width: 1023px) {
+    .site-header__inner { gap: var(--space-3); }
+    .site-header__logo { margin-right: auto; }
+    .site-header__quick { white-space: nowrap; }
+  }
+  @media (max-width: 400px) {
+    .site-header__logo :global(img) { width: 9rem; }
+    .site-header__quick { padding-inline: var(--space-4); }
+  }
+  @media (max-width: 370px) {
+    .site-header__inner { gap: var(--space-2); }
+    .site-header__logo :global(img) { width: 7.75rem; }
+    .site-header__quick { padding-inline: var(--space-3); }
   }
 </style>

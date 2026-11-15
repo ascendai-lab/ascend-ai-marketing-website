@@ -16,7 +16,7 @@ const [layout, page] = await Promise.all([
 const seo = page?.seo ?? { metaTitle: `${brand.name} · HVAC websites and lead systems`, metaDescription: hero.body }
 ---
 
-<BaseLayout layout={layout} seo={seo}>
+<BaseLayout layout={layout} seo={seo} jsonLd={[{ '@context': 'https://schema.org', '@type': 'WebSite', name: brand.name, url: (Astro.site ?? new URL(Astro.url.origin)).href }]}>
   {
     page?.pageBuilder?.length ? (
       <PageBuilder blocks={page.pageBuilder} document={page} settings={layout.settings} />
