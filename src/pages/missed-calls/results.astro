@@ -101,6 +101,12 @@ const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => 
         if (/book/i.test(node.textContent ?? '')) { node.textContent = a.classList.contains('site-header__quick') ? 'Take the quiz' : (root?.dataset.quizLabel ?? 'Take the quiz'); break }
       }
     })
+    // A footer list that already links to the quiz keeps just that one link.
+    document.querySelectorAll<HTMLAnchorElement>('.site-footer li a').forEach((a) => {
+      const list = a.closest('ul')
+      const twin = list && [...list.querySelectorAll<HTMLAnchorElement>('a')].find((b) => b !== a && b.pathname === a.pathname && b.compareDocumentPosition(a) & Node.DOCUMENT_POSITION_FOLLOWING)
+      if (twin) a.closest('li')?.remove()
+    })
   }
   if (root && result?.first && result.range) {
     const grades = JSON.parse(root.dataset.grades ?? '{}') as Record<string, string>

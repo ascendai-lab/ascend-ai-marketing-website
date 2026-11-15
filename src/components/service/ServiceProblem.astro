@@ -36,7 +36,7 @@ const body = close && !bold ? paragraphs.slice(0, -1) : paragraphs
 <style>
   .problem__body { display: grid; gap: var(--space-4); }
   .problem__body .body-lg + .body-lg { margin-top: 0; }
-  .problem__close { margin-top: var(--space-4); font-weight: var(--weight-medium); max-width: calc(32 * var(--ch)); }
+  .problem__close { margin-top: var(--space-4); font-weight: var(--weight-medium); max-width: calc(40 * var(--ch)); text-wrap: balance; }
   .problem__aside { display: grid; gap: var(--space-10); }
   .problem__panel { margin-top: var(--space-6); }
   .problem__panel :global(.missed) { justify-self: stretch; max-width: none; }

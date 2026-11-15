@@ -77,7 +77,7 @@ const smallRest = small && smallFirst ? small.slice(smallFirst.length).trim() : 
   )}
   {isQuiz && <MissedCallQuiz slot="aside" id="quiz" />}
   {isTeardown && (
-    <div slot="aside" id="teardown-form">
+    <div slot="aside" id="teardown-form" role="region" aria-label={page.hero.formButton ?? 'Send me my teardown'}>
       <LeadForm
         id="teardown"
         fields={[

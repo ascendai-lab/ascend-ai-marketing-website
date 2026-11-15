@@ -75,6 +75,8 @@ const seo = { metaTitle: `HVAC Marketing Services | ${brand.name}`, metaDescript
 </BaseLayout>
 
 <style>
+  /* The intro beside each category heading starts level with the eyebrow. */
+  :global(.section-head--split:has(> .svc-index__intro)) { align-items: start; }
   .svc-index__intro { display: grid; gap: var(--space-4); justify-items: start; max-width: calc(44 * var(--ch)); }
   .svc-index-hero { padding-block: var(--space-16); }
   .svc-index-hero .t-display { max-width: calc(18 * var(--ch)); }
