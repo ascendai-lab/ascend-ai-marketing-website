@@ -58,7 +58,7 @@ function holdInPlace(el: HTMLElement, top: number, group: HTMLElement) {
   const moving = () => [...group.querySelectorAll<HTMLElement>(':scope > details')].some((d) => d.getAnimations().length > 0)
   const step = () => {
     const shift = el.getBoundingClientRect().top - top
-    if (Math.abs(shift) >= 0.5) window.scrollBy(0, shift)
+    if (Math.abs(shift) >= 1) window.scrollBy(0, Math.round(shift))
     const elapsed = performance.now() - start
     if (elapsed < 50 || (moving() && elapsed < limit)) holds.set(group, requestAnimationFrame(step))
   }

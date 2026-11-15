@@ -57,6 +57,8 @@ if (root.classList.contains('motion')) {
     const inside = window.innerHeight * 0.75
     arriving.forEach(({ el, box }, i) => {
       reveal.unobserve(el)
+      // Coming in from the top (scrolling back up past skipped sections): just there, no slide against the scroll.
+      if (box.top < 0) { el.classList.add('is-in', 'is-done'); return }
       const delay = box.top < inside ? 0 : Math.round(i * gap)
       el.style.setProperty('--reveal-delay', `${delay}ms`)
       el.classList.add('is-in')
@@ -65,7 +67,7 @@ if (root.classList.contains('motion')) {
       // Once it has landed, hand transitions back to the element's own hover effects.
       window.setTimeout(() => el.classList.add('is-done'), delay + settle)
     })
-  }, { rootMargin: `0px 0px ${shift + 80}px 0px`, threshold: 0 })
+  }, { rootMargin: `${shift + 80}px 0px ${shift + 80}px 0px`, threshold: 0 })
   // A piece inside something that already slides in arrives with it, not on its own.
   const targets = [...document.querySelectorAll<HTMLElement>(SELECTOR)].filter((el) => !el.parentElement?.closest(SELECTOR))
   targets.forEach((el) => reveal.observe(el))

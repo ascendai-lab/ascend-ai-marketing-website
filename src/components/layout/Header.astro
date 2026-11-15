@@ -324,7 +324,7 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
   }
   .site-nav.is-open { visibility: visible; clip-path: inset(0 0 0 0); transition: clip-path 400ms var(--ease-height), visibility 0s; }
   /* Open and close share one curve, so reopening mid-close turns around smoothly instead of jumping. */
-  .site-nav__item, .site-nav__cta { opacity: 0; transform: translateY(-14px); transition: opacity 260ms var(--ease-out) 40ms, transform 260ms var(--ease-out) 40ms; }
+  .site-nav__item, .site-nav__cta { opacity: 0; transform: translateY(-14px); transition: opacity 320ms var(--ease-in-out, ease-in-out) 40ms, transform 320ms var(--ease-out) 40ms; }
   .site-nav.is-open .site-nav__item, .site-nav.is-open .site-nav__cta { opacity: 1; transform: none; transition: opacity 300ms var(--ease-out), transform 300ms var(--ease-out); transition-delay: calc(60ms + var(--i, 0) * 25ms); }
   /* Reopened while still closing: the items come straight back with the panel, no stagger wait. */
   .site-nav.is-open.is-reopening .site-nav__item, .site-nav.is-open.is-reopening .site-nav__cta { transition-delay: 0ms; }
