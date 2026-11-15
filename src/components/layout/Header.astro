@@ -168,8 +168,11 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
     document.querySelectorAll<HTMLElement>('body > :not(header):not(script)').forEach((el) => { el.inert = open })
     if (open) nav.querySelector<HTMLElement>('a, button')?.focus({ preventScroll: true })
     // The menu always reopens with the Services list folded.
-    if (!open && !desktop.matches) resetServices()
+    // Folded once the menu has finished closing, so the list doesn't snap shut while still in view.
+    window.clearTimeout(resetTimer)
+    if (!open && !desktop.matches) resetTimer = window.setTimeout(() => { if (!nav.classList.contains('is-open')) resetServices() }, 420)
   }
+  let resetTimer = 0
   toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'))
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && nav?.classList.contains('is-open')) {

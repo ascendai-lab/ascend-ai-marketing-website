@@ -47,7 +47,11 @@ function setOpen(details: HTMLDetailsElement, open: boolean) {
   animation.onfinish = done
 }
 
+/** One running hold per group: a new click replaces it, so an old hold never pulls a newer question away. */
+const holds = new WeakMap<HTMLElement, number>()
+
 function holdInPlace(el: HTMLElement, top: number, group: HTMLElement) {
+  cancelAnimationFrame(holds.get(group) ?? 0)
   // Holds until every item in the group has stopped moving (a reversal can run longer than one duration).
   const start = performance.now()
   const limit = motionTiming().duration * 4
@@ -56,9 +60,9 @@ function holdInPlace(el: HTMLElement, top: number, group: HTMLElement) {
     const shift = el.getBoundingClientRect().top - top
     if (Math.abs(shift) >= 0.5) window.scrollBy(0, shift)
     const elapsed = performance.now() - start
-    if (elapsed < 50 || (moving() && elapsed < limit)) requestAnimationFrame(step)
+    if (elapsed < 50 || (moving() && elapsed < limit)) holds.set(group, requestAnimationFrame(step))
   }
-  requestAnimationFrame(step)
+  holds.set(group, requestAnimationFrame(step))
 }
 
 document.querySelectorAll<HTMLElement>('.accordion').forEach((group) => {
@@ -68,18 +72,15 @@ document.querySelectorAll<HTMLElement>('.accordion').forEach((group) => {
       const open = !(details.dataset.state ? details.dataset.state === 'open' : details.open)
       const summary = details.querySelector('summary')!
       const top = summary.getBoundingClientRect().top
-      let closedAbove = false
       if (open && group.hasAttribute('data-one-open')) {
         group.querySelectorAll<HTMLDetailsElement>(':scope > details').forEach((other) => {
           if (other === details) return
-          const wasOpen = other.dataset.state ? other.dataset.state === 'open' : other.open
-          if (wasOpen && other.compareDocumentPosition(details) & Node.DOCUMENT_POSITION_FOLLOWING) closedAbove = true
           setOpen(other, false)
         })
       }
       setOpen(details, open)
-      // An item closing above would pull the clicked question up and out from under the pointer: keep it in place.
-      if (closedAbove && !reduce) holdInPlace(summary, top, group)
+      // Whatever else in the group opens or closes, the clicked question stays under the pointer.
+      if (!reduce) holdInPlace(summary, top, group)
     })
   })
 })

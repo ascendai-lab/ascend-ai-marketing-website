@@ -268,6 +268,10 @@ import { consent, PRIVACY_PATH } from '@/content/legal'
   .quiz :global(.field__error) { font-size: var(--text-xs); font-weight: var(--weight-medium); color: var(--color-error); }
   .quiz :global(.field__error:empty) { display: none; }
   .quiz__fallback { font-size: var(--text-body-lg); }
+  /* Until the script builds the first question, the card keeps about its height, so the page doesn't jump. */
+  .quiz:has(> .quiz__fallback) { min-height: 27rem; }
+  @media (min-width: 641px) { .quiz:has(> .quiz__fallback) { min-height: 17rem; } }
+  @media (min-width: 960px) { .quiz:has(> .quiz__fallback) { min-height: 18rem; } }
   .quiz__fallback a { color: var(--color-brand); text-decoration: underline; text-underline-offset: 4px; }
   .quiz :global(.field input[aria-invalid='true']) { border-color: var(--color-error); box-shadow: 0 0 0 1px var(--color-error); }
   .quiz :global(.quiz__small) { margin-top: var(--space-3); font-size: var(--text-xs); color: var(--color-text-muted); }
