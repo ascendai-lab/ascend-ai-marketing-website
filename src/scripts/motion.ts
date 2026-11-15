@@ -58,7 +58,15 @@ if (root.classList.contains('motion')) {
     arriving.forEach(({ el, box }, i) => {
       reveal.unobserve(el)
       // Coming in from the top (scrolling back up past skipped sections): just there, no slide against the scroll.
-      if (box.top < 0) { el.classList.add('is-in', 'is-done'); return }
+      if (box.top < 0) {
+        // Already off screen: just there. Partly on screen: a short fade in place, so it never pops.
+        if (box.bottom <= 0) { el.classList.add('is-in', 'is-done'); return }
+        el.classList.add('is-fade')
+        void el.offsetWidth
+        el.classList.add('is-in')
+        window.setTimeout(() => el.classList.add('is-done'), 260)
+        return
+      }
       const delay = box.top < inside ? 0 : Math.round(i * gap)
       el.style.setProperty('--reveal-delay', `${delay}ms`)
       el.classList.add('is-in')

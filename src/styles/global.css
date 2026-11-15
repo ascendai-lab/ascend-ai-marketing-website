@@ -628,6 +628,9 @@
       color var(--dur-base) var(--ease-out),
       box-shadow var(--dur-base) var(--ease-out);
   }
+  /* Arriving from above the screen (scrolling back up): a short fade, no slide against the scroll. */
+  .motion .is-fade { translate: none !important; }
+  .motion .is-fade.is-in:not(.is-done) { transition: opacity var(--dur-fast) var(--ease-out); }
 
   /* Hero: the headline, copy and slider arrive in sequence on load. */
   @keyframes rise { from { opacity: 0; translate: 0 var(--reveal-shift); } 70% { opacity: 1; } }
