@@ -136,7 +136,10 @@ import { PRIVACY_PATH } from '@/content/legal'
   .site-footer__bottom { margin-top: var(--space-14); padding-top: var(--space-6); border-top: 1px solid var(--surface-line); display: flex; flex-wrap: wrap; gap: var(--space-4); justify-content: space-between; font-size: var(--text-sm); }
   .site-footer__bottom p { color: var(--surface-muted); }
   .site-footer__bottom ul { display: flex; flex-wrap: wrap; gap: var(--space-5); color: var(--surface-muted); }
-  @media (min-width: 641px) { .site-footer__cols { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 641px) {
+    .site-footer__cols { grid-template-columns: repeat(3, 1fr); }
+    .site-footer__services { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
   @media (min-width: 1101px) {
     .site-footer__top { grid-template-columns: 1fr 1.3fr; }
     .site-footer__services { grid-template-columns: repeat(5, minmax(0, 1fr)); }

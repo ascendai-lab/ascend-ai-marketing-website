@@ -133,6 +133,7 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
       </ul>
       <div class="site-nav__cta" style={`--i:${navigation?.headerLinks?.length ?? fallbackNav.length}`}>
         {navigation?.headerCta ? <Button button={navigation.headerCta} /> : <Btn href={links.quiz} size="sm">{hero.primary}</Btn>}
+        <a href={links.book} class="site-nav__book">Or book a 15-minute call</a>
       </div>
     </nav>
 
@@ -302,6 +303,8 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
 
   .site-nav__cta { margin-top: var(--space-6); }
   .site-nav__cta :global(.btn) { width: 100%; height: var(--control-h); font-size: var(--text-body); }
+  /* Phones only: a quieter way in for owners ready to talk. */
+  .site-nav__book { display: flex; align-items: center; justify-content: center; min-height: 44px; margin-top: var(--space-3); font-size: var(--text-body); color: var(--surface-body); text-decoration: underline; text-underline-offset: 4px; }
 
   .site-header__toggle { display: inline-flex; width: var(--icon-chip); height: var(--icon-chip); align-items: center; justify-content: center; border-radius: var(--radius-full); background: var(--color-control-inverse); border: 0; cursor: pointer; color: inherit; }
   .bars, .bars::before, .bars::after { display: block; width: 1.25rem; height: 2px; background: currentColor; position: relative; }
@@ -336,7 +339,7 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
       transition: opacity var(--dur-base) var(--ease-height), translate var(--dur-base) var(--ease-height), visibility 0s linear var(--dur-base);
     }
     .svc-menu.is-open .svc-menu__panel { opacity: 1; visibility: visible; translate: -50% 0; transition: opacity var(--dur-base) var(--ease-height), translate var(--dur-base) var(--ease-height), visibility 0s; }
-    .svc-menu__inner { padding: var(--space-8); border-radius: var(--radius-lg); background: var(--color-white); color: var(--color-text); box-shadow: var(--shadow-lg); }
+    .svc-menu__inner { --surface-fg: var(--color-text); padding: var(--space-8); border-radius: var(--radius-lg); background: var(--color-white); color: var(--color-text); box-shadow: var(--shadow-lg); }
     .svc-menu__groups { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-6); }
     .svc-menu__cat { align-items: flex-start; flex-direction: column; gap: var(--space-3); min-height: 0; font-size: var(--text-ui); color: var(--color-text); }
     .svc-menu__cat:hover { color: var(--color-brand); }
@@ -353,6 +356,7 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
     .site-nav__dropdown ul a { padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); }
     .site-nav__dropdown ul a:hover { background: var(--color-surface-muted); }
     .site-nav__cta { margin: 0; justify-self: end; }
+    .site-nav__book { display: none; }
     .site-nav__cta :global(.btn) { width: auto; height: var(--control-h-sm); font-size: var(--text-sm); }
   }
   @media (prefers-reduced-motion: reduce) {

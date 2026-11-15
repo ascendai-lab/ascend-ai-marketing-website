@@ -45,7 +45,14 @@ const trust = page.hero.trust ? page.hero.trust.split(/(?<=\.)\s+/).map((text) =
 
 // The quiz page's quiz sits right beside the copy, so the hero offers the call instead of a second quiz button.
 const primary = isTeardown || isQuiz ? null : { text: page.hero.primary ?? homeHero.primary, href: isQuiz ? '#quiz' : links.quiz }
-const secondary = isTeardown ? null : { text: page.hero.secondary ?? homeHero.secondary, href: isBook ? '#calendar' : links.book }
+const secondary = isTeardown || isQuiz ? null : { text: page.hero.secondary ?? homeHero.secondary, href: isBook ? '#calendar' : links.book }
+
+// On the booking page the calendar comes first, right under the hero: that's what the visitor came for.
+// Roles are worked out on the original order, then the sections are shown in the new one.
+const order = page.sections.map((_, i) => i)
+if (isBook) order.sort((a, b) => Number(pageRoleOf(page.sections, b) === 'calendar') - Number(pageRoleOf(page.sections, a) === 'calendar'))
+const sections = order.map((i) => page.sections[i])
+const roleOf = (_: unknown, index: number) => pageRoleOf(page.sections, order[index])
 
 const small = page.closing.small
 const smallFirst = small ? small.split(/(?<=\.)\s/)[0] : undefined
@@ -57,8 +64,8 @@ const smallRest = small && smallFirst ? small.slice(smallFirst.length).trim() : 
   eyebrow={page.kind === 'category' ? look.name : (eyebrows[page.path] ?? look.name)}
   headline={page.hero.headline}
   subhead={page.hero.subhead}
-  primary={primary}
-  secondary={secondary}
+  primary={isBook ? secondary : primary}
+  secondary={isBook ? primary : secondary}
   note={page.hero.note && !isTeardown ? page.hero.note : undefined}
   photo={look.photo}
   notes={look.notes}
@@ -90,7 +97,7 @@ const smallRest = small && smallFirst ? small.slice(smallFirst.length).trim() : 
   )}
 </PageHero>
 
-<CopySections sections={page.sections} roleOf={pageRoleOf} look={look} phone={phone} />
+<CopySections sections={sections} roleOf={roleOf} look={look} phone={phone} />
 
 <QuizSection
   heading={inline(page.closing.heading)}

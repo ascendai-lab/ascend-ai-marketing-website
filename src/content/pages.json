@@ -1337,7 +1337,7 @@
         ]
       },
       {
-        "label": "What happens on the 15-minute call",
+        "label": "What happens on the 15‑minute call",
         "heading": "What we cover in 15 minutes.",
         "blocks": [
           {
@@ -1364,7 +1364,7 @@
       },
       {
         "label": "Pick a time",
-        "heading": "Book your 15-minute call.",
+        "heading": "Book your 15‑minute call.",
         "blocks": [
           {
             "type": "calendar"

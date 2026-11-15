@@ -216,5 +216,12 @@ for (const page of pages) {
   page.sections.forEach((s) => { if (!s.heading && !/faq/i.test(s.label)) throw new Error(`Section without a heading: ${page.path} / ${s.label}`) })
 }
 
-writeFileSync(OUT, JSON.stringify(pages, null, 2) + '\n')
+// "15-minute" never breaks after the hyphen in a heading or label (a non-breaking hyphen looks the same).
+const keepTogether = (text) => text.replace(/(\d)-(?=[a-z])/g, '$1\u2011')
+const tidy = (value, key) =>
+  typeof value === 'string' ? (['heading', 'label', 'headline'].includes(key) ? keepTogether(value) : value)
+  : Array.isArray(value) ? value.map((v) => tidy(v))
+  : value && typeof value === 'object' ? Object.fromEntries(Object.entries(value).map(([k, v]) => [k, tidy(v, k)]))
+  : value
+writeFileSync(OUT, JSON.stringify(tidy(pages), null, 2) + '\n')
 console.log(`Wrote ${pages.length} pages to ${OUT}: ${pages.map((p) => p.path).join(', ')}`)
