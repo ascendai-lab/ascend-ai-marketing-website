@@ -1,6 +1,8 @@
 /**
  * Accordions (.accordion > details) open and close with a smooth height animation.
- * Groups marked [data-one-open] keep one item open at a time. No animation for reduced motion.
+ * Items open and close on their own, like the footer services: content only grows or shrinks below the
+ * clicked question, so the page never scrolls. Groups marked [data-one-open] keep one item open at a time
+ * and hold the clicked question in place while the others close. No animation for reduced motion.
  */
 import { animateHeight, heightVelocity, motionTiming } from './animate-height'
 
@@ -72,7 +74,9 @@ document.querySelectorAll<HTMLElement>('.accordion').forEach((group) => {
       const open = !(details.dataset.state ? details.dataset.state === 'open' : details.open)
       const summary = details.querySelector('summary')!
       const top = summary.getBoundingClientRect().top
-      if (open && group.hasAttribute('data-one-open')) {
+      // Independent items: the question stays where it is and the answer grows below it. Nothing to hold.
+      if (!group.hasAttribute('data-one-open')) { setOpen(details, open); return }
+      if (open) {
         group.querySelectorAll<HTMLDetailsElement>(':scope > details').forEach((other) => {
           if (other === details) return
           setOpen(other, false)
