@@ -5,10 +5,11 @@ import { routes } from '@cms/routes'
 import SocialIcon from '@components/ui/SocialIcon.astro'
 import SanityImage from '@components/ui/SanityImage.astro'
 import Btn from '@components/ui/Btn.astro'
+import Icon from '@components/ui/Icon.astro'
 import ContactDetails from './ContactDetails.astro'
 import { stegaClean } from '@sanity/client/stega'
 import { brand, footer as fallback, links, hero } from '@/content/home'
-import { servicesByCategory, serviceHref } from '@/content/services'
+import { servicesByCategory, serviceHref, categoryId } from '@/content/services'
 
 interface Props {
   layout: Layout
@@ -74,12 +75,23 @@ import { PRIVACY_PATH } from '@/content/legal'
     </div>
 
     <nav class="site-footer__services" aria-label="Services">
-      {servicesByCategory.map(({ look, pages }) => (
-        <div>
-          <h2 class="site-footer__heading"><a href={look.href}>{look.name}</a></h2>
-          <ul>{pages.map((page) => <li><a href={serviceHref(page.slug)}>{page.title}</a></li>)}</ul>
-        </div>
-      ))}
+      {servicesByCategory.map(({ look, pages }) => {
+        const id = `footer-svc-${categoryId(look.name)}`
+        return (
+          <div class="site-footer__group" data-footer-group>
+            <h2 class="site-footer__heading">
+              <a href={look.href}>{look.name}</a>
+              {/* Shown once the script runs; without it every list simply stays open. */}
+              <button type="button" class="site-footer__toggle" aria-expanded="true" aria-controls={id} hidden>
+                <span class="sr-only">{look.name} services</span><Icon name="chevron-down" />
+              </button>
+            </h2>
+            <div class="site-footer__panel" id={id}>
+              <ul>{pages.map((page) => <li><a href={serviceHref(page.slug)}>{page.title}</a></li>)}</ul>
+            </div>
+          </div>
+        )
+      })}
     </nav>
 
     <div class="site-footer__bottom">
@@ -97,6 +109,41 @@ import { PRIVACY_PATH } from '@/content/legal'
 </footer>
 
 <script>
+  import { animateHeight, heightVelocity } from '@/scripts/animate-height'
+
+  // Services lists fold under their category: closed on phones, open on wider screens until the visitor folds one.
+  const phone = window.matchMedia('(max-width: 640px)')
+  const groups = [...document.querySelectorAll<HTMLElement>('[data-footer-group]')].flatMap((group) => {
+    const toggle = group.querySelector<HTMLButtonElement>('.site-footer__toggle')
+    const panel = group.querySelector<HTMLElement>('.site-footer__panel')
+    return toggle && panel ? [{ group, toggle, panel }] : []
+  })
+  type Group = (typeof groups)[number]
+  const setGroup = ({ group, toggle, panel }: Group, open: boolean, animate = true) => {
+    if ((toggle.getAttribute('aria-expanded') === 'true') === open) return
+    toggle.setAttribute('aria-expanded', String(open))
+    group.classList.toggle('is-open', open)
+    const from = panel.getBoundingClientRect().height
+    const velocity = heightVelocity(panel)
+    const wasMoving = panel.getAnimations().length > 0
+    panel.getAnimations().forEach((a) => a.cancel())
+    // Folded links leave the tab order and the accessibility tree.
+    panel.hidden = false
+    const to = open ? panel.getBoundingClientRect().height : 0
+    const animation = animate ? animateHeight(panel, from, to, { interrupted: wasMoving, velocity }) : null
+    const done = () => { panel.hidden = !open }
+    if (animation) animation.onfinish = done
+    else done()
+  }
+  const reset = () => groups.forEach((g) => setGroup(g, !phone.matches, false))
+  groups.forEach((g) => {
+    g.toggle.hidden = false
+    g.group.classList.add('is-open')
+    g.toggle.addEventListener('click', () => setGroup(g, g.toggle.getAttribute('aria-expanded') !== 'true'))
+  })
+  reset()
+  phone.addEventListener('change', reset)
+
   // The big name always spans the full container width, whatever the font or screen.
   const fit = () => document.querySelectorAll<HTMLElement>('[data-fit]').forEach((el) => {
     const span = el.firstElementChild as HTMLElement | null
@@ -134,7 +181,14 @@ import { PRIVACY_PATH } from '@/content/legal'
   }
   .site-footer__name span { display: inline-block; }
   .site-footer__services { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: var(--space-8) var(--space-6); margin-top: var(--space-14); padding-top: var(--space-10); border-top: 1px solid var(--surface-line); }
+  .site-footer__services .site-footer__heading { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); margin-bottom: 0; }
   .site-footer__services .site-footer__heading a { color: var(--surface-fg); font-weight: var(--weight-medium); }
+  .site-footer__panel ul { padding-top: var(--space-3); }
+  .site-footer__toggle { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 2.75rem; height: 2.75rem; margin-right: calc(var(--space-3) * -1); padding: 0; background: none; border: 0; border-radius: var(--radius-full); color: var(--surface-muted); cursor: pointer; transition: color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out); }
+  .site-footer__toggle[hidden] { display: none; }
+  .site-footer__toggle:hover { color: var(--surface-fg); background-color: color-mix(in oklab, var(--surface-fg) 6%, transparent); }
+  .site-footer__toggle :global(.icon) { width: 1.125rem; height: 1.125rem; transition: transform var(--dur-accordion) var(--ease-height); }
+  .site-footer__group.is-open .site-footer__toggle :global(.icon) { transform: rotate(180deg); }
   .site-footer__services ul a { display: block; padding: 0.3125rem 0; font-size: var(--text-sm); color: var(--surface-body); }
   .site-footer__bottom { margin-top: var(--space-14); padding-top: var(--space-6); border-top: 1px solid var(--surface-line); display: flex; flex-wrap: wrap; gap: var(--space-4); justify-content: space-between; font-size: var(--text-sm); }
   .site-footer__bottom p { color: var(--surface-muted); }
@@ -143,6 +197,11 @@ import { PRIVACY_PATH } from '@/content/legal'
   @media (max-width: 640px) {
     .site-footer__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .site-footer__cols > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+    /* Folded services read as one stacked list of categories, each row divided like the rows above. */
+    .site-footer__services { grid-template-columns: 1fr; gap: 0; padding-top: var(--space-4); }
+    .site-footer__group + .site-footer__group { border-top: 1px solid var(--surface-line); }
+    .site-footer__services .site-footer__heading { min-height: 3.5rem; }
+    .site-footer__panel ul { padding-top: 0; padding-bottom: var(--space-3); }
   }
   @media (min-width: 641px) {
     .site-footer__cols { grid-template-columns: repeat(3, 1fr); }
