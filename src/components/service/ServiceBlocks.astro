@@ -118,7 +118,7 @@ for (const [i, block] of blocks.entries()) {
     if (group.kind === 'prose') return <div class="blocks__prose">{group.items.map((text) => <p class="body-lg" set:html={inline(text)} />)}</div>
     if (group.kind === 'own') return <OwnNote text={group.text} />
     if (group.kind === 'bold') return <p class="lead strong blocks__bold" set:html={inline(group.text)} />
-    if (group.kind === 'note') return <p class="card blocks__note" set:html={inline(group.text)} />
+    if (group.kind === 'note') return <p class="card surface-deep blocks__note" set:html={inline(group.text)} />
     if (group.kind === 'label') return <h3 class="t-h4 blocks__label">{group.text.replace(/:$/, '')}</h3>
     if (group.kind === 'cta') return <div class="actions"><Btn href={group.href} icon="arrow" variant={quizLike(group.text) ? 'primary' : 'secondary'}>{group.text}</Btn>{group.withBook && <Btn href={links.book} variant="secondary">{hero.secondary}</Btn>}</div>
     if (group.kind === 'pricing')
@@ -208,7 +208,7 @@ for (const [i, block] of blocks.entries()) {
   .blocks__result blockquote p { font-style: italic; color: var(--surface-body); }
   .blocks__result footer { margin-top: var(--space-2); font-size: var(--text-sm); font-weight: var(--weight-strong); color: var(--surface-fg); }
   .blocks__bold { max-width: var(--measure); }
-  .blocks__note { font-size: var(--text-body-lg); line-height: 1.5; color: var(--surface-fg); background: var(--color-sage-100); max-width: var(--measure); }
+  .blocks__note { font-size: var(--text-body-lg); line-height: 1.5; color: var(--surface-fg); max-width: var(--measure); }
   .blocks__label { margin-bottom: calc(var(--space-4) - var(--space-8)); }
   .blocks__pricing { font-size: var(--text-body); color: var(--surface-muted); }
   .blocks__links { display: grid; gap: var(--grid-gap); }

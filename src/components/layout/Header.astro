@@ -399,7 +399,7 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
       transition: opacity var(--dur-base) var(--ease-height), translate var(--dur-base) var(--ease-height), visibility 0s linear var(--dur-base);
     }
     .svc-menu.is-open .svc-menu__panel { opacity: 1; visibility: visible; translate: -50% 0; transition: opacity var(--dur-base) var(--ease-height), translate var(--dur-base) var(--ease-height), visibility 0s; }
-    .svc-menu__inner { --surface-fg: var(--color-text); padding: var(--space-8); border-radius: var(--radius-lg); background: var(--color-white); color: var(--color-text); box-shadow: var(--shadow-lg); }
+    .svc-menu__inner { --surface-fg: var(--color-text); --chip-bg: var(--color-brand-deep); --chip-fg: var(--color-white); padding: var(--space-8); border-radius: var(--radius-lg); background: var(--color-white); color: var(--color-text); box-shadow: var(--shadow-lg); }
     .svc-menu__groups { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-6); }
     .svc-menu__cat { align-items: flex-start; flex-direction: column; gap: var(--space-3); min-height: 0; font-size: var(--text-ui); color: var(--color-text); }
     .svc-menu__cat:hover { color: var(--color-brand); }
