@@ -19,8 +19,8 @@ const paragraphs = section.blocks.flatMap((b) => (b.type === 'p' ? [b.text] : []
 
 <Section surface={surface} anchorId="founder">
   <div class="split founder">
-    <figure class="media media--cutout founder__photo">
-      <img src={about.portraits.founder.src} alt={about.portraits.founder.alt} width="1000" height="1028" loading="lazy" />
+    <figure class="media founder__photo">
+      <img src={about.photo.src} alt={about.photo.alt} width="820" height="866" loading="lazy" />
     </figure>
     <div class="founder__copy" data-reveal>
       <h2 class="t-h2">{section.heading}</h2>

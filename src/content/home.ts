@@ -99,11 +99,8 @@ export const about = {
     'Our founder, Mark Johnson, has built websites for more than 20 years. He has built hundreds of them. Ascend AI Marketing started in 2019.',
   ],
   photo: { src: '/images/about/mark-at-desk.webp', alt: 'Mark Johnson, founder of Ascend AI Marketing, at work at his desk' },
-  /** Mark cut out from his background: these sit on the green photo backdrop (`.media--cutout`). */
-  portraits: {
-    hero: { src: '/images/about/mark-arms-crossed-cutout.webp', alt: 'Mark Johnson, founder of Ascend AI Marketing, smiling with his arms crossed', cutout: true },
-    founder: { src: '/images/about/mark-shirt-tie-cutout.webp', alt: 'Mark Johnson, founder of Ascend AI Marketing, smiling behind his laptop', cutout: true },
-  },
+  /** The about page hero. */
+  portrait: { src: '/images/about/mark-arms-crossed.webp', alt: 'Mark Johnson, founder of Ascend AI Marketing, smiling with his arms crossed' },
   chips: [
     { icon: 'users', title: 'Real people', text: 'Not a ticket system. Not a call center.' },
     { icon: 'clock', title: 'Live in 72 hours', text: 'After we have everything we need.' },

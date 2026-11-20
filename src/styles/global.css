@@ -487,9 +487,6 @@
 
   .media { position: relative; overflow: hidden; border-radius: var(--radius-lg); background: var(--color-green-800); }
   .media > img { width: 100%; height: 100%; object-fit: cover; }
-  /* A cutout portrait (no background of its own) stands on a soft green backdrop, at the bottom of the frame. */
-  .media--cutout { background: radial-gradient(120% 90% at 50% 30%, var(--color-green-700), var(--color-green-900)); }
-  .media--cutout > img { object-fit: contain; object-position: 50% 100%; }
 
   /* Floating note over a photo (toast) */
   .float-note {
