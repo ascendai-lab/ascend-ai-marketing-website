@@ -8,6 +8,7 @@
  */
 export const PRIVACY_PATH = '/privacy'
 export const TERMS_PATH = '/terms'
+export const COOKIES_PATH = '/cookies'
 export const CONTACT_EMAIL = 'hello@ascendaimarketing.com'
 
 /** Under every form that asks for an email or a mobile number. */
@@ -49,7 +50,7 @@ export const privacy: LegalPage = {
       list: [
         'What you give us. When you take the missed call quiz, request a teardown, ask for a call or book a time, we collect what you type in: your name, business name, email, website, your mobile number if you give it, your message and your quiz answers. When you book through our calendar, we also get the time you pick.',
         'What your browser sends. Like every website, our hosting receives basic technical details with each visit, such as your IP address, browser and device type, the page you asked for, the page that sent you here and the time. We also use your IP address for a short time to stop the same visitor from sending a form over and over.',
-        'What cookies and similar tools record. When we use analytics or advertising tools, they record how you use the site, such as the pages you view and the buttons you click. The "Cookies and similar tools" section below explains these.',
+        'What cookies and similar tools record. If you accept cookies, our analytics and advertising tools record how you use the site, such as the pages you view and the buttons you click. The "Cookies, analytics and advertising" section below explains these.',
       ],
     },
     {
@@ -63,7 +64,9 @@ export const privacy: LegalPage = {
         'keep the site and our forms safe from spam and abuse',
         'meet our legal and accounting duties',
       ],
-      after: ['We do not sell your personal information.'],
+      after: [
+        'We do not sell your personal information for money, and we do not collect sensitive information such as health, financial account or government ID details.',
+      ],
     },
     {
       heading: 'Who we share it with',
@@ -76,7 +79,7 @@ export const privacy: LegalPage = {
         'Booking calendar: our booking calendar runs on HighLevel (GoHighLevel). When you book a call, the details you enter go to HighLevel.',
         'Text messages: LeadLine and Twilio deliver our texts.',
         'Email: the email service we use to reply to you and send follow-ups.',
-        'Analytics and advertising: Google (Google Analytics and Google Tag Manager) and Meta (the Meta Pixel), when we use them. See "Cookies and similar tools" below.',
+        'Analytics and advertising: Google (Google Analytics and Google Tag Manager) and Meta (the Meta Pixel), only if you accept cookies. See "Cookies, analytics and advertising" below.',
         'Videos: YouTube and Vimeo, when you play a video on the site.',
         'Website content: our content system (Sanity) stores the words and images on this site. It does not receive what you type into our forms.',
       ],
@@ -93,19 +96,11 @@ export const privacy: LegalPage = {
       ],
     },
     {
-      heading: 'Cookies and similar tools',
+      heading: 'Cookies, analytics and advertising',
       body: [
-        'Cookies are small files a website saves in your browser. Here is what this site uses.',
-      ],
-      list: [
-        'Analytics: when we use Google Analytics, directly or through Google Tag Manager, it sets cookies to count visits and see how people use the site. Google processes this data for us. You can block it with Google\'s opt-out add-on at tools.google.com/dlpage/gaoptout.',
-        'Advertising: when we use the Meta Pixel, it tells Meta that you visited so we can measure our Facebook and Instagram ads and show ads to people who have visited. You can change this in your Facebook ad settings.',
-        'Videos: our YouTube videos use YouTube\'s privacy-enhanced mode. A video from YouTube or Vimeo loads, and may set its own cookies, only when you play it.',
-        'Booking calendar: when a page shows our booking calendar, HighLevel may set its own cookies to run it.',
-        'Quiz results: your quiz results are saved in your browser tab for the results page and are cleared when you close the tab.',
-      ],
-      after: [
-        'You can block or delete cookies in your browser settings. The site still works without them. Our site does not currently respond to "Do Not Track" signals from browsers.',
+        'We use analytics and advertising tools, such as Google Analytics, Google Tag Manager and the Meta Pixel, only after you click "Accept" on our cookie banner. If you click "Decline", or your browser sends a Global Privacy Control signal, they do not load. You can change your choice at any time with the "Cookie settings" link at the bottom of every page.',
+        'When the Meta Pixel or similar ad tools run, some state laws may treat that as "sharing" your information for targeted advertising. Declining cookies or turning on Global Privacy Control opts you out of this.',
+        'Our cookie policy lists every cookie and similar tool the site uses: ascendaimarketing.com/cookies.',
       ],
     },
     {
@@ -123,22 +118,24 @@ export const privacy: LegalPage = {
     },
     {
       heading: 'Your choices and rights',
-      body: ['You can:'],
+      body: ['Wherever you live, you can:'],
       list: [
-        'ask us what personal information we hold about you',
+        'ask us what personal information we hold about you and get a copy of it',
         'ask us to correct it or delete it',
+        'opt out of targeted advertising by declining cookies or using Global Privacy Control',
         'unsubscribe from our emails with the link in any email',
         'reply STOP to any text to stop getting texts',
-        'block or delete cookies in your browser',
       ],
       after: [
-        `Depending on where you live, such as California, you may have more rights under your state's privacy law. To make a request, email ${CONTACT_EMAIL}. We may ask you to confirm who you are before we act on it, and we will not treat you differently for using your rights.`,
+        "Residents of some states, such as California, Colorado, Connecticut, Virginia, Texas and others with privacy laws, have these rights by law, along with the right to limit how sensitive information is used. We honor them for everyone.",
+        `To make a request, email ${CONTACT_EMAIL}. We will confirm we got it and answer within 45 days. We may ask you to confirm who you are first. You can also have an authorized agent ask for you, with your written permission. We will not charge you or treat you differently for using your rights.`,
+        `If we turn down your request, you can appeal by replying to our answer or emailing ${CONTACT_EMAIL} with "Appeal" in the subject. We will answer your appeal within 60 days. If you are not happy with the result, you can contact your state attorney general.`,
       ],
     },
     {
       heading: 'Children',
       body: [
-        'This website is for business owners. It is not meant for children under 13, and we do not knowingly collect information from them. If you think a child has sent us information, email us and we will delete it.',
+        'This website is for business owners. It is not meant for anyone under 18, and we do not knowingly collect information from children under 16. If you think a child has sent us information, email us and we will delete it.',
       ],
     },
     {
@@ -193,6 +190,12 @@ export const terms: LegalPage = {
       ],
     },
     {
+      heading: 'Your consent to calls and texts',
+      body: [
+        'When you give us your phone number and agree to be contacted, you agree that Ascend AI Marketing may call or text you at that number about your request, including with automated tools. Agreeing is never a condition of buying anything from us. You can opt out at any time by replying STOP, or by telling us on a call or by email.',
+      ],
+    },
+    {
       heading: 'Our content',
       body: [
         'The words, designs, logos, photos and videos on this site belong to Ascend AI Marketing or the people who license them to us. You may view and share our pages, but you may not copy, sell or reuse our content without our written permission.',
@@ -227,12 +230,106 @@ export const terms: LegalPage = {
       ],
     },
     {
+      heading: 'Your responsibility',
+      body: [
+        'If you misuse this site or break these terms, you agree to cover the costs and claims that Ascend AI Marketing faces because of it, as far as the law allows.',
+      ],
+    },
+    {
+      heading: 'Privacy',
+      body: ['Our privacy policy and cookie policy explain how we handle your information. They are part of these terms.'],
+    },
+    {
+      heading: 'General',
+      body: [
+        'If a court finds part of these terms unenforceable, the rest still applies. If we do not enforce a term right away, we can still enforce it later. These terms are the whole agreement between you and us about using this website.',
+      ],
+    },
+    {
       heading: 'Changes to these terms',
       body: ['We may update these terms. When we do, we post the new version on this page and update the date at the top.'],
     },
     {
       heading: 'Contact us',
       body: [`Questions about these terms? Email us at ${CONTACT_EMAIL}.`],
+    },
+  ],
+}
+
+/** The banner shown before any analytics or ad tool loads. */
+export const cookieBanner = {
+  text: 'We use cookies for analytics and to measure our ads. They only load if you accept.',
+  link: 'Cookie policy',
+  accept: 'Accept',
+  decline: 'Decline',
+  settings: 'Cookie settings',
+}
+
+export const cookies: LegalPage = {
+  title: 'Cookie policy',
+  updated: 'November 20, 2026',
+  intro: 'This page explains the cookies and similar tools ascendaimarketing.com uses, why, and how you control them.',
+  sections: [
+    {
+      heading: 'What cookies are',
+      body: [
+        'Cookies are small text files a website saves in your browser. Similar tools, such as pixels, tags and browser storage, do the same kind of job. In this policy, "cookies" means all of them.',
+      ],
+    },
+    {
+      heading: 'Your choice comes first',
+      body: [
+        'Analytics and advertising cookies load only after you click "Accept" on our cookie banner. If you click "Decline", close the banner or your browser sends a Global Privacy Control signal, they stay off and the site works the same.',
+        'You can change your mind at any time with the "Cookie settings" link at the bottom of every page. Your choice is saved in your browser, so it applies to this browser and device only.',
+      ],
+    },
+    {
+      heading: 'Needed to run the site',
+      body: ['These do not track you and do not need your consent:'],
+      list: [
+        'Your cookie choice: saved in your browser so we do not ask again on every page.',
+        'Quiz results: your quiz results are saved in your browser tab for the results page and are cleared when you close the tab.',
+        'Security: our hosting provider (Netlify) may use technical data such as your IP address to deliver pages and protect the site. We do not use it to track you.',
+      ],
+    },
+    {
+      heading: 'Analytics (only if you accept)',
+      body: ['These help us understand how people use the site so we can improve it:'],
+      list: [
+        'Google Analytics, directly or through Google Tag Manager: counts visits and records the pages you view, how you got here, and your general location and device. Cookies such as _ga and _ga_<ID> last up to 2 years. Google explains how it uses this data at policies.google.com/technologies/partner-sites, and you can block it everywhere with the opt-out add-on at tools.google.com/dlpage/gaoptout.',
+      ],
+    },
+    {
+      heading: 'Advertising (only if you accept)',
+      body: ['These help us measure our ads and show them to people who have visited:'],
+      list: [
+        'Meta Pixel (Facebook and Instagram): tells Meta which pages you visit and which forms you send, so we can measure our ads and reach visitors again. Cookies such as _fbp last about 3 months. You can manage this in your Facebook ad settings.',
+      ],
+    },
+    {
+      heading: 'Videos and booking calendar',
+      body: [
+        'Some pages include tools from other companies. They load their own cookies only when you use them:',
+      ],
+      list: [
+        'YouTube (privacy-enhanced mode) and Vimeo: when you play a video.',
+        'HighLevel (GoHighLevel): when a page shows our booking calendar.',
+      ],
+      after: ['Their own cookie and privacy policies apply to these tools.'],
+    },
+    {
+      heading: 'Managing cookies in your browser',
+      body: [
+        'Besides our cookie settings, you can block or delete cookies in your browser settings, and you can turn on Global Privacy Control in browsers and extensions that support it. Blocking all cookies may stop some features, such as the booking calendar, from working.',
+      ],
+    },
+    {
+      heading: 'Changes to this policy',
+      body: ['If we add or change the tools we use, we update this page and the date at the top.'],
+    },
+    {
+      heading: 'Contact us',
+      body: [`Questions about cookies? Email us at ${CONTACT_EMAIL}.`],
     },
   ],
 }
