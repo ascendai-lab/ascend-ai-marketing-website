@@ -32,7 +32,7 @@ const columns: FooterColumn[] = navigation?.footerColumns?.length
       }),
     }))
   : fallback.columns
-import { PRIVACY_PATH } from '@/content/legal'
+import { PRIVACY_PATH, TERMS_PATH } from '@/content/legal'
 ---
 
 <footer class="site-footer surface-cream">
@@ -98,6 +98,7 @@ import { PRIVACY_PATH } from '@/content/legal'
       <p>© {year} {copyright}. All rights reserved.</p>
       <ul>
         <li><a href={PRIVACY_PATH}>Privacy policy</a></li>
+        <li><a href={TERMS_PATH}>Terms and conditions</a></li>
         {footerPages.map((page) => page.slug && (
           <li><a href={routes.page(page.slug)}>{page.title}</a></li>
         ))}
