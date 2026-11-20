@@ -1,4 +1,5 @@
 import { useState, type SubmitEvent } from 'react'
+import { smsConsent, PRIVACY_PATH, TERMS_PATH } from '@/content/legal'
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -6,7 +7,7 @@ interface Props {
   successMessage?: string | null
 }
 
-/** Posts to /api/contact, which validates and forwards to n8n. */
+/** Posts to /api/contact, which validates and forwards to LeadLine. */
 export default function ContactForm({ successMessage }: Props) {
   const [state, setState] = useState<FormState>('idle')
   const [errorMsg, setErrorMsg] = useState('')
@@ -17,13 +18,19 @@ export default function ContactForm({ successMessage }: Props) {
     setErrorMsg('')
 
     const form = e.currentTarget
-    const data = Object.fromEntries(new FormData(form).entries())
+    const { smsConsent: smsBox, ...data } = Object.fromEntries(new FormData(form).entries())
+    const phone = String(data.phone ?? '').trim()
+    if (smsBox === 'yes' && !phone) {
+      setErrorMsg(smsConsent.needsPhone)
+      setState('error')
+      return
+    }
 
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, page: window.location.pathname }),
+        body: JSON.stringify({ ...data, smsConsent: smsBox === 'yes' && Boolean(phone), page: window.location.pathname }),
       })
 
       if (!res.ok) {
@@ -54,6 +61,14 @@ export default function ContactForm({ successMessage }: Props) {
         <Field label="Email" name="email" type="email" autoComplete="email" required />
       </div>
       <Field label="Phone" name="phone" type="tel" autoComplete="tel" />
+      <div className="sms-consent">
+        <label className="sms-consent__label">
+          <input type="checkbox" name="smsConsent" value="yes" />
+          <span>
+            {smsConsent.text} <a href={PRIVACY_PATH}>{smsConsent.privacy}</a> · <a href={TERMS_PATH}>{smsConsent.terms}</a>
+          </span>
+        </label>
+      </div>
       <div className="contact-form__field">
         <label htmlFor="cf-message">Message *</label>
         <textarea id="cf-message" name="message" required minLength={10} rows={5} />

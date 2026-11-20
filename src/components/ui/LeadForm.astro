@@ -1,0 +1,154 @@
+---
+/**
+ * A short lead form (teardown request, call request). It posts to /api/contact (→ LeadLine) with fetch,
+ * never a form action, then shows its thank-you line or goes to `redirect`. Each send is also
+ * pushed to the dataLayer as `event`, so it can be tracked as a conversion.
+ */
+import Icon from './Icon.astro'
+import { consent, smsConsent, PRIVACY_PATH, TERMS_PATH } from '@/content/legal'
+
+type FieldName = 'name' | 'shop' | 'website' | 'email' | 'phone'
+interface Props {
+  id: string
+  fields: { name: FieldName; label: string; required?: boolean }[]
+  button: string
+  source: 'teardown-request' | 'call-request'
+  /** What the lead asked for, as the first line of the message LeadLine receives. */
+  subject: string
+  /** The dataLayer event pushed on a successful send. */
+  event: string
+  note?: string
+  success: string
+  redirect?: string
+  surface?: 'white' | 'deep'
+}
+
+const { id, fields, button, source, subject, event, note, success, redirect, surface = 'white' } = Astro.props
+const types: Record<FieldName, { type: 'text' | 'url' | 'email' | 'tel'; auto: string }> = {
+  name: { type: 'text', auto: 'name' },
+  shop: { type: 'text', auto: 'organization' },
+  website: { type: 'url', auto: 'url' },
+  email: { type: 'email', auto: 'email' },
+  phone: { type: 'tel', auto: 'tel' },
+}
+---
+
+<form class:list={['lead-form', surface === 'white' && 'surface-white']} id={id} data-lead-form data-source={source} data-subject={subject} data-event={event} data-redirect={redirect} data-sms-needs-phone={smsConsent.needsPhone} novalidate>
+  <div class="lead-form__fields">
+    {fields.map((f) => (
+      <label class="lead-form__field">
+        <span>{f.label}</span>
+        <input name={f.name} type={types[f.name].type} autocomplete={types[f.name].auto} required={f.required !== false} id={`${id}-${f.name}`} aria-describedby={`${id}-${f.name}-error`} inputmode={f.name === 'website' ? 'url' : undefined} />
+        <span class="lead-form__error" id={`${id}-${f.name}-error`}></span>
+      </label>
+    ))}
+  </div>
+  {fields.some((f) => f.name === 'phone') && (
+    <div class="sms-consent">
+      <label class="sms-consent__label">
+        <input type="checkbox" name="smsConsent" value="yes" id={`${id}-sms`} aria-describedby={`${id}-sms-error`} />
+        <span>{smsConsent.text} <a href={PRIVACY_PATH}>{smsConsent.privacy}</a> · <a href={TERMS_PATH}>{smsConsent.terms}</a></span>
+      </label>
+      <span class="lead-form__error" id={`${id}-sms-error`}></span>
+    </div>
+  )}
+  <input type="text" name="hp" tabindex="-1" autocomplete="off" class="sr-only" aria-hidden="true" />
+  <button type="submit" class="btn btn--primary lead-form__submit">{button}<Icon name="arrow" /></button>
+  <p class="lead-form__error lead-form__send-error" role="alert"></p>
+  {note && <p class="lead-form__note">{note}</p>}
+  <p class="lead-form__consent">{consent.text} <a href={PRIVACY_PATH}>{consent.link}</a>.</p>
+  <div class="lead-form__done" hidden tabindex="-1"><span class="icon-chip icon-chip--ui"><Icon name="check" /></span><p>{success}</p></div>
+</form>
+
+<script>
+  type Layer = { push: (event: Record<string, unknown>) => void }
+  document.querySelectorAll<HTMLFormElement>('[data-lead-form]').forEach((form) => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      let ok = true
+      form.querySelectorAll<HTMLInputElement>('.lead-form__field input').forEach((input) => {
+        const value = input.value.trim()
+        const empty = input.required && !value
+        const bad = empty || (value !== '' && input.type === 'email' && !/^\S+@\S+\.\S+$/.test(value)) || (value !== '' && input.type === 'url' && !/\S+\.\S+/.test(value))
+        input.setAttribute('aria-invalid', bad ? 'true' : 'false')
+        const error = document.getElementById(`${input.id}-error`)
+        const label = input.closest('label')?.querySelector('span')?.textContent?.replace(/\s*\(optional\)/i, '').trim().toLowerCase()
+        if (error) error.textContent = !bad ? '' : empty ? (label ? `Enter your ${label}.` : 'Please fill this in.') : input.type === 'email' ? 'Enter a valid email, like you@yourshop.com.' : 'Enter your website address, like yourshop.com.'
+        if (bad && ok) { input.focus(); ok = false }
+      })
+      // Ticking the text box needs a mobile number to text.
+      const sms = form.querySelector<HTMLInputElement>('input[name="smsConsent"]')
+      const phone = form.querySelector<HTMLInputElement>('input[name="phone"]')
+      const smsError = sms && document.getElementById(`${sms.id}-error`)
+      if (smsError) smsError.textContent = ''
+      if (ok && sms?.checked && phone && !phone.value.trim()) {
+        phone.setAttribute('aria-invalid', 'true')
+        if (smsError) smsError.textContent = form.dataset.smsNeedsPhone ?? ''
+        phone.focus()
+        ok = false
+      }
+      if (!ok) return
+      const data = new FormData(form)
+      const get = (k: string) => String(data.get(k) ?? '').trim()
+      const submit = form.querySelector<HTMLButtonElement>('.lead-form__submit')!
+      const sendError = form.querySelector<HTMLElement>('.lead-form__send-error')!
+      submit.disabled = true
+      sendError.textContent = ''
+      let saved = false
+      try {
+        const lines = [form.dataset.subject, get('shop') && `Shop: ${get('shop')}`, get('website') && `Website: ${get('website')}`].filter(Boolean)
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: get('name') || get('shop'),
+            email: get('email'),
+            phone: get('phone') || undefined,
+            smsConsent: Boolean(get('phone')) && data.get('smsConsent') === 'yes',
+            message: lines.join('\n'),
+            page: window.location.pathname,
+            source: form.dataset.source,
+            interest: new URLSearchParams(window.location.search).get('interest')?.replace(/[^a-z0-9-]/g, '') || undefined,
+            website: get('hp'),
+          }),
+        })
+        saved = res.ok
+      } catch {
+        saved = false
+      }
+      submit.disabled = false
+      if (!saved) {
+        sendError.textContent = "We couldn't send that just now. Please try again in a moment."
+        submit.focus()
+        return
+      }
+      const w = window as unknown as { dataLayer?: Layer }
+      w.dataLayer = w.dataLayer ?? ([] as unknown as Layer)
+      w.dataLayer.push({ event: form.dataset.event })
+      if (form.dataset.redirect) { window.location.assign(form.dataset.redirect); return }
+      form.querySelectorAll<HTMLElement>(':scope > :not(.lead-form__done)').forEach((el) => { el.hidden = true })
+      const done = form.querySelector<HTMLElement>('.lead-form__done')!
+      done.hidden = false
+      done.focus({ preventScroll: true })
+    })
+  })
+</script>
+
+<style>
+  .lead-form { display: grid; gap: var(--space-5); background: var(--color-white); color: var(--color-text); border-radius: var(--radius-xl); padding: clamp(var(--space-6), 3vw, var(--space-8)); box-shadow: var(--shadow-lg); }
+  .lead-form__fields { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); align-items: start; }
+  .lead-form__field { display: grid; gap: var(--space-2); font-size: var(--text-sm); font-weight: var(--weight-medium); }
+  .lead-form__field input[aria-invalid='true'] { border-color: var(--color-error); box-shadow: 0 0 0 1px var(--color-error); }
+  .lead-form__error { font-size: var(--text-xs); font-weight: var(--weight-medium); color: var(--color-error); }
+  .lead-form__error:empty { display: none; }
+  .lead-form__submit { justify-self: start; }
+  .lead-form__note { font-size: var(--text-xs); color: var(--color-text-muted); margin-top: calc(var(--space-2) * -1); }
+  .lead-form__consent { font-size: var(--text-xs); line-height: 1.5; color: var(--color-text-muted); }
+  .lead-form__consent a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+  .lead-form__done { display: flex; gap: var(--space-4); align-items: flex-start; font-size: var(--text-body-lg); line-height: 1.5; }
+  .lead-form__done[hidden] { display: none; }
+  @media (max-width: 640px) {
+    .lead-form__fields { grid-template-columns: 1fr; }
+    .lead-form__submit { justify-self: stretch; }
+  }
+</style>

@@ -1,5 +1,5 @@
 You run the jobs. We help you catch every call.
-Ascend AI builds HVAC websites and lead systems that answer every lead and follow up for you. You own all of it.
+Ascend AI Marketing builds HVAC websites and lead systems that answer every lead and follow up for you. You own all of it.
 Take the 60-second quiz
 Book a 15-minute call
 Mark on camera, in a real setting. No stock photos.
@@ -9,14 +9,14 @@ Then there's the website. Too many shops pay an agency every month for a site th
 That's a hard spot. You're busy. An agency let you down before. And you're not sure who to trust.
 A good shop should not lose a job to a voicemail.
 We've seen it too many times.
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
 So we built a different way to work. Fast setup. One simple price. Real people who answer.
 And you own everything. That means the website, the domain, the Google profile, the ad accounts and the contact list. You can log in to your lead dashboard any time.
-Mark Johnson, founder of Ascend AI.
+Mark Johnson, founder of Ascend AI Marketing.
 "I built my first website over 20 years ago. I've built hundreds since. When AI tools arrived in 2022, I jumped in early. Today I use AI every day to build sites, apps and marketing systems faster than a traditional agency can."
-Mark has an associate degree in Business Management. He also earned a bachelor's in Marketing from Wilmington University. He started Ascend AI in 2019.
+Mark has an associate degree in Business Management. He also earned a bachelor's in Marketing from Wilmington University. He started Ascend AI Marketing in 2019.
 Today, Mark leads a real team you can reach. When you have a question, you get a straight answer.
-"Some of my clients have been with me for over a decade. I'd rather earn your trust for years than make a quick sale." Mark Johnson, founder of Ascend AI
+"Some of my clients have been with me for over a decade. I'd rather earn your trust for years than make a quick sale." Mark Johnson, founder of Ascend AI Marketing
 Mark also runs The N Johnson Foundation, a nonprofit that helps children in Belize. "Giving back keeps me grounded," he says.
 Based in New Jersey, working with HVAC shops across the U.S.
 What we stand for.
@@ -48,8 +48,8 @@ The shop that always picks up.
 Every call gets a reply in seconds, from you or from a text back. Every lead gets a follow-up. Jobs land on the calendar while you work. You stop wondering where the leads went.
 Someone is going to answer that call.
 If it isn't you, the next shop gets the job, the review and the customer for life.
-Who is behind Ascend AI?
-Mark Johnson started Ascend AI in 2019. He has built websites for more than 20 years and leads the team today.
+Who is behind Ascend AI Marketing?
+Mark Johnson started Ascend AI Marketing in 2019. He has built websites for more than 20 years and leads the team today.
 Do you work with shops in every state?
 Yes. We build for HVAC shops in any state.
 How fast can you go live?

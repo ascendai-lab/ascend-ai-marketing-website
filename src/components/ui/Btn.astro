@@ -1,0 +1,56 @@
+---
+/**
+ * The site's one button. Use this for every hand-built button or button link.
+ * (CMS buttons use Button.astro, which renders the same classes.)
+ *  - primary: the main action. Deep green on light surfaces, sage on dark ones.
+ *  - secondary: the second action, an outlined pill.
+ *  - link: an underlined text link for a third, quieter action.
+ */
+import Icon, { type IconName } from './Icon.astro'
+
+interface Props {
+  href?: string
+  variant?: 'primary' | 'secondary' | 'link'
+  size?: 'md' | 'sm'
+  icon?: IconName
+  block?: boolean
+  type?: 'button' | 'submit'
+  class?: string
+  [key: `data-${string}`]: string | undefined
+  'aria-label'?: string
+}
+
+const { href, variant = 'primary', size = 'md', icon, block = false, type = 'button', class: className, ...rest } = Astro.props
+const classes = [variant === 'link' ? 'link' : ['btn', `btn--${variant}`, size === 'sm' && 'btn--sm', block && 'btn--block'], className]
+const external = href?.startsWith('http')
+// The ↗ arrow means "opens elsewhere": internal links get the plain arrow.
+const iconName = icon === 'arrow-ur' && !external ? 'arrow' : icon
+// A text link keeps its last word with its arrow, so the arrow never sits alone on a new line.
+const label = variant === 'link' && iconName ? (await Astro.slots.render('default')).trim() : ''
+const split = label.lastIndexOf(' ')
+const [head, tail] = split > 0 && !label.slice(split).includes('>') ? [label.slice(0, split + 1), label.slice(split + 1)] : ['', label]
+---
+
+{
+  href ? (
+    <a href={href} class:list={classes} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined} {...rest}>
+      {variant === 'link' ? (
+        iconName ? (
+          <span><Fragment set:html={head} /><span class="nowrap"><Fragment set:html={tail} /><Icon name={iconName} /></span>{external && <span class="sr-only"> (opens in a new tab)</span>}</span>
+        ) : (
+          <span><slot />{external && <span class="sr-only"> (opens in a new tab)</span>}</span>
+        )
+      ) : (
+        <>
+          <span><slot />{external && <span class="sr-only"> (opens in a new tab)</span>}</span>
+          {iconName && <Icon name={iconName} />}
+        </>
+      )}
+    </a>
+  ) : (
+    <button type={type} class:list={classes} {...rest}>
+      <span><slot /></span>
+      {icon && <Icon name={icon} />}
+    </button>
+  )
+}

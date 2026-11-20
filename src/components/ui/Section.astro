@@ -1,18 +1,25 @@
 ---
 import { stegaClean } from '@sanity/client/stega'
 
+/**
+ * Every section is a surface with the standard vertical rhythm and container.
+ * CMS blocks pass `background` (default | muted | dark | brand); hand-built sections pass `surface`.
+ */
 interface Props {
   anchorId?: string | null
   background?: string | null
+  surface?: 'cream' | 'white' | 'tint' | 'deep' | 'deeper'
   class?: string
+  pad?: 'normal' | 'none' | 'top' | 'bottom'
   'data-sanity'?: string
 }
 
-const { anchorId, background, class: className, 'data-sanity': dataSanity } = Astro.props
+const { anchorId, background, surface, class: className, pad = 'normal', 'data-sanity': dataSanity } = Astro.props
 const bg = stegaClean(background) || 'default'
+const surfaceClass = surface ? `surface-${surface}` : ({ default: 'surface-cream', muted: 'surface-white', dark: 'surface-deep', brand: 'surface-deep' } as Record<string, string>)[bg] ?? 'surface-cream'
 ---
 
-<section id={stegaClean(anchorId) || undefined} class:list={['section', `bg-${bg}`, className]} data-sanity={dataSanity}>
+<section id={stegaClean(anchorId) || undefined} class:list={[pad === 'normal' && 'section', pad === 'top' && 'pt-section', pad === 'bottom' && 'pb-section', surfaceClass, className]} data-sanity={dataSanity}>
   <div class="container">
     <slot />
   </div>

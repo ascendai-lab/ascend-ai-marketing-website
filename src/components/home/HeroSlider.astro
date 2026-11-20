@@ -1,0 +1,241 @@
+---
+import Icon from '@components/ui/Icon.astro'
+import { slides, inbox } from '@/content/home'
+---
+
+<div class="slider" data-slider data-autoplay="3500">
+  <ul class="slider__track" data-track aria-label="What the system does" tabindex="0">
+    {
+      slides.map((slide, i) => (
+        <li class:list={['slide', `slide--${slide.kind}`]} style={`--i: ${i}`}>
+          {slide.kind === 'photo' && (
+            <figure class="media slide__media">
+              <img src={slide.src} alt={slide.alt} width="1000" height="800" loading={i < 3 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : 'auto'} />
+              {slide.caption && <figcaption class="slide__caption">{slide.caption}</figcaption>}
+            </figure>
+          )}
+          {slide.kind === 'booked' && (
+            <figure class="media slide__media">
+              <img src={slide.src} alt={slide.alt} width="1000" height="800" loading={i < 3 ? 'eager' : 'lazy'} />
+              <div class="float-note slide__note">
+                <span class="icon-chip icon-chip--ui"><Icon name="cal" /></span>
+                <div><strong>New job booked</strong><span>On your calendar by lunch</span></div>
+              </div>
+            </figure>
+          )}
+          {slide.kind === 'textback' && (
+            <div class="card slide__panel">
+              <div class="ui-panel">
+                <div class="ui-row"><span class="ui-missed"><Icon name="phone-missed" /></span><div><strong>Missed call</strong><span>2:14 PM · Homeowner</span></div></div>
+                <p class="bubble">Sorry we missed you! This is your HVAC team. What can we help with today?</p>
+                <p class="bubble bubble--in">AC stopped cooling. Can someone come today?</p>
+                <p class="ui-meta"><Icon name="check" />Missed call text back</p>
+              </div>
+            </div>
+          )}
+          {slide.kind === 'inbox' && (
+            <div class="card slide__panel">
+              <div class="ui-panel">
+                <p class="ui-title"><Icon name="inbox" />One inbox for every lead</p>
+                {inbox.slice(0, 3).map((row) => (
+                  <div class="ui-row"><span class="avatar">{row.initials}</span><div><strong>{row.title}</strong><span>{row.detail}</span></div></div>
+                ))}
+              </div>
+            </div>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+  <div class="container slider__controls">
+    <button type="button" class="slider__btn" data-toggle aria-label="Pause slides" aria-pressed="false"><Icon name="pause" class="when-playing" /><Icon name="play" class="when-paused" /></button>
+    <button type="button" class="slider__btn" data-prev aria-label="Previous slide"><Icon name="chevron-left" /></button>
+    <button type="button" class="slider__btn" data-next aria-label="Next slide"><Icon name="chevron-right" /></button>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-slider]').forEach((slider) => {
+    const track = slider.querySelector<HTMLElement>('[data-track]')
+    const prev = slider.querySelector<HTMLButtonElement>('[data-prev]')
+    const next = slider.querySelector<HTMLButtonElement>('[data-next]')
+    if (!track || !prev || !next) return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const atStart = () => track.scrollLeft <= 2
+    const atEnd = () => track.scrollLeft >= track.scrollWidth - track.clientWidth - 2
+    // The slider loops: Next at the end goes back to the first slide, Prev at the start goes to the last.
+    const update = () => {
+      next.setAttribute('aria-label', atEnd() ? 'Back to the first slide' : 'Next slide')
+      prev.setAttribute('aria-label', atStart() ? 'Go to the last slide' : 'Previous slide')
+    }
+    const css = getComputedStyle(document.documentElement)
+    const easing = css.getPropertyValue('--ease-reveal').trim() || 'ease-out'
+    const fadeMs = parseFloat(css.getPropertyValue('--dur-base')) || 260
+    const maxLeft = () => track.scrollWidth - track.clientWidth
+
+    // Slides glide with the site's soft ease-out. Extra clicks move the target further
+    // instead of restarting the motion. Snapping is paused while it glides.
+    // Slides glide on a soft spring toward the target: they ease off from rest, settle without
+    // overshoot, and an extra click (or a change of direction) carries the current speed along
+    // instead of restarting the motion. Snapping is paused while it glides.
+    let target: number | null = null
+    let raf = 0
+    let x = 0
+    let v = 0 // px per second, signed
+    let last = 0
+    const omega = 9.5 // spring stiffness: settles in about 0.7s
+    const glideTo = (left: number) => {
+      left = Math.max(0, Math.min(maxLeft(), left))
+      if (reduce) { track.scrollTo({ left }); return }
+      if (target === null) { x = track.scrollLeft; v = 0; last = 0 }
+      target = left
+      track.style.scrollSnapType = 'none'
+      if (raf) return
+      const frame = (now: number) => {
+        const dt = last ? Math.min(Math.max(now - last, 0), 32) / 1000 : 1 / 60
+        last = now
+        const to = target ?? x
+        // Critically damped spring (semi-implicit Euler).
+        v += (-omega * omega * (x - to) - 2 * omega * v) * dt
+        x += v * dt
+        if (Math.abs(x - to) < 1 && Math.abs(v) < 60) {
+          track.scrollLeft = to
+          raf = 0
+          target = null
+          v = 0
+          last = 0
+          track.style.scrollSnapType = ''
+          update()
+          // A click that needs to wrap waits for the glide to land, so the track never stops between slides.
+          const next = queued
+          queued = 0
+          if (next) go(next)
+          return
+        }
+        track.scrollLeft = x
+        raf = requestAnimationFrame(frame)
+      }
+      raf = requestAnimationFrame(frame)
+    }
+
+    // Wrapping around fades the track out, jumps, and fades back in, instead of racing back
+    // across every slide. A click during the fade is kept and played right after.
+    let wrapping = false
+    let queued = 0
+    const wrapTo = (left: number) => {
+      if (reduce) { track.scrollTo({ left }); return }
+      wrapping = true
+      const fade = { duration: fadeMs, easing }
+      track.animate([{ opacity: 1 }, { opacity: 0 }], { ...fade, fill: 'forwards' }).finished.then((out) => {
+        track.style.scrollSnapType = ''
+        track.scrollTo({ left, behavior: 'auto' })
+        track.animate([{ opacity: 0 }, { opacity: 1 }], fade).finished.then(() => {
+          out.cancel()
+          wrapping = false
+          const next = queued
+          queued = 0
+          if (next) go(next)
+        })
+      })
+    }
+    // Every place the track can rest: each slide's left edge, capped at the end of the track.
+    const stops = () => {
+      const slides = [...track.querySelectorAll<HTMLElement>('.slide')]
+      const first = slides[0]?.offsetLeft ?? 0
+      const max = maxLeft()
+      return [...new Set(slides.map((s) => Math.min(max, Math.round(s.offsetLeft - first))))]
+    }
+    const go = (dir: number) => {
+      if (wrapping) { queued = dir; return }
+      const base = target ?? track.scrollLeft
+      const wraps = (dir > 0 && base >= maxLeft() - 2) || (dir < 0 && base <= 2)
+      if (wraps && target !== null) { queued = dir; return }
+      if (dir > 0 && base >= maxLeft() - 2) wrapTo(0)
+      else if (dir < 0 && base <= 2) wrapTo(maxLeft())
+      else {
+        const all = stops()
+        const next = dir > 0 ? all.find((x) => x > base + 2) : [...all].reverse().find((x) => x < base - 2)
+        glideTo(next ?? (dir > 0 ? maxLeft() : 0))
+      }
+    }
+
+    // Autoplay: moves one slide every few seconds. It waits while someone hovers, focuses
+    // or touches the slider, while it's off screen or the tab is hidden, and when paused.
+    const toggle = slider.querySelector<HTMLButtonElement>('[data-toggle]')
+    const delay = Number(slider.dataset.autoplay) || 0
+    let timer = 0
+    let paused = reduce || !delay
+    let holding = false
+    let visible = true
+    const stop = () => { window.clearInterval(timer); timer = 0 }
+    const start = () => {
+      stop()
+      if (!paused && !holding && visible && !document.hidden && !document.documentElement.classList.contains('menu-open')) timer = window.setInterval(() => go(1), delay)
+    }
+    const setPaused = (value: boolean) => {
+      paused = value
+      slider.classList.toggle('is-paused', paused)
+      toggle?.setAttribute('aria-pressed', String(paused))
+      toggle?.setAttribute('aria-label', paused ? 'Play slides' : 'Pause slides')
+      start()
+    }
+    const hold = (value: boolean) => { holding = value; start() }
+    toggle?.addEventListener('click', () => setPaused(!paused))
+    slider.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') hold(true) })
+    slider.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') hold(false) })
+    track.addEventListener('focusin', () => hold(true))
+    track.addEventListener('focusout', () => hold(false))
+    track.addEventListener('touchstart', () => hold(true), { passive: true })
+    track.addEventListener('touchend', () => window.setTimeout(() => hold(false), delay), { passive: true })
+    document.addEventListener('visibilitychange', start)
+    // The menu and the video pop-up add .menu-open to <html>; the slides wait behind them.
+    new MutationObserver(start).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; start() }).observe(slider)
+    if (!delay) toggle?.remove()
+    setPaused(paused)
+
+    prev.addEventListener('click', () => { go(-1); start() })
+    next.addEventListener('click', () => { go(1); start() })
+    track.addEventListener('scroll', update, { passive: true })
+    track.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight') { event.preventDefault(); go(1) }
+      if (event.key === 'ArrowLeft') { event.preventDefault(); go(-1) }
+    })
+    window.addEventListener('resize', update)
+    update()
+  })
+</script>
+
+<style>
+  .slider__track {
+    --slide-h: 18rem;
+    display: flex; gap: var(--grid-gap);
+    overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+    padding-inline: max(var(--container-padding-x), calc((100vw - var(--container-max)) / 2));
+    scroll-padding-inline: max(var(--container-padding-x), calc((100vw - var(--container-max)) / 2));
+  }
+  .slider__track::-webkit-scrollbar { display: none; }
+  .slide { flex: none; height: var(--slide-h); scroll-snap-align: start; }
+  .slide--photo, .slide--booked { width: 26rem; }
+  .slide--textback, .slide--inbox { width: 19rem; }
+  .slide__media { height: 100%; margin: 0; }
+  .slide__caption { position: absolute; left: var(--space-4); bottom: var(--space-4); background: var(--color-white); color: var(--color-text); font-size: var(--text-sm); font-weight: var(--weight-medium); padding: var(--space-2) var(--space-3); border-radius: var(--radius-full); }
+  .slide__note { position: absolute; left: var(--space-4); bottom: var(--space-4); }
+  .slide__panel { height: 100%; display: flex; padding: var(--space-5); --surface-card: var(--color-surface-muted); }
+  .slide__panel .ui-panel { width: 100%; }
+  .ui-title { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); font-weight: var(--weight-strong); color: var(--color-text); }
+  .ui-title .icon { color: var(--color-brand); }
+  .slider__controls { display: flex; justify-content: flex-end; gap: var(--space-2); padding-top: var(--space-5); }
+  .slider__btn { width: var(--icon-chip); height: var(--icon-chip); border-radius: var(--radius-full); border: 0; display: grid; place-items: center; background: var(--color-control-inverse); color: var(--color-white); transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out); }
+  .slider__btn:hover { background: var(--color-accent); color: var(--color-green-950); }
+  .slider__btn .icon { width: var(--icon-size); height: var(--icon-size); }
+  .slider__btn[data-toggle] { margin-right: auto; }
+  .slider :global(.when-paused), .slider.is-paused :global(.when-playing) { display: none; }
+  .slider.is-paused :global(.when-paused) { display: block; }
+  .slider__btn :global(.icon--fill), .slider__btn :global(.when-paused), .slider__btn :global(.when-playing) { fill: currentColor; stroke: none; }
+  @media (max-width: 640px) {
+    .slider__track { --slide-h: 16rem; gap: var(--space-3); }
+    .slide--photo, .slide--booked { width: 80vw; }
+    .slide--textback, .slide--inbox { width: 80vw; }
+  }
+</style>

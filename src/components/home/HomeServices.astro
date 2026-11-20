@@ -1,0 +1,83 @@
+---
+import { twoDigit } from '@/lib/format'
+/** Standalone services, featured on a dark band. Each row opens to a short line and a link to its page. */
+import Section from '@components/ui/Section.astro'
+import Btn from '@components/ui/Btn.astro'
+import Icon from '@components/ui/Icon.astro'
+import { services, links, hero } from '@/content/home'
+---
+
+<Section surface="deeper" anchorId="services">
+  <div class="split split--top services">
+    <div class="services__head">
+      <h2 class="t-h2" set:html={services.heading} />
+      <p class="body-lg services__intro">{services.intro}</p>
+      <div class="actions services__actions">
+        <Btn href={links.book} icon="arrow">{hero.secondary}</Btn>
+        <Btn href={services.allHref} variant="link" icon="arrow">{services.allLabel}</Btn>
+      </div>
+    </div>
+
+    <div class="accordion services__list" data-one-open>
+      {services.items.map((item, i) => (
+        <details open={i === 0}>
+          <summary>
+            <span class="services__num">{twoDigit(i)}</span>
+            <span class="icon-chip"><Icon name={item.icon} /></span>
+            <span class="services__name">{item.name}</span>
+            <span class="plus"><Icon name="plus" /></span>
+          </summary>
+          <div class="services__body">
+            <p>{item.text}</p>
+            <Btn href={item.href} variant="link" icon="arrow">{`Learn more about ${item.short}`}</Btn>
+          </div>
+        </details>
+      ))}
+    </div>
+  </div>
+</Section>
+
+<script>
+  import '@/scripts/accordion'
+</script>
+
+<style>
+  .services__intro { margin-top: var(--stack-body); }
+  .services__actions { margin-top: var(--stack-actions); }
+  .services__list { gap: var(--space-2); }
+  .services__list details { border-radius: var(--radius-lg); }
+  /* Colours change together with the open and close, never in a single frame. */
+  .services__list summary, .services__num, .services__list .icon-chip, .services__list .plus {
+    transition: background-color var(--dur-accordion) var(--ease-reveal), color var(--dur-accordion) var(--ease-reveal), transform var(--dur-base) var(--ease-out);
+  }
+  /* Rows also keep the shared slide-up entrance (opacity and translate), which this scoped rule would otherwise replace. */
+  .services__list details {
+    transition:
+      opacity var(--dur-reveal-fade) var(--ease-reveal) var(--reveal-delay, 0ms),
+      translate var(--dur-reveal) var(--ease-reveal) var(--reveal-delay, 0ms),
+      background-color var(--dur-accordion) var(--ease-reveal),
+      color var(--dur-accordion) var(--ease-reveal);
+  }
+  .services__list details[open]:not(.is-closing) { --surface-fg: var(--color-text); background: var(--color-white); color: var(--color-text); }
+  /* Inside the open white card, the focus ring sits within the card so it shows. */
+  .services__list details[open] summary:focus-visible { outline-offset: -3px; border-radius: var(--radius-lg); }
+  .services__list summary { gap: var(--space-4); justify-content: flex-start; padding: var(--space-5) var(--space-6); }
+  .services__num { font-size: var(--text-sm); color: var(--surface-muted); font-variant-numeric: tabular-nums; width: 1.5rem; flex: none; }
+  .services__name { flex: 1; font-size: var(--text-h3); font-weight: var(--weight-heading); letter-spacing: var(--tracking-snug); line-height: 1.2; }
+  .services__list .plus { background: var(--color-control-inverse); color: var(--color-white); }
+  .services__list details[open]:not(.is-closing) .services__num { color: var(--color-text-muted); }
+  .services__list details[open]:not(.is-closing) .icon-chip { background: var(--color-brand-deep); color: var(--color-white); }
+  .services__list details[open]:not(.is-closing) .plus { background: var(--color-brand-deep); color: var(--color-white); }
+  .services__list .services__body { display: grid; gap: var(--space-4); justify-items: start; padding: 0 var(--space-6) var(--space-6) calc(var(--space-6) + 1.5rem + var(--space-4) + var(--icon-chip) + var(--space-4)); max-width: none; color: var(--color-text-muted); }
+  .services__body p { font-size: var(--text-body-lg); color: var(--color-text-muted); }
+  .services__body :global(.link) { color: var(--color-brand); }
+  @media (min-width: 960px) {
+    .services__head { position: sticky; top: 7rem; }
+  }
+  @media (max-width: 640px) {
+    .services__num { display: none; }
+    .services__list summary { padding: var(--space-4); gap: var(--space-3); }
+    .services__name { font-size: var(--text-h4); }
+    .services__list .services__body { padding: 0 var(--space-4) var(--space-5) calc(var(--space-4) + var(--icon-chip) + var(--space-3)); }
+  }
+</style>

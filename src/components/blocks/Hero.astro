@@ -23,7 +23,6 @@ const hasImage = Boolean(block.image?.asset)
   )}
   <div class="hero__inner">
     <div class="hero__content">
-      {block.eyebrow && <span class="eyebrow">{block.eyebrow}</span>}
       <Heading class="hero__heading">{block.heading}</Heading>
       {block.subheading && <p class="hero__subheading">{block.subheading}</p>}
       {block.buttons?.length ? (
@@ -42,7 +41,7 @@ const hasImage = Boolean(block.image?.asset)
   .hero { position: relative; overflow: hidden; }
   .hero__inner { position: relative; display: grid; gap: 3rem; align-items: center; }
   .hero__heading { font-size: clamp(2.25rem, 5vw, 3.75rem); line-height: 1.1; letter-spacing: -0.02em; }
-  .hero__subheading { margin-top: 1.25rem; font-size: clamp(1.05rem, 2vw, 1.25rem); max-width: 55ch; }
+  .hero__subheading { margin-top: 1.25rem; font-size: clamp(1.05rem, 2vw, 1.25rem); max-width: calc(55 * var(--ch)); }
   .hero__media :global(img) { width: 100%; border-radius: var(--radius-2xl); box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.15); }
 
   @media (min-width: 768px) {

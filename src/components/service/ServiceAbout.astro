@@ -1,0 +1,49 @@
+---
+/** About us: who we are beside the founder photo, then past client results. */
+import Section from '@components/ui/Section.astro'
+import Btn from '@components/ui/Btn.astro'
+import Icon from '@components/ui/Icon.astro'
+import ServiceBlocks from './ServiceBlocks.astro'
+import { about, links, hero } from '@/content/home'
+import type { ServiceSectionCopy } from '@/content/services'
+
+interface Props {
+  section: ServiceSectionCopy
+}
+
+const { section } = Astro.props
+const paragraphs = section.blocks.flatMap((b) => (b.type === 'p' || b.type === 'field' ? [b.text] : []))
+const proof = section.blocks.filter((b) => b.type === 'result' || b.type === 'quote')
+---
+
+<Section surface="white" anchorId="about">
+  <div class="split split--wide-left">
+    <div>
+      <h2 class="t-h2">{section.heading}</h2>
+      <div class="about__body">{paragraphs.map((p) => <p class="body-lg">{p}</p>)}</div>
+      <div class="actions about__actions"><Btn href={links.book}>{hero.secondary}</Btn></div>
+    </div>
+    <figure class="media about__photo">
+      <img src={about.photo.src} alt={about.photo.alt} width="1200" height="1400" loading="lazy" />
+      <ul class="about__chips">
+        {about.chips.map((chip) => (
+          <li class="ui-row"><span class="icon-chip icon-chip--ui"><Icon name={chip.icon} /></span><div><strong>{chip.title}</strong><span>{chip.text}</span></div></li>
+        ))}
+      </ul>
+    </figure>
+  </div>
+  {proof.length > 0 && <div class="about__proof"><ServiceBlocks blocks={proof} /></div>}
+</Section>
+
+<style>
+  .about__body { margin-top: var(--stack-body); }
+  .about__actions { margin-top: var(--stack-actions); }
+  .about__photo { margin: 0; aspect-ratio: 5 / 6; width: 100%; }
+  .about__chips { position: absolute; left: var(--space-5); right: var(--space-5); bottom: var(--space-5); background: var(--color-white); border-radius: var(--radius-md); padding: var(--space-2) var(--space-4); box-shadow: var(--shadow-md); }
+  .about__chips li { padding: var(--space-3) 0; }
+  .about__chips li + li { border-top: 1px solid var(--color-border); }
+  .about__chips strong { font-size: var(--text-ui); }
+  .about__chips span:not(.icon-chip) { font-size: var(--text-xs); }
+  .about__proof { margin-top: var(--section-head-gap); }
+  @media (max-width: 959px) and (min-width: 641px) { .about__photo { aspect-ratio: 4 / 3; } }
+</style>

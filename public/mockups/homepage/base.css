@@ -1,0 +1,71 @@
+/* Shared base for the three homepage mockups. Each mockup is scoped under .mA, .mB or .mC. */
+:root {
+  --green: #194728;
+  --sage: #ABC9AE;
+  --ink: #1E1E1E;
+  --blue: #2D9FFE;
+  --white: #ffffff;
+  --font: 'Google Sans Flex', 'Google Sans', 'Outfit', system-ui, -apple-system, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+/* Mark asked for no animations: nothing moves, hovers change in place. */
+*, *::before, *::after { transition: none !important; animation: none !important; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: auto; }
+body { margin: 0; font-family: var(--font); color: var(--ink); background: #fff; font-optical-sizing: auto; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+img { display: block; max-width: 100%; height: auto; }
+h1, h2, h3, h4, p, ul, ol, figure, blockquote, dl, dd { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+a { color: inherit; text-decoration: none; }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+.i { width: 1.1em; height: 1.1em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.i-fill { fill: currentColor; stroke: none; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.skip { position: absolute; left: 12px; top: -60px; z-index: 100; background: #fff; color: var(--ink); padding: 12px 18px; border-radius: 8px; }
+.skip:focus { top: 12px; }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+
+/* ── Mockup separators and the jump bar ───────────────────── */
+.divider { background: #0d0f0e; color: #fff; padding: 56px 24px; text-align: center; }
+.divider p { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: #8d968f; }
+.divider h2 { font-size: clamp(28px, 4vw, 44px); font-weight: 450; letter-spacing: -.02em; margin-top: 10px; }
+.divider span { display: block; margin-top: 10px; color: #b9c2bb; font-size: 16px; }
+.jump { position: fixed; z-index: 90; left: 50%; bottom: 18px; transform: translateX(-50%); display: flex; gap: 4px; padding: 5px; border-radius: 999px; background: rgba(18, 20, 19, .92); box-shadow: 0 10px 30px rgba(0,0,0,.25); backdrop-filter: blur(8px); }
+.jump a { color: #e7ece8; font-size: 14px; padding: 10px 16px; border-radius: 999px; white-space: nowrap; min-height: 40px; display: flex; align-items: center; }
+.jump a:hover { background: rgba(255,255,255,.12); }
+.jump b { font-weight: 600; margin-right: 6px; color: var(--sage); }
+
+/* ── Quiz: structure shared by every skin ─────────────────── */
+.quiz-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+.quiz-count { font-size: 14px; }
+.quiz-bar { display: flex; gap: 4px; }
+.quiz-bar li { width: 22px; height: 5px; border-radius: 3px; background: currentColor; opacity: .18; }
+.quiz-bar li.done, .quiz-bar li.now { opacity: 1; }
+.quiz-step { border: 0; margin: 0; padding: 0; min-width: 0; }
+.quiz-q { display: block; padding: 0; font-size: 24px; line-height: 1.25; letter-spacing: -.01em; font-weight: 500; margin-bottom: 20px; }
+.quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.quiz-option { display: flex; align-items: center; gap: 12px; text-align: left; padding: 15px 16px; min-height: 58px; border-radius: 12px; font-size: 16px; line-height: 1.3; }
+.quiz-key { flex: none; width: 26px; height: 26px; border-radius: 7px; display: grid; place-items: center; font-size: 12px; font-weight: 600; }
+.quiz-back { margin-top: 18px; background: none; border: 0; padding: 10px 0; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; min-height: 44px; }
+.quiz-ready { font-size: 14px; margin-bottom: 6px; }
+.quiz-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+.quiz-field { display: grid; gap: 6px; font-size: 14px; }
+.quiz-field input { height: 50px; padding: 0 14px; border-radius: 10px; font-size: 16px; }
+.quiz-field input[aria-invalid="true"] { box-shadow: 0 0 0 2px #d4452f; }
+.quiz-submit { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 26px; border-radius: 999px; font-size: 16px; font-weight: 550; border: 0; }
+.quiz-small { margin-top: 12px; font-size: 13px; opacity: .75; }
+.quiz-headline { font-size: 24px; line-height: 1.3; letter-spacing: -.01em; font-weight: 500; margin-bottom: 20px; }
+.quiz-score { display: flex; gap: 16px; align-items: center; padding: 16px; border-radius: 14px; margin-bottom: 20px; }
+.quiz-score > span:last-child { display: grid; gap: 2px; font-size: 15px; line-height: 1.4; }
+.quiz-grade { flex: none; width: 56px; height: 56px; border-radius: 12px; display: grid; place-items: center; font-size: 30px; font-weight: 600; }
+.quiz-fix-title { font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+.quiz-fixes { counter-reset: fx; display: grid; gap: 10px; margin-bottom: 22px; }
+.quiz-fixes li { counter-increment: fx; display: grid; grid-template-columns: 26px 1fr; gap: 8px; font-size: 15px; line-height: 1.45; }
+.quiz-fixes li::before { content: counter(fx); width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 600; margin-top: 1px; }
+.quiz-fixes strong { font-weight: 600; }
+@media (max-width: 640px) {
+  .quiz-options, .quiz-fields { grid-template-columns: 1fr; }
+  .quiz-q, .quiz-headline { font-size: 21px; }
+  .jump a { padding: 10px 12px; font-size: 13px; }
+  .jump a span { display: none; }
+}

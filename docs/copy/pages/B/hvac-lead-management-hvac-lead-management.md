@@ -10,8 +10,8 @@ You send a quote for a new system. No one follows up. The homeowner goes quiet.
 You feel money slipping away. But you shouldn't have to hire someone to watch the phone.
 A good shop should not lose a job to a voicemail.
 HVAC lead management that answers when you can't.
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
-Founder Mark Johnson has 20+ years of building websites. He has built hundreds of them. We started Ascend AI in 2019. When you need us, a real person answers.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
+Founder Mark Johnson has 20+ years of building websites. He has built hundreds of them. We started Ascend AI Marketing in 2019. When you need us, a real person answers.
 Etheric Networks (past client): we built their site and set up their lead forms. Their sales team could follow up fast. 45 qualified leads in 60 days.
 Three steps to a lead system that answers for you.
 Take the 60-second quiz.

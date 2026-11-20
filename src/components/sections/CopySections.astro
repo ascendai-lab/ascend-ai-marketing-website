@@ -1,0 +1,95 @@
+---
+/**
+ * Draws a page's copy sections, each by its role, for the service, category and core pages.
+ * Light sections alternate cream and white; steps and stakes sit on green.
+ */
+import ServiceProblem from '@components/service/ServiceProblem.astro'
+import ServiceAbout from '@components/service/ServiceAbout.astro'
+import ServiceDetail from '@components/service/ServiceDetail.astro'
+import ServiceStakes from '@components/service/ServiceStakes.astro'
+import StepsSection from './StepsSection.astro'
+import StorySection from './StorySection.astro'
+import NationwideSection from './NationwideSection.astro'
+import FaqSection from './FaqSection.astro'
+import FounderSection from '@components/page/FounderSection.astro'
+import CasesSection from '@components/page/CasesSection.astro'
+import CalendarSection from '@components/page/CalendarSection.astro'
+import type { IconName } from '@components/ui/Icon.astro'
+import { faq as homeFaq } from '@/content/home'
+import { splitStep, type CategoryLook, type ServiceSectionCopy } from '@/content/services'
+import type { PageRole } from '@/content/pages'
+
+interface Props {
+  sections: ServiceSectionCopy[]
+  roleOf: (sections: ServiceSectionCopy[], index: number) => PageRole
+  look: CategoryLook
+  /** The business phone, when there is one: lines and answers that need it are left out without it. */
+  phone?: string
+}
+
+const { sections, roleOf, look, phone } = Astro.props
+
+const withPhone = (text: string) => (phone ? text.replace(/\[BUSINESS PHONE\]/g, phone) : text)
+const needsPhone = (text: string) => !phone && text.includes('[BUSINESS PHONE]')
+const paragraphs = (s: ServiceSectionCopy) => s.blocks.flatMap((b) => (b.type === 'p' ? [b.lead ? `${b.lead} ${b.text}` : b.text] : []))
+const stepIcons: IconName[] = ['clock', 'cal', 'zap']
+
+/** Eyebrows come from the copy's section labels, with a few renamed to read well on the page. */
+function eyebrowFor(section: ServiceSectionCopy, role: PageRole) {
+  const label = section.label
+  if (role === 'life') return /^(life|what changes)/i.test(label) ? 'What changes' : label
+  if (/^(pricing|price)$/i.test(label)) return 'Pricing'
+  if (/^what('s included| (you get|care includes|we set up|we do|we build))/i.test(label)) return 'What you get'
+  if (/services$/i.test(label) || /^hvac ai agents/i.test(label)) return 'Services'
+  return label.replace(/:.*$/, '')
+}
+
+const fixedSurface: Partial<Record<PageRole, 'cream' | 'white'>> = { problem: 'cream', about: 'white', faq: 'cream', nationwide: 'white' }
+let lastLight: 'cream' | 'white' = 'white'
+const drawn = sections.map((section, index) => {
+  const role = roleOf(sections, index)
+  const surface: 'cream' | 'white' | 'dark' = role === 'steps' || role === 'stakes' ? 'dark' : (fixedSurface[role] ?? (lastLight === 'cream' ? 'white' : 'cream'))
+  if (surface !== 'dark') lastLight = surface
+  const anchor = /^pricing$/i.test(section.label) ? 'pricing' : /^what you get|what('s| is) included/i.test(section.label) ? 'included' : undefined
+  return { section, role, surface, eyebrow: eyebrowFor(section, role), anchor }
+})
+---
+
+{
+  drawn.map(({ section, role, surface, eyebrow, anchor }) => {
+    const light = surface === 'dark' ? 'cream' : surface
+    switch (role) {
+      case 'problem':
+        return <ServiceProblem section={section} />
+      case 'about':
+        return <ServiceAbout section={section} />
+      case 'founder':
+        return <FounderSection section={section} surface={light} />
+      case 'cases':
+        return <CasesSection section={section} surface={light} />
+      case 'calendar':
+        return <CalendarSection section={section} phone={phone} surface={light} />
+      case 'steps': {
+        const list = section.blocks.find((b) => b.type === 'ol')
+        const items = list?.type === 'ol' ? list.items.map((item, i) => ({ icon: stepIcons[i] ?? 'check', ...splitStep(item.text) })) : []
+        const more = section.blocks.flatMap((b) =>
+          b.type === 'pricing' ? [`${b.text} [${b.link.text}](${b.link.href || '/hvac-lead-system'})`] : b.type === 'field' ? [`**${b.text}**`] : [],
+        )
+        return <StepsSection eyebrow="Getting started" heading={section.heading} note={paragraphs(section)[0]} items={items} more={more} />
+      }
+      case 'life':
+        return <StorySection eyebrow={eyebrow} heading={section.heading} body={paragraphs(section)} photo={look.storyPhoto ?? look.photo} surface={light} />
+      case 'stakes':
+        return <ServiceStakes section={section} />
+      case 'nationwide':
+        return <NationwideSection heading={section.heading} body={paragraphs(section)} surface={light} />
+      case 'faq': {
+        const faq = section.blocks.find((b) => b.type === 'faq')
+        const items = faq?.type === 'faq' ? faq.items.filter((item) => !needsPhone(item.a)).map((item) => ({ q: item.q, a: withPhone(item.a) })) : []
+        return <FaqSection heading={section.heading || homeFaq.heading} items={items} />
+      }
+      default:
+        return <ServiceDetail section={section} eyebrow={eyebrow} surface={light} anchorId={anchor} />
+    }
+  })
+}

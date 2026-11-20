@@ -1,0 +1,116 @@
+---
+/**
+ * The template for the category pages and the core pages (lead system, quiz, about, work, teardown, book).
+ * It draws the approved copy (src/content/pages.ts) with the same sections as the service pages.
+ * The quiz page puts the quiz in its hero, and the teardown page puts its request form there.
+ */
+import PageHero from '@components/sections/PageHero.astro'
+import CopySections from '@components/sections/CopySections.astro'
+import QuizSection from '@components/sections/QuizSection.astro'
+import MissedCallQuiz from '@components/home/MissedCallQuiz.astro'
+import LeadForm from '@components/ui/LeadForm.astro'
+import type { IconName } from '@components/ui/Icon.astro'
+import { inline } from '@/lib/inline'
+import { links, hero as homeHero } from '@/content/home'
+import { lookForPage, pageRoleOf, type PageCopy } from '@/content/pages'
+
+interface Props {
+  page: PageCopy
+  phone?: string
+}
+
+const { page, phone } = Astro.props
+const look = lookForPage(page)
+const isQuiz = page.path === '/missed-calls'
+const isTeardown = page.path === '/teardown'
+const isBook = page.path === '/book'
+
+const eyebrows: Record<string, string> = {
+  '/hvac-lead-system': 'The 72-hour HVAC lead system',
+  '/missed-calls': 'Missed call quiz',
+  '/about': 'About Ascend AI Marketing',
+  '/work': 'Our work',
+  '/teardown': 'Free video teardown',
+  '/book': 'Book a call',
+}
+const crumbs =
+  page.kind === 'category'
+    ? [{ label: 'Home', href: '/' }, { label: 'Services', href: '/services' }, { label: look.name }]
+    : [{ label: 'Home', href: '/' }, { label: eyebrows[page.path] ?? page.title }]
+
+/** "You own your site. Live in 72 hours." → one trust item per sentence, each with a fitting icon. */
+const iconFor = (text: string): IconName =>
+  /own/i.test(text) ? 'key' : /72|hours|fast/i.test(text) ? 'clock' : /people|answer/i.test(text) ? 'users' : /price|pay/i.test(text) ? 'check' : /phone|number/i.test(text) ? 'phone' : /ranking|google/i.test(text) ? 'pin' : /ai\b/i.test(text) ? 'bot' : 'check'
+const trust = page.hero.trust ? page.hero.trust.split(/(?<=\.)\s+/).map((text) => ({ icon: iconFor(text), text })) : homeHero.trust
+
+// The quiz page's quiz sits right beside the copy, so the hero offers the call instead of a second quiz button.
+const primary = isTeardown || isQuiz ? null : { text: page.hero.primary ?? homeHero.primary, href: isQuiz ? '#quiz' : links.quiz }
+const secondary = isTeardown || isQuiz ? null : { text: page.hero.secondary ?? homeHero.secondary, href: isBook ? '#calendar' : links.book }
+
+// On the booking page the calendar comes first, right under the hero: that's what the visitor came for.
+// Roles are worked out on the original order, then the sections are shown in the new one.
+const order = page.sections.map((_, i) => i)
+if (isBook) order.sort((a, b) => Number(pageRoleOf(page.sections, b) === 'calendar') - Number(pageRoleOf(page.sections, a) === 'calendar'))
+const sections = order.map((i) => page.sections[i])
+const roleOf = (_: unknown, index: number) => pageRoleOf(page.sections, order[index])
+
+const small = page.closing.small
+const smallFirst = small ? small.split(/(?<=\.)\s/)[0] : undefined
+const smallRest = small && smallFirst ? small.slice(smallFirst.length).trim() : undefined
+---
+
+<PageHero
+  crumbs={crumbs}
+  eyebrow={page.kind === 'category' ? look.name : (eyebrows[page.path] ?? look.name)}
+  headline={page.hero.headline}
+  subhead={page.hero.subhead}
+  primary={isBook ? secondary : primary}
+  secondary={isBook ? primary : secondary}
+  note={page.hero.note && !isTeardown ? page.hero.note : undefined}
+  photo={look.photo}
+  notes={look.notes}
+  trust={trust}
+  tool={isQuiz || isTeardown}
+>
+  {isTeardown && page.hero.textLink && (
+    <p slot="copy" class="hero-textlink">Rather talk? <a href={links.quiz}>{homeHero.primary}</a> or <a href={links.book}>book a 15-minute call</a>.</p>
+  )}
+  {isQuiz && <MissedCallQuiz slot="aside" id="quiz" />}
+  {isTeardown && (
+    <div slot="aside" id="teardown-form" role="region" aria-label={page.hero.formButton ?? 'Send me my teardown'}>
+      <LeadForm
+        id="teardown"
+        fields={[
+          { name: 'name', label: 'Name' },
+          { name: 'shop', label: 'Shop name' },
+          { name: 'website', label: 'Website' },
+          { name: 'email', label: 'Email' },
+          { name: 'phone', label: 'Mobile (optional)', required: false },
+        ]}
+        button={page.hero.formButton ?? 'Send me my teardown'}
+        source="teardown-request"
+        subject="Wants a free video teardown of their website."
+        event="teardown_request"
+        note={page.hero.note}
+        success="Thanks. We send your teardown as soon as it's ready."
+      />
+    </div>
+  )}
+</PageHero>
+
+<CopySections sections={sections} roleOf={roleOf} look={look} phone={phone} />
+
+<QuizSection
+  heading={inline(page.closing.heading)}
+  body={page.closing.body || undefined}
+  teardown={isTeardown ? '' : (smallFirst ?? '')}
+  teardownNote={smallRest || undefined}
+  onQuizPage={isQuiz}
+  extra={isTeardown ? { text: page.closing.formButton ?? 'Send me my teardown', href: '#teardown-form' } : undefined}
+/>
+
+<style>
+  .hero-textlink { margin-top: var(--space-6); font-size: var(--text-body); color: var(--surface-body); }
+  .hero-textlink a { color: var(--surface-fg); text-decoration: underline; text-underline-offset: 4px; }
+  @media (pointer: coarse) { .hero-textlink a { display: inline-block; padding-block: 0.6875rem; } }
+</style>

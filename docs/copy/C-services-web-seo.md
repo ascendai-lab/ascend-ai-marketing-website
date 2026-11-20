@@ -1,4 +1,4 @@
-# Ascend AI website copy v2: service pages (website design and Google search)
+# Ascend AI Marketing website copy v2: service pages (website design and Google search)
 
 Seven service pages. Each one follows the brief in BRIEF.md and the check in CHECKLIST.md. Fix rounds 1 to 5 applied (FIX-DECISIONS.md). The ### lines are build labels and do not show on the live site. Every **Heading:** and **Headline:** shows on the page.
 
@@ -8,7 +8,7 @@ Seven service pages. Each one follows the brief in BRIEF.md and the check in CHE
 
 **Slug:** /services/72-hour-hvac-website
 **Category:** HVAC Website Design
-**SEO title:** 72-Hour Website Launch for HVAC Companies | Ascend AI
+**SEO title:** 72-Hour Website Launch for HVAC Companies | Ascend AI Marketing
 **SEO description:** A new HVAC website and lead system, live 72 hours from the day we have what we need. Built to get the call. You own all of it.
 **Short description:** A new HVAC website and lead system that answers every lead and follows up for you. It goes live 72 hours from the day we have everything we need, and you own all of it.
 
@@ -32,9 +32,9 @@ A good shop should not lose a job to a voicemail.
 ### 3. Who we are
 **Heading:** A real team that builds fast.
 
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
 
-Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI started in 2019. You get a real team, not a ticket system.
+Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. You get a real team, not a ticket system.
 
 **Past client result:** Etheric Networks (past client) got 45 qualified leads in 60 days.
 
@@ -155,7 +155,7 @@ Yes. We connect to the CRM or field service software you use now.
 
 **Slug:** /services/hvac-website-redesign
 **Category:** HVAC Website Design
-**SEO title:** HVAC Website Redesign for HVAC Companies | Ascend AI
+**SEO title:** HVAC Website Redesign for HVAC Companies | Ascend AI Marketing
 **SEO description:** Turn your old HVAC website into one that brings in calls. Fast, phone-first redesigns for HVAC shops across the U.S. You own the site.
 **Short description:** Your old site looks dated or gets no calls. We rebuild it so it loads fast, works on a phone and turns visitors into calls. You own all of it.
 
@@ -179,9 +179,9 @@ A good shop should not lose a job to a voicemail.
 ### 3. Who we are
 **Heading:** We know what makes an old site work again.
 
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
 
-Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI started in 2019. We keep what works, cut what doesn't and rebuild the rest around more calls.
+Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. We keep what works, cut what doesn't and rebuild the rest around more calls.
 
 **Past client result:** Etheric Networks (past client) got 45 qualified leads in 60 days.
 
@@ -304,7 +304,7 @@ Yes. We connect to the CRM or field service software you use now.
 
 **Slug:** /services/hvac-website-hosting-care
 **Category:** HVAC Website Design
-**SEO title:** HVAC Website Hosting and Care | Ascend AI
+**SEO title:** HVAC Website Hosting and Care | Ascend AI Marketing
 **SEO description:** Hosting, updates, backups and security come in one plan with every HVAC website we build. Standalone care is for WordPress sites only.
 **Short description:** Every site we build includes hosting and care in one plan, so your HVAC website stays fast, safe and running. Have a WordPress site you want to keep? Ask about standalone care.
 
@@ -328,9 +328,9 @@ You're too busy to babysit a website. A good shop should not lose a job to a bro
 ### 3. Who we are
 **Heading:** We take care of the site. You take care of customers.
 
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
 
-Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI started in 2019. When you need a change, you reach a real team, not a ticket system.
+Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. When you need a change, you reach a real team, not a ticket system.
 
 **Past client result:** Miracle Temple C.O.G.I.C. (past client, church website) has had us as its web partner for 12+ years. Their leaders send us a flyer, and we post it fast. They never touch the site. Over $750,000 has come in through the online giving system we built.
 
@@ -444,7 +444,7 @@ Yes. Your tracking number forwards calls to it.
 
 **Slug:** /services/hvac-landing-pages
 **Category:** HVAC Website Design
-**SEO title:** HVAC Landing Pages for HVAC Companies | Ascend AI
+**SEO title:** HVAC Landing Pages for HVAC Companies | Ascend AI Marketing
 **SEO description:** Landing pages for AC tune-ups, furnace specials and new installs that turn clicks into calls. Built for HVAC shops across the U.S.
 **Short description:** One page, one offer, one goal: a booked call. Landing pages for tune-ups, seasonal specials and new installs, included in your plan.
 
@@ -468,9 +468,9 @@ It's frustrating to spend money and not know what worked. A good shop should not
 ### 3. Who we are
 **Heading:** Pages built for one job.
 
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
 
-Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI started in 2019. We build landing pages with one offer and one clear next step: call.
+Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. We build landing pages with one offer and one clear next step: call.
 
 **Past client result:** Etheric Networks (past client) got 45 qualified leads in 60 days.
 
@@ -615,9 +615,9 @@ It's frustrating to watch shops that do worse work show up above you. A good sho
 ### 3. Who we are
 **Heading:** Your best free ad, set up right.
 
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
 
-Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI started in 2019. We set up your profile the way Google asks. We match it to your website.
+Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. We set up your profile the way Google asks. We match it to your website.
 
 **Past client result:** Etheric Networks (past client): local SEO and a custom website. 45 qualified leads in 60 days.
 
@@ -716,7 +716,7 @@ You do. It stays in your name.
 
 **Slug:** /services/google-reviews-hvac
 **Category:** HVAC Local SEO
-**SEO title:** Google Reviews for HVAC Companies | Ascend AI
+**SEO title:** Google Reviews for HVAC Companies | Ascend AI Marketing
 **SEO description:** Get more Google reviews after every HVAC job with simple text and email requests. Built for HVAC shops across the U.S. and Google's review rules.
 **Short description:** Happy customers often forget to leave a review unless someone asks. After each job, your team sends a review request in a few taps, so new Google reviews keep coming in.
 
@@ -740,9 +740,9 @@ A good shop should not lose a job to a voicemail or a thin review count.
 ### 3. Who we are
 **Heading:** Asking for reviews, the right way.
 
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
 
-Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI started in 2019. We set up a simple way to ask every customer the same way.
+Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. We set up a simple way to ask every customer the same way.
 
 **Past client result:** Etheric Networks (past client): local SEO and a custom website. 45 qualified leads in 60 days.
 
@@ -840,7 +840,7 @@ They live on your Google profile, which stays in your name.
 
 **Slug:** /services/ai-search-optimization-hvac
 **Category:** HVAC Local SEO
-**SEO title:** AI Search Optimization for HVAC Companies | Ascend AI
+**SEO title:** AI Search Optimization for HVAC Companies | Ascend AI Marketing
 **SEO description:** Help ChatGPT and Google AI answers read and understand your HVAC website. Clear service pages, schema and matching business info for U.S. HVAC shops.
 **Short description:** Some homeowners now ask AI tools who to call. We build your site so Google AI answers and ChatGPT can read it and understand what you do.
 
@@ -864,9 +864,9 @@ It's one more thing to keep up with, on top of running a shop. A good shop shoul
 ### 3. Who we are
 **Heading:** We build sites that machines can read.
 
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
 
-Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI started in 2019. The same work that helps AI search read your site helps you on Google too. You don't pay twice.
+Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. The same work that helps AI search read your site helps you on Google too. You don't pay twice.
 
 **Past client result:** Etheric Networks (past client): local SEO and a custom website. 45 qualified leads in 60 days.
 

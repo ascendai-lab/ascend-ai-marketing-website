@@ -1,0 +1,47 @@
+---
+/** "What it feels like": a photo with product notes floating over it, and a short story beside it. */
+import Section from '@components/ui/Section.astro'
+import Icon, { type IconName } from '@components/ui/Icon.astro'
+import { success } from '@/content/home'
+
+interface Props {
+  eyebrow?: string
+  heading: string
+  body: string[]
+  close?: string
+  photo?: { src: string; alt: string }
+  notes?: { icon: IconName; title: string; text: string }[]
+  surface?: 'cream' | 'white'
+}
+
+const { heading, body, close, photo = success.photo, notes = success.notes, surface = 'white' } = Astro.props
+---
+
+<Section surface={surface}>
+  <div class="split">
+    <figure class="media story__photo">
+      <img src={photo.src} alt={photo.alt} width="1400" height="1100" loading="lazy" />
+      <ul class="story__notes">
+        {notes.map((note) => (
+          <li class="float-note"><span class="icon-chip icon-chip--ui"><Icon name={note.icon} /></span><div><strong>{note.title}</strong><span>{note.text}</span></div></li>
+        ))}
+      </ul>
+    </figure>
+    <div>
+      <h2 class="t-h2">{heading}</h2>
+      <div class="story__body">{body.map((p) => <p class="body-lg">{p}</p>)}</div>
+      {close && <p class="lead strong story__close">{close}</p>}
+    </div>
+  </div>
+</Section>
+
+<style>
+  .story__photo { margin: 0; aspect-ratio: 1 / 1; width: 100%; }
+  @media (max-width: 959px) and (min-width: 641px) { .story__photo { aspect-ratio: 16 / 9; } }
+  .story__notes { position: absolute; left: var(--space-5); right: var(--space-5); bottom: var(--space-5); display: grid; gap: var(--space-2); justify-items: start; }
+  .story__notes li:nth-child(2) { margin-left: var(--space-6); }
+  .story__notes li:nth-child(3) { margin-left: var(--space-12); }
+  .story__body { margin-top: var(--stack-body); }
+  .story__close { margin-top: var(--space-6); font-weight: var(--weight-medium); max-width: calc(36 * var(--ch)); }
+  @media (max-width: 640px) { .story__notes li:nth-child(n) { margin-left: 0; } }
+</style>

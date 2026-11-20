@@ -12,7 +12,7 @@ What was costing them jobs.
 [The problem in one short paragraph. Missed calls, slow follow-up or a site that didn't bring calls. Add how it felt, in their words.]
 [What the shop was losing before, said once, in plain words.]
 A good shop should not lose a job to a voicemail.
-Why [owner first name] called Ascend AI.
+Why [owner first name] called Ascend AI Marketing.
 [One line of empathy and one line of authority: 20+ years, hundreds of sites, founded 2019, real people.]
 What we built for [client name].
 [What we built for them and the date it went live, counted from the day we had everything we needed. Tell their own launch story here.]

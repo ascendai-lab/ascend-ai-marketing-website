@@ -1,11 +1,13 @@
 ---
 import type { Layout } from '@cms/lib/types'
-import { resolveLink } from '@cms/lib/links'
+import { resolveLink, telHref } from '@cms/lib/links'
 import { routes } from '@cms/routes'
 import SocialIcon from '@components/ui/SocialIcon.astro'
 import SanityImage from '@components/ui/SanityImage.astro'
-import ContactDetails from './ContactDetails.astro'
+import Icon from '@components/ui/Icon.astro'
 import { stegaClean } from '@sanity/client/stega'
+import { PRIVACY_PATH, TERMS_PATH, COOKIES_PATH, CONTACT_EMAIL, cookieBanner } from '@/content/legal'
+import { brand, footer as fallback } from '@/content/home'
 
 interface Props {
   layout: Layout
@@ -13,79 +15,144 @@ interface Props {
 
 const { settings, navigation, footerPages } = Astro.props.layout
 const year = new Date().getFullYear()
-const copyright = settings?.copyrightName || settings?.siteName
-const footerLogo = settings?.logoInverse?.asset ? settings.logoInverse : settings?.logo
+const name = stegaClean(settings?.siteName) || brand.name
+const copyright = settings?.copyrightName || name
+const email = stegaClean(settings?.email) || CONTACT_EMAIL
+type FooterColumn = { heading: string; links: { label: string; href: string; target?: string; rel?: string }[] }
+const columns: FooterColumn[] = navigation?.footerColumns?.length
+  ? navigation.footerColumns.map((column) => ({
+      heading: column.heading ?? '',
+      links: (column.links ?? []).flatMap((item) => {
+        const link = resolveLink(item.link)
+        return link ? [{ label: item.label ?? '', href: link.href, target: link.target, rel: link.rel }] : []
+      }),
+    }))
+  : fallback.columns
 ---
 
-<footer class="site-footer">
-  <div class="container site-footer__grid">
-    <div class="site-footer__brand">
-      {footerLogo?.asset ? <SanityImage image={footerLogo} width={180} sizes="180px" /> : <strong>{settings?.siteName}</strong>}
-      {settings?.footerText && <p>{settings.footerText}</p>}
-      {
-        settings?.socialLinks?.length ? (
-          <ul class="site-footer__social">
-            {settings.socialLinks.map((social) => (
-              <li>
-                <a href={stegaClean(social.url) ?? '#'} target="_blank" rel="noopener noreferrer" aria-label={stegaClean(social.platform) ?? 'Social profile'}>
-                  <SocialIcon platform={social.platform} />
-                </a>
-              </li>
-            ))}
-          </ul>
-        ) : null
-      }
-    </div>
-
-    {
-      navigation?.footerColumns?.map((column) => (
-        <nav aria-label={column.heading ?? 'Footer'}>
-          {column.heading && <h2 class="site-footer__heading">{column.heading}</h2>}
-          <ul>
-            {column.links?.map((item) => {
-              const link = resolveLink(item.link)
-              return link ? (
+<footer class="site-footer surface-cream">
+  <div class="container">
+    <div class="site-footer__top">
+      <div class="site-footer__brand">
+        {settings?.logo?.asset ? <SanityImage image={settings.logo} width={210} sizes="210px" /> : <img src="/brand/logo.svg" alt={name} width="210" height="36" />}
+        <p>{settings?.footerText || brand.tagline}</p>
+        <ul class="site-footer__contact">
+          <li><a href={`mailto:${email}`}><Icon name="inbox" />{email}</a></li>
+          {settings?.phone && <li><a href={telHref(settings.phone)}><Icon name="phone" />{settings.phone}</a></li>}
+        </ul>
+        {
+          settings?.socialLinks?.length ? (
+            <ul class="site-footer__social">
+              {settings.socialLinks.map((social) => (
                 <li>
-                  <a href={link.href} target={link.target} rel={link.rel}>
-                    {item.label}
+                  <a href={stegaClean(social.url) ?? '#'} target="_blank" rel="noopener noreferrer" aria-label={stegaClean(social.platform) ?? 'Social profile'}>
+                    <SocialIcon platform={social.platform} />
                   </a>
                 </li>
-              ) : null
-            })}
-          </ul>
-        </nav>
-      ))
-    }
+              ))}
+            </ul>
+          ) : null
+        }
+      </div>
 
-    {settings && <ContactDetails settings={settings} />}
-  </div>
+      <div class="site-footer__cols">
+        {
+          columns.map((column) => (
+            <nav aria-label={column.heading || 'Footer'}>
+              {column.heading && <h2 class="site-footer__heading">{column.heading}</h2>}
+              <ul>
+                {column.links.map((link) => (
+                  <li><a href={link.href} target={link.target} rel={link.rel}>{link.label}</a></li>
+                ))}
+              </ul>
+            </nav>
+          ))
+        }
+      </div>
+    </div>
 
-  <div class="container site-footer__bottom">
-    <p>© {year} {copyright}. All rights reserved.</p>
-    {
-      footerPages.length > 0 && (
-        <ul>
-          {footerPages.map((page) => page.slug && (
-            <li>
-              <a href={routes.page(page.slug)}>{page.title}</a>
-            </li>
-          ))}
-        </ul>
-      )
-    }
+    <div class="site-footer__bottom">
+      <p>© {year} {copyright}. All rights reserved.</p>
+      <ul>
+        <li><a href={PRIVACY_PATH}>Privacy</a></li>
+        <li><a href={TERMS_PATH}>Terms</a></li>
+        <li><a href={COOKIES_PATH}>Cookies</a></li>
+        <li hidden data-cookie-settings><button type="button" class="site-footer__cookie-btn">{cookieBanner.settings}</button></li>
+        {footerPages.map((page) => page.slug && (
+          <li><a href={routes.page(page.slug)}>{page.title}</a></li>
+        ))}
+      </ul>
+    </div>
+
+    <p class="site-footer__name" aria-hidden="true" data-fit><span>{brand.name}</span></p>
   </div>
 </footer>
 
+<script>
+  // The big name always spans the full container width, whatever the font or screen.
+  const fit = () => document.querySelectorAll<HTMLElement>('[data-fit]').forEach((el) => {
+    const span = el.firstElementChild as HTMLElement | null
+    if (!span) return
+    el.style.fontSize = '100px'
+    el.style.fontSize = `${Math.floor((100 * el.clientWidth) / span.offsetWidth) - 1}px`
+  })
+  fit()
+  document.fonts?.ready.then(fit)
+  window.addEventListener('resize', fit)
+</script>
+
 <style>
-  .site-footer { background: var(--color-bg-dark); color: var(--color-text-inverse); padding-top: 4rem; }
-  .site-footer p { color: inherit; opacity: 0.8; }
-  .site-footer__grid { display: grid; gap: 2.5rem; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); padding-bottom: 3rem; }
-  .site-footer__brand { display: grid; gap: 1rem; align-content: start; }
-  .site-footer__brand :global(img) { max-height: 3rem; width: auto; }
-  .site-footer__heading { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem; opacity: 0.75; }
-  .site-footer ul { list-style: none; display: grid; gap: 0.5rem; }
-  .site-footer a:hover { text-decoration: underline; }
-  .site-footer__social { display: flex !important; gap: 0.75rem; }
-  .site-footer__bottom { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; padding-block: 1.5rem; border-top: 1px solid rgb(255 255 255 / 0.15); font-size: 0.875rem; }
-  .site-footer__bottom ul { display: flex; flex-wrap: wrap; gap: 1.25rem; }
+  .site-footer { padding-top: var(--section-y); overflow: hidden; }
+  .site-footer__top { display: grid; gap: var(--space-12); }
+
+  /* Brand column: logo, one line, how to reach us, socials. */
+  .site-footer__brand { display: grid; gap: var(--space-5); justify-items: start; align-content: start; }
+  .site-footer__brand :global(img) { width: 13rem; height: auto; }
+  .site-footer__brand p { max-width: calc(36 * var(--ch)); color: var(--surface-body); }
+  .site-footer__contact { gap: var(--space-2); }
+  .site-footer__contact a { display: inline-flex; align-items: center; gap: var(--space-2); padding-bottom: 2px; border-bottom: 1px solid currentColor; color: var(--surface-fg); }
+  .site-footer__contact a:hover { text-decoration: none; border-bottom-color: transparent; }
+  .site-footer__contact :global(.icon) { width: 1rem; height: 1rem; flex: none; }
+  .site-footer__social { display: flex !important; gap: var(--space-4); margin-top: var(--space-2); }
+
+  /* Link columns: a clear heading over a quiet list. */
+  .site-footer__cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-10) var(--space-6); }
+  .site-footer__heading { font-size: var(--text-h4); font-weight: var(--weight-strong); letter-spacing: 0; color: var(--surface-fg); margin-bottom: var(--space-4); }
+  .site-footer ul { display: grid; }
+  .site-footer__cols a { display: block; padding: 0.375rem 0; font-size: var(--text-ui); color: var(--surface-body); }
+  .site-footer a:hover { color: var(--surface-fg); text-decoration: underline; text-underline-offset: 4px; }
+
+  /* Bottom row: copyright on the left, legal links in the middle. */
+  .site-footer__bottom { margin-top: var(--space-16); padding-block: var(--space-6); border-top: 1px solid var(--surface-line); display: grid; gap: var(--space-4); font-size: var(--text-sm); color: var(--surface-body); }
+  .site-footer__bottom ul { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-8); }
+  .site-footer__cookie-btn { background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; }
+  .site-footer__cookie-btn:hover { color: var(--surface-fg); text-decoration: underline; text-underline-offset: 4px; }
+
+  /* The name sits in the cream like a watermark: wide, faint, cut off by the bottom edge. */
+  .site-footer__name {
+    --wordmark-top: color-mix(in oklab, var(--color-green-900) 9%, transparent);
+    --wordmark-bottom: color-mix(in oklab, var(--color-green-900) 2%, transparent);
+    margin: var(--space-10) 0 -0.3em;
+    font-size: clamp(2.25rem, 8.6vw, 8rem); line-height: 1; letter-spacing: 0.01em; font-weight: var(--weight-strong);
+    white-space: nowrap; user-select: none;
+    color: transparent;
+    background: linear-gradient(180deg, var(--wordmark-top) 20%, var(--wordmark-bottom) 95%);
+    -webkit-background-clip: text; background-clip: text;
+  }
+  .site-footer__name span { display: inline-block; }
+
+  /* Phones: two columns; a third column on its own takes the full row. */
+  @media (max-width: 640px) {
+    .site-footer__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .site-footer__cols > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+  }
+  @media (min-width: 960px) {
+    .site-footer__top { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: var(--space-16); }
+    .site-footer__bottom { grid-template-columns: 1fr auto 1fr; align-items: center; }
+  }
+  /* Touch screens: every footer link is at least a 44px tap target. */
+  @media (pointer: coarse), (max-width: 959px) {
+    .site-footer :is(.site-footer__cols, .site-footer__bottom) :is(a, .site-footer__cookie-btn) { display: flex; align-items: center; min-height: 44px; padding-block: 0; }
+    .site-footer__contact a { min-height: 44px; }
+  }
 </style>

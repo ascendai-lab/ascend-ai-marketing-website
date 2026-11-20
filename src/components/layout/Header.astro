@@ -1,9 +1,14 @@
 ---
 import type { Layout } from '@cms/lib/types'
 import { resolveLink } from '@cms/lib/links'
+import { stegaClean } from '@sanity/client/stega'
 import { editAttr } from '@cms/lib/visualEditing'
 import Button from '@components/ui/Button.astro'
 import SanityImage from '@components/ui/SanityImage.astro'
+import Btn from '@components/ui/Btn.astro'
+import Icon from '@components/ui/Icon.astro'
+import { brand, nav as fallbackNav, links, hero } from '@/content/home'
+import { servicesByCategory, serviceHref } from '@/content/services'
 
 interface Props {
   layout: Layout
@@ -15,7 +20,14 @@ const { draftMode } = Astro.locals
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/'
 const announcement = settings?.announcement
 const announcementLink = resolveLink(announcement?.link)
+const useFallbackNav = !navigation?.headerLinks?.length
 const isCurrent = (href: string | undefined) => href !== undefined && (href.replace(/\/$/, '') || '/') === currentPath
+/** On /services, a category hub or a service page, the Services button shows as the current section. */
+// After the quiz (results) and on the booking page, the header button books the call.
+const bookingPage = currentPath === '/book' || currentPath === '/missed-calls/results'
+// On the quiz page the quiz is already on screen, so the phone button offers the call instead.
+const quizPage = currentPath === '/missed-calls'
+const inServices = currentPath.startsWith('/services') || servicesByCategory.some(({ look }) => isCurrent(look.href))
 ---
 
 {
@@ -32,20 +44,53 @@ const isCurrent = (href: string | undefined) => href !== undefined && (href.repl
   )
 }
 
-<header class="site-header">
+<header class="site-header surface-deep">
   <div class="container site-header__inner">
-    <a href="/" class="site-header__logo" aria-label={`${settings?.siteName ?? 'Home'} home`}>
+    <a href="/" class="site-header__logo" aria-label={`${stegaClean(settings?.siteName) || brand.name} home`}>
       {
         settings?.logo?.asset ? (
           <SanityImage image={settings.logo} width={180} loading="eager" sizes="180px" />
         ) : (
-          <span class="site-header__name">{settings?.siteName ?? 'Site name'}</span>
+          <img src="/brand/logo-white.svg" alt={brand.name} width="190" height="33" />
         )
       }
     </a>
 
     <nav aria-label="Main" class="site-nav" id="site-nav" data-sanity={editAttr(draftMode, { _id: 'navigation', _type: 'navigation' }, 'headerLinks')}>
       <ul class="site-nav__list">
+        {useFallbackNav && fallbackNav.map((item, index) => item.menu === 'services' ? (
+          <li class="site-nav__item svc-menu" style={`--i:${index}`} data-svc-menu>
+            <button type="button" class:list={['svc-menu__toggle', inServices && 'is-current']} aria-expanded="false" aria-controls="svc-menu-panel">
+              {item.label}<Icon name="chevron-down" />
+            </button>
+            <div class="svc-menu__panel" id="svc-menu-panel">
+              <div class="svc-menu__inner">
+                <ul class="svc-menu__groups">
+                  {servicesByCategory.map(({ look, pages }) => (
+                    <li class="svc-menu__group">
+                      <a class="svc-menu__cat" href={look.href} aria-current={isCurrent(look.href) ? 'page' : undefined}>
+                        <span class="icon-chip"><Icon name={look.icon} /></span>{look.name}
+                      </a>
+                      <ul class="svc-menu__links">
+                        {pages.map((page) => (
+                          <li><a href={serviceHref(page.slug)} aria-current={isCurrent(serviceHref(page.slug)) ? 'page' : undefined}>{page.title}</a></li>
+                        ))}
+                      </ul>
+                    </li>
+                  ))}
+                </ul>
+                <div class="svc-menu__foot">
+                  <a href={item.href} class="svc-menu__all">All services<Icon name="arrow" /></a>
+                  <a href={links.plan} class="svc-menu__all">The 72-hour HVAC lead system<Icon name="arrow" /></a>
+                </div>
+              </div>
+            </div>
+          </li>
+        ) : (
+          <li class="site-nav__item" style={`--i:${index}`}>
+            <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a>
+          </li>
+        ))}
         {
           navigation?.headerLinks?.map((item, index) => {
             const link = resolveLink(item.link)
@@ -90,9 +135,14 @@ const isCurrent = (href: string | undefined) => href !== undefined && (href.repl
           })
         }
       </ul>
-      {navigation?.headerCta && <div class="site-nav__cta" style={`--i:${navigation.headerLinks?.length ?? 0}`}><Button button={navigation.headerCta} /></div>}
+      <div class="site-nav__cta" style={`--i:${navigation?.headerLinks?.length ?? fallbackNav.length}`}>
+        {navigation?.headerCta && !bookingPage ? <Button button={navigation.headerCta} /> : bookingPage ? <Btn href="#calendar" size="sm">{hero.secondary}</Btn> : <Btn href={links.quiz} size="sm">{hero.primary}</Btn>}
+        {!bookingPage && <a href={links.book} class="site-nav__book">Or book a 15-minute call</a>}
+      </div>
     </nav>
 
+    {/* Phones and tablets: the main action stays one tap away, next to the menu button. */}
+    <a href={bookingPage ? '#calendar' : quizPage ? links.book : links.quiz} class="btn btn--primary btn--sm site-header__quick">{bookingPage || quizPage ? 'Book a call' : 'Take the quiz'}</a>
     <button class="site-header__toggle" type="button" aria-controls="site-nav" aria-expanded="false">
       <span class="sr-only">Menu</span>
       <span aria-hidden="true" class="bars"></span>
@@ -101,10 +151,12 @@ const isCurrent = (href: string | undefined) => href !== undefined && (href.repl
 </header>
 
 <script>
+  import { animateHeight, heightVelocity } from '@/scripts/animate-height'
+
   const header = document.querySelector<HTMLElement>('.site-header')
   const toggle = document.querySelector<HTMLButtonElement>('.site-header__toggle')
   const nav = document.getElementById('site-nav')
-  const desktop = window.matchMedia('(min-width: 960px)')
+  const desktop = window.matchMedia('(min-width: 1024px)')
 
   // The mobile menu is a full-screen panel that starts right under the header and covers the page.
   const placeMenu = () => header && nav?.style.setProperty('--nav-top', `${Math.max(0, header.getBoundingClientRect().bottom)}px`)
@@ -112,14 +164,39 @@ const isCurrent = (href: string | undefined) => href !== undefined && (href.repl
     if (!toggle || !nav) return
     if (open) placeMenu()
     toggle.setAttribute('aria-expanded', String(open))
+    // Reopening before the close has finished (items still fading): skip the stagger.
+    nav.classList.toggle('is-reopening', open && nav.getAnimations({ subtree: true }).length > 0)
     nav.classList.toggle('is-open', open)
     document.documentElement.classList.toggle('menu-open', open)
+    // While the menu covers the page, the page behind can't be reached by keyboard or screen reader.
+    document.querySelectorAll<HTMLElement>('body > :not(header):not(script)').forEach((el) => { el.inert = open })
+    if (open) nav.querySelector<HTMLElement>('a, button')?.focus({ preventScroll: true })
+    // The menu always reopens with the Services list folded.
+    // Folded once the menu has finished closing, so the list doesn't snap shut while still in view.
+    window.clearTimeout(resetTimer)
+    if (!open && !desktop.matches) resetTimer = window.setTimeout(() => { if (!nav.classList.contains('is-open')) resetServices() }, 420)
   }
+  let resetTimer = 0
   toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'))
+  // While the menu is open, Tab loops between the menu button and the menu's own links.
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Tab' || !nav?.classList.contains('is-open') || desktop.matches || !toggle) return
+    const items = [...nav.querySelectorAll<HTMLElement>('a, button')].filter((el) => el.offsetParent !== null && !el.closest('[inert]'))
+    if (!items.length) return
+    if (!event.shiftKey && document.activeElement === toggle) { event.preventDefault(); items[0].focus() }
+    else if (event.shiftKey && document.activeElement === items[0]) { event.preventDefault(); toggle.focus() }
+  })
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && nav?.classList.contains('is-open')) {
+      // Inside the open Services list, Escape folds the list first.
+      const svc = document.querySelector<HTMLElement>('[data-svc-menu]')
+      if (svc?.classList.contains('is-open') && svc.contains(document.activeElement)) {
+        svc.querySelector<HTMLButtonElement>('.svc-menu__toggle')?.click()
+        svc.querySelector<HTMLButtonElement>('.svc-menu__toggle')?.focus()
+        return
+      }
       setMenu(false)
-      toggle?.focus()
+      toggle?.focus({ preventScroll: true })
     }
   })
   // Following a link (including #anchors on the same page) closes the menu.
@@ -128,6 +205,95 @@ const isCurrent = (href: string | undefined) => href !== undefined && (href.repl
   })
   desktop.addEventListener('change', () => setMenu(false))
   window.addEventListener('resize', () => nav?.classList.contains('is-open') && placeMenu())
+  // Services menu: a panel under the header on desktop (opens on hover or click), a nested list in the mobile menu.
+  // It opens and closes with the same height animation as the FAQ, so it never snaps.
+  const menu = document.querySelector<HTMLElement>('[data-svc-menu]')
+  const menuToggle = menu?.querySelector<HTMLButtonElement>('.svc-menu__toggle')
+  const panel = menu?.querySelector<HTMLElement>('.svc-menu__panel')
+  let closeTimer = 0
+  function resetServices() {
+    if (!menu || !menuToggle || !panel) return
+    panel.getAnimations().forEach((a) => a.cancel())
+    menu.classList.remove('is-open')
+    menuToggle.setAttribute('aria-expanded', 'false')
+    panel.style.height = ''
+    panel.inert = true
+  }
+  // Opened by the pointer resting on it: a click that follows (the natural next move) keeps it open.
+  let openedByHover = false
+  const setServices = (open: boolean) => {
+    if (!open) openedByHover = false
+    if (!menu || !menuToggle || !panel || menu.classList.contains('is-open') === open) return
+    menuToggle.setAttribute('aria-expanded', String(open))
+    if (desktop.matches) { menu.classList.toggle('is-open', open); return }
+    // Collapsed on phones, its links are out of the tab order too.
+    if (open) panel.inert = false
+    // Measure where it is now (mid-animation, if it's moving), then stop that animation before measuring the target.
+    let from = panel.getBoundingClientRect().height
+    const velocity = heightVelocity(panel)
+    const running = panel.getAnimations()
+    const wasMoving = running.length > 0
+    running.forEach((a) => a.cancel())
+    menu.classList.toggle('is-open', open)
+    panel.style.height = 'auto'
+    const full = open ? panel.getBoundingClientRect().height : 0
+    panel.style.height = ''
+    // Only the part on screen animates: the list is taller than the phone, and the rest is out of sight.
+    const visible = Math.max(0, window.innerHeight - panel.getBoundingClientRect().top + 40)
+    from = Math.min(from, visible)
+    const to = Math.min(full, visible)
+    const animation = animateHeight(panel, from, to, { interrupted: wasMoving, velocity })
+    if (animation) {
+      panel.style.height = `${to}px`
+      // Only the newest animation hands the height back, so an older one finishing never snaps the panel.
+      animation.addEventListener('finish', () => {
+        if (panel.getAnimations().length === 0) panel.style.height = ''
+        if (!menu.classList.contains('is-open')) panel.inert = true
+      })
+    } else if (!open) panel.inert = true
+  }
+  if (panel && !desktop.matches) panel.inert = true
+  menuToggle?.addEventListener('click', () => {
+    // The first click after a hover-open keeps it open; the next click closes it as usual.
+    if (desktop.matches && openedByHover) { openedByHover = false; return }
+    setServices(!menu!.classList.contains('is-open'))
+  })
+  menu?.addEventListener('pointerenter', (event) => {
+    if (!desktop.matches || event.pointerType !== 'mouse') return
+    clearTimeout(closeTimer)
+    if (!menu.classList.contains('is-open')) openedByHover = true
+    setServices(true)
+  })
+  menu?.addEventListener('pointerleave', (event) => {
+    if (!desktop.matches || event.pointerType !== 'mouse') return
+    closeTimer = window.setTimeout(() => setServices(false), 180)
+  })
+  // ArrowDown on the Services button opens the list and moves to its first link.
+  menuToggle?.addEventListener('keydown', (event) => {
+    if (event.key !== 'ArrowDown' || !desktop.matches) return
+    event.preventDefault()
+    openedByHover = false
+    setServices(true)
+    panel?.querySelector<HTMLElement>('a')?.focus()
+  })
+  menu?.addEventListener('focusout', (event) => {
+    if (desktop.matches && !menu.contains(event.relatedTarget as Node | null)) setServices(false)
+  })
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && menu?.classList.contains('is-open') && desktop.matches) {
+      setServices(false)
+      menuToggle?.focus()
+    }
+  })
+  document.addEventListener('click', (event) => {
+    if (menu && desktop.matches && !menu.contains(event.target as Node)) setServices(false)
+  })
+  desktop.addEventListener('change', () => {
+    menu?.classList.remove('is-open')
+    menuToggle?.setAttribute('aria-expanded', 'false')
+    if (panel) panel.inert = !desktop.matches
+  })
+
   // Close dropdowns when clicking elsewhere.
   document.addEventListener('click', (event) => {
     document.querySelectorAll<HTMLDetailsElement>('.site-nav__dropdown[open]').forEach((el) => {
@@ -137,84 +303,138 @@ const isCurrent = (href: string | undefined) => href !== undefined && (href.repl
 </script>
 
 <style>
-  .announcement { background: var(--color-bg-dark); color: var(--color-text-inverse); text-align: center; font-size: 0.9rem; padding: 0.5rem 1rem; }
+  .announcement { background: var(--color-bg-darker); color: var(--color-text-inverse); text-align: center; font-size: var(--text-sm); padding: var(--space-2) var(--space-4); }
   .announcement a { text-decoration: underline; text-underline-offset: 3px; }
 
-  .site-header { position: sticky; top: 0; z-index: 50; background: var(--color-bg); border-bottom: 1px solid var(--color-border); }
-  .site-header__inner { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; min-height: 4.5rem; }
-  .site-header__logo :global(img) { max-height: 3rem; width: auto; }
-  .site-header__name { font-family: var(--font-heading); font-weight: 700; font-size: 1.25rem; }
+  .site-header { position: sticky; top: 0; z-index: 50; }
+  .site-header__inner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-6); min-height: var(--header-h); }
+  .site-header__logo { flex: none; display: flex; align-items: center; min-height: 44px; }
+  .site-header__logo :global(img) { width: 11.5rem; height: auto; max-height: 2.5rem; object-fit: contain; object-position: left; }
 
-  /* Mobile menu: a full-screen panel over the page. It unrolls from the header,
-     then the items slide down one after another. */
+  /* Mobile menu: a full-screen deep green panel under the header. */
   .site-nav {
-    position: fixed;
-    inset: var(--nav-top, 4.5rem) 0 0 0;
-    z-index: 49;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    background: var(--color-bg);
-    padding: 1.25rem var(--container-padding-x) 2.5rem;
-    visibility: hidden;
-    clip-path: inset(0 0 100% 0);
-    transition: clip-path 0.5s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.5s;
+    position: fixed; inset: var(--nav-top, 5rem) 0 0 0; z-index: 49;
+    overflow-y: auto; overscroll-behavior: contain;
+    background: var(--surface-bg);
+    padding: var(--space-5) var(--container-padding-x) var(--space-10);
+    visibility: hidden; clip-path: inset(0 0 100% 0);
+    /* Closing: a quicker, even ease, so it doesn't rush off in the first frames. */
+    transition: clip-path 400ms var(--ease-height), visibility 0s linear 400ms;
   }
-  .site-nav.is-open {
-    visibility: visible;
-    clip-path: inset(0 0 0 0);
-    transition: clip-path 0.5s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
-  }
-  .site-nav__item, .site-nav__cta { opacity: 0; transform: translateY(-14px); transition: opacity 0.2s ease, transform 0.2s ease; }
-  .site-nav.is-open .site-nav__item, .site-nav.is-open .site-nav__cta {
-    opacity: 1;
-    transform: none;
-    transition: opacity 0.45s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-    transition-delay: calc(0.12s + var(--i, 0) * 0.06s);
-  }
+  .site-nav.is-open { visibility: visible; clip-path: inset(0 0 0 0); transition: clip-path 400ms var(--ease-height), visibility 0s; }
+  /* Open and close share one curve, so reopening mid-close turns around smoothly instead of jumping. */
+  .site-nav__item, .site-nav__cta { opacity: 0; transform: translateY(-14px); transition: opacity 320ms var(--ease-in-out, ease-in-out) 40ms, transform 320ms var(--ease-out) 40ms; }
+  .site-nav.is-open .site-nav__item, .site-nav.is-open .site-nav__cta { opacity: 1; transform: none; transition: opacity 300ms var(--ease-out), transform 300ms var(--ease-out); transition-delay: calc(60ms + var(--i, 0) * 25ms); }
+  /* Reopened while still closing: the items come straight back with the panel, no stagger wait. */
+  .site-nav.is-open.is-reopening .site-nav__item, .site-nav.is-open.is-reopening .site-nav__cta { transition-delay: 0ms; }
   :global(html.menu-open body) { overflow: hidden; }
   @media (prefers-reduced-motion: reduce) {
     .site-nav, .site-nav.is-open { clip-path: none; opacity: 0; transition: opacity 0.15s, visibility 0s linear 0.15s; }
     .site-nav.is-open { opacity: 1; transition: opacity 0.15s, visibility 0s; }
     .site-nav__item, .site-nav__cta, .site-nav.is-open .site-nav__item, .site-nav.is-open .site-nav__cta { opacity: 1; transform: none; transition: none; }
   }
-  .site-nav__list { list-style: none; display: grid; gap: 0.25rem; }
-  .site-nav__item > a, .site-nav__item summary, .site-nav__item > span { display: block; padding: 0.9rem 0; font-weight: 500; font-size: 1.25rem; cursor: pointer; }
-  .site-nav__list > .site-nav__item + .site-nav__item { border-top: 1px solid var(--color-border); }
-  .site-nav a[aria-current='page'] { color: var(--color-brand); }
+  .site-nav__list { display: grid; }
+  .site-nav__item > a, .site-nav__item summary, .site-nav__item > span { display: block; padding: var(--space-4) 0; font-size: 1.375rem; letter-spacing: -0.01em; cursor: pointer; color: var(--surface-fg); }
+  .site-nav__list > .site-nav__item + .site-nav__item { border-top: 1px solid var(--surface-line); }
   .site-nav__dropdown summary { list-style: none; }
   .site-nav__dropdown summary::-webkit-details-marker { display: none; }
   .site-nav__dropdown summary::after { content: ' ▾'; font-size: 0.8em; }
-  .site-nav__dropdown ul { list-style: none; padding-left: 1rem; }
-  .site-nav__dropdown ul a { display: block; padding: 0.45rem 0; }
-  .site-nav__cta { margin-top: 1.5rem; }
+  .site-nav__dropdown ul { padding-left: var(--space-4); }
+  .site-nav__dropdown ul a { display: flex; align-items: center; min-height: 44px; }
+  /* Services menu, mobile: a nested list that opens under its button. */
+  .svc-menu__toggle { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: var(--space-2); padding: var(--space-4) 0; background: none; border: 0; font: inherit; font-size: 1.375rem; letter-spacing: -0.01em; color: var(--surface-fg); cursor: pointer; text-align: left; }
+  .svc-menu__toggle :global(.icon) { width: 1.25rem; height: 1.25rem; transition: transform var(--dur-accordion) var(--ease-height); }
+  .svc-menu.is-open .svc-menu__toggle :global(.icon) { transform: rotate(180deg); }
+  .svc-menu__panel { height: 0; overflow: hidden; }
+  .svc-menu.is-open .svc-menu__panel { height: auto; }
+  .svc-menu__inner { padding-bottom: var(--space-5); }
+  .svc-menu__groups { display: grid; gap: var(--space-5); }
+  .svc-menu__cat { display: flex; align-items: center; gap: var(--space-3); min-height: 44px; font-size: var(--text-body); font-weight: var(--weight-medium); color: var(--surface-fg); }
+  .svc-menu__cat .icon-chip { width: 2rem; height: 2rem; }
+  .svc-menu__links { display: grid; margin-top: var(--space-2); padding-left: calc(2rem + var(--space-3)); }
+  .svc-menu__links a { display: flex; align-items: center; min-height: 44px; padding: var(--space-1) 0; font-size: var(--text-body); color: var(--surface-body); }
+  /* The panel clips while it animates, so focus rings sit just inside each link instead of being cut off. */
+  .svc-menu__panel a:focus-visible, .svc-menu__toggle:focus-visible { outline-offset: -3px; border-radius: var(--radius-sm); }
+  @media (max-width: 1023px) { .svc-menu__links a, .svc-menu__cat { padding-inline: var(--space-2); margin-inline: calc(var(--space-2) * -1); } }
+  .svc-menu__links a[aria-current='page'], .svc-menu__cat[aria-current='page'] { color: var(--color-accent); }
+  .svc-menu__foot { display: grid; gap: var(--space-2); margin-top: var(--space-5); }
+  .svc-menu__all { display: inline-flex; align-items: center; gap: var(--space-2); min-height: 44px; font-size: var(--text-body); font-weight: var(--weight-medium); color: var(--surface-fg); }
+  .svc-menu__all :global(.icon) { width: 1rem; height: 1rem; color: var(--color-accent); }
 
-  .site-header__toggle { display: inline-flex; padding: 0.75rem; background: none; border: 0; cursor: pointer; color: inherit; }
-  .bars, .bars::before, .bars::after { display: block; width: 1.5rem; height: 2px; background: currentColor; position: relative; }
+  .site-nav__cta { margin-top: var(--space-6); }
+  .site-nav__cta :global(.btn) { width: 100%; height: var(--control-h); font-size: var(--text-body); }
+  /* Phones only: a quieter way in for owners ready to talk. */
+  .site-nav__book { display: flex; align-items: center; justify-content: center; min-height: 44px; margin-top: var(--space-3); font-size: var(--text-body); color: var(--surface-body); text-decoration: underline; text-underline-offset: 4px; }
+
+  .site-header__toggle { display: inline-flex; flex: none; width: max(var(--icon-chip), 44px); height: max(var(--icon-chip), 44px); align-items: center; justify-content: center; border-radius: var(--radius-full); background: var(--color-control-inverse); border: 0; cursor: pointer; color: inherit; }
+  .bars, .bars::before, .bars::after { display: block; width: 1.25rem; height: 2px; background: currentColor; position: relative; }
   .bars::before, .bars::after { content: ''; position: absolute; }
-  .bars::before { top: -7px; }
-  .bars::after { top: 7px; }
-  /* The three bars fold into an X while the menu is open. */
+  .bars::before { top: -6px; }
+  .bars::after { top: 6px; }
   .bars, .bars::before, .bars::after { transition: transform 0.3s ease, top 0.3s ease, background-color 0.2s; }
   .site-header__toggle[aria-expanded='true'] .bars { background-color: transparent; }
   .site-header__toggle[aria-expanded='true'] .bars::before { top: 0; transform: rotate(45deg); }
   .site-header__toggle[aria-expanded='true'] .bars::after { top: 0; transform: rotate(-45deg); }
 
-  @media (min-width: 960px) {
-    .site-header__toggle { display: none; }
-    .site-nav, .site-nav.is-open {
-      display: flex; position: static; align-items: center; gap: 1.5rem; padding: 0; border: 0;
-      background: none; overflow: visible; visibility: visible; clip-path: none; transition: none;
-    }
-    .site-nav__item, .site-nav__cta, .site-nav.is-open .site-nav__item, .site-nav.is-open .site-nav__cta { opacity: 1; transform: none; transition: none; }
+  /* Desktop: logo, a pill of links in the middle, the quiz button on the right. */
+  @media (min-width: 1024px) {
+    .site-header__inner { display: grid; grid-template-columns: 1fr auto 1fr; }
+    .site-header__toggle, .site-header__quick { display: none; }
+    .site-nav { display: contents; position: static; visibility: visible; clip-path: none; padding: 0; background: none; }
+    .site-nav__item, .site-nav__cta { opacity: 1; transform: none; }
+    .site-nav__list { display: flex; gap: 2px; padding: 5px; border-radius: var(--radius-full); background: var(--color-control-inverse); }
     .site-nav__list > .site-nav__item + .site-nav__item { border-top: 0; }
-    .site-nav__item > a, .site-nav__item summary, .site-nav__item > span { padding: 0.6rem 0; font-size: 1rem; }
-    .site-nav__list { display: flex; gap: 1.5rem; }
-    .site-nav__dropdown { position: relative; }
-    .site-nav__dropdown ul {
-      position: absolute; top: 100%; left: -1rem; min-width: 14rem; padding: 0.5rem 1rem;
-      background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-lg);
-      box-shadow: 0 12px 30px -12px rgb(0 0 0 / 0.2);
+    .site-nav__item > a, .site-nav__item summary, .site-nav__item > span { padding: 0.5625rem 1.125rem; border-radius: var(--radius-full); font-size: var(--text-sm); letter-spacing: 0; color: var(--surface-body); transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); }
+    .site-nav__item > a:hover { color: var(--surface-fg); background: var(--color-control-inverse); }
+    .site-nav__item > a[aria-current='page'] { background: var(--color-white); color: var(--color-text); }
+    /* Services menu, desktop: a white panel under the header with every service, grouped by category. */
+    .svc-menu__toggle { display: inline-flex; width: auto; gap: 0.375rem; padding: 0.5625rem 0.875rem 0.5625rem 1.125rem; border-radius: var(--radius-full); font-size: var(--text-sm); letter-spacing: 0; color: var(--surface-body); transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); }
+    .svc-menu__toggle :global(.icon) { width: 0.875rem; height: 0.875rem; }
+    .svc-menu__toggle:hover, .svc-menu.is-open .svc-menu__toggle { color: var(--surface-fg); background: var(--color-control-inverse); }
+    .svc-menu__toggle.is-current, .svc-menu.is-open .svc-menu__toggle.is-current { background: var(--color-white); color: var(--color-text); }
+    .svc-menu__panel {
+      position: absolute; top: calc(100% - 0.5rem); left: 50%; width: min(var(--container-max), calc(100vw - 2 * var(--container-padding-x)));
+      height: auto; overflow: visible; padding-top: var(--space-3);
+      opacity: 0; visibility: hidden; translate: -50% -0.5rem;
+      transition: opacity var(--dur-base) var(--ease-height), translate var(--dur-base) var(--ease-height), visibility 0s linear var(--dur-base);
     }
-    .site-nav__cta { margin-top: 0; }
+    .svc-menu.is-open .svc-menu__panel { opacity: 1; visibility: visible; translate: -50% 0; transition: opacity var(--dur-base) var(--ease-height), translate var(--dur-base) var(--ease-height), visibility 0s; }
+    .svc-menu__inner { --surface-fg: var(--color-text); --chip-bg: var(--color-brand-deep); --chip-fg: var(--color-white); padding: var(--space-8); border-radius: var(--radius-lg); background: var(--color-white); color: var(--color-text); box-shadow: var(--shadow-lg); }
+    .svc-menu__groups { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-6); }
+    .svc-menu__cat { align-items: flex-start; flex-direction: column; gap: var(--space-3); min-height: 0; font-size: var(--text-ui); color: var(--color-text); }
+    .svc-menu__cat:hover { color: var(--color-brand); }
+    .svc-menu__links { padding-left: 0; margin-top: var(--space-3); }
+    .svc-menu__links a { display: block; min-height: 0; padding: 0.375rem 0; font-size: var(--text-sm); line-height: 1.4; color: var(--color-text-muted); transition: color var(--dur-fast) var(--ease-out); }
+    .svc-menu__links a:hover { color: var(--color-text); }
+    .svc-menu__links a[aria-current='page'], .svc-menu__cat[aria-current='page'] { color: var(--color-brand); }
+    .svc-menu__foot { display: flex; gap: var(--space-8); margin-top: var(--space-6); padding-top: var(--space-5); border-top: 1px solid var(--color-border); }
+    .svc-menu__all { min-height: 0; font-size: var(--text-sm); color: var(--color-text); }
+    .svc-menu__all:hover { color: var(--color-brand); }
+    .svc-menu__all :global(.icon) { color: var(--color-brand); }
+    .site-nav__dropdown { position: relative; }
+    .site-nav__dropdown ul { position: absolute; top: calc(100% + 0.5rem); left: 0; min-width: 14rem; padding: var(--space-2); border-radius: var(--radius-md); background: var(--color-white); color: var(--color-text); box-shadow: var(--shadow-md); }
+    .site-nav__dropdown ul a { padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); }
+    .site-nav__dropdown ul a:hover { background: var(--color-surface-muted); }
+    .site-nav__cta { margin: 0; justify-self: end; }
+    .site-nav__book { display: none; }
+    .site-nav__cta :global(.btn) { width: auto; height: var(--control-h-sm); font-size: var(--text-sm); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .svc-menu__panel, .svc-menu.is-open .svc-menu__panel, .svc-menu__toggle :global(.icon) { transition: none; }
+  }
+  /* Phones and tablets: logo, then the main action and the menu button side by side. */
+  @media (max-width: 1023px) {
+    .site-header__inner { gap: var(--space-3); }
+    .site-header__logo { margin-right: auto; }
+    .site-header__quick { white-space: nowrap; min-height: 44px; }
+  }
+  @media (max-width: 400px) {
+    .site-header__logo :global(img) { width: 10.25rem; }
+    .site-header__quick { padding-inline: var(--space-4); }
+  }
+  @media (max-width: 370px) {
+    .site-header__inner { gap: var(--space-2); }
+    .site-header__logo :global(img) { width: 9rem; }
+    .site-header__quick { padding-inline: var(--space-3); }
   }
 </style>

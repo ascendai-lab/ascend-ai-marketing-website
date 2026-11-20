@@ -10,7 +10,7 @@ Or maybe you hired an agency before. They billed every month and sent a report n
 Now you're not sure ads even work. It feels like you're paying Google to send jobs to someone else. A good shop should not lose a paid lead to a voicemail.
 Google Ads only work when someone answers
 We've watched good contractors pay for clicks, then lose the job to a slow callback. That's why our ads work best with a lead system that replies in seconds.
-Mark Johnson founded Ascend AI in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
+Mark Johnson founded Ascend AI Marketing in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
 A fence and tree company (past client) made over $100,000 from our local SEO and Google Ads work. We cut ad spend outside their service area. We also fixed their ads so more leads turned into booked jobs.
 Better Google Ads in three steps
 Take the 60-second quiz. See what missed calls may cost you before you buy more clicks.

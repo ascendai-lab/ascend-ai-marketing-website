@@ -1,0 +1,24 @@
+---
+/** Service page hero: the shared page hero with the service's breadcrumb, its category and the category photo. */
+import PageHero from '@components/sections/PageHero.astro'
+import { links } from '@/content/home'
+import type { CategoryLook, ServiceCopy } from '@/content/services'
+
+interface Props {
+  page: ServiceCopy
+  look: CategoryLook
+}
+
+const { page, look } = Astro.props
+---
+
+<PageHero
+  crumbs={[{ label: 'Home', href: '/' }, { label: 'Services', href: '/services' }, { label: look.name, href: look.href }, { label: page.title }]}
+  eyebrow={look.name}
+  headline={page.hero.headline}
+  subhead={page.hero.subhead}
+  primary={{ text: page.hero.primary, href: links.quiz }}
+  secondary={{ text: page.hero.secondary, href: links.book }}
+  photo={look.photo}
+  notes={look.notes}
+/>

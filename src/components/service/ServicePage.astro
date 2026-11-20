@@ -1,0 +1,31 @@
+---
+/**
+ * The one template every service page uses. It reads the page's approved copy (src/content/services.ts)
+ * and draws each section by its role (see CopySections).
+ */
+import ServiceHero from './ServiceHero.astro'
+import CopySections from '@components/sections/CopySections.astro'
+import QuizSection from '@components/sections/QuizSection.astro'
+import { inline } from '@/lib/inline'
+import { lookFor, roleOf, type ServiceCopy } from '@/content/services'
+
+interface Props {
+  page: ServiceCopy
+}
+
+const { page } = Astro.props
+const look = lookFor(page.category)
+
+const teardown = page.closing.teardown
+const teardownFirst = teardown ? teardown.text.split(/(?<=\.)\s/)[0] : undefined
+const teardownRest = teardown && teardownFirst ? teardown.text.slice(teardownFirst.length).trim() : undefined
+---
+
+<ServiceHero page={page} look={look} />
+<CopySections sections={page.sections} roleOf={roleOf} look={look} />
+<QuizSection
+  heading={inline(page.closing.heading)}
+  body={page.closing.body || undefined}
+  teardown={teardown && teardownFirst ? `${teardown.lead} ${teardownFirst}` : undefined}
+  teardownNote={teardownRest || undefined}
+/>

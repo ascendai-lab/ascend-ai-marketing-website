@@ -22,8 +22,8 @@ Mark, our founder, records your video himself.
 We send it to your inbox as soon as it's ready.
 That's it. No call needed. No sales pitch in the video.
 Led by a founder who has built hundreds of websites.
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
-Our founder, Mark Johnson, has more than 20 years of building websites. He has built hundreds of them. Ascend AI started in 2019. Mark records each teardown himself. He knows what makes a homeowner call, and what makes them leave.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
+Our founder, Mark Johnson, has more than 20 years of building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. Mark records each teardown himself. He knows what makes a homeowner call, and what makes them leave.
 Want us to fix it for you?
 Take the 60-second quiz.
 Book a 15-minute call.

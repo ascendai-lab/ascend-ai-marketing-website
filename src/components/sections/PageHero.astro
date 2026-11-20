@@ -1,0 +1,137 @@
+---
+/**
+ * The hero every inner page uses: breadcrumb, headline and the two calls to action,
+ * beside a photo with product notes (or whatever the page puts in the `aside` slot: the quiz, a form).
+ * The trust row runs underneath.
+ */
+import Btn from '@components/ui/Btn.astro'
+import Icon, { type IconName } from '@components/ui/Icon.astro'
+import { hero as homeHero, links } from '@/content/home'
+
+interface Props {
+  crumbs?: { label: string; href?: string }[]
+  eyebrow: string
+  headline: string
+  subhead?: string
+  primary?: { text: string; href: string } | null
+  secondary?: { text: string; href: string } | null
+  /** A short line under the buttons. */
+  note?: string
+  photo?: { src: string; alt: string }
+  notes?: { icon: IconName; title: string; text: string }[]
+  trust?: { icon: IconName; text: string }[]
+  /** The page puts a tool (the quiz, a form) in the `aside` slot instead of the photo. */
+  tool?: boolean
+}
+
+const {
+  crumbs,
+  headline,
+  subhead,
+  primary = { text: homeHero.primary, href: links.quiz },
+  secondary = { text: homeHero.secondary, href: links.book },
+  note,
+  photo,
+  notes = [],
+  trust = homeHero.trust,
+  tool = false,
+} = Astro.props
+// Each sentence of the headline keeps to its own lines where it fits ("Catch every call. / Book more HVAC jobs.").
+const sentences = headline.replace(/(\d)-(?=[a-z])/g, '$1\u2011').split(/(?<=[.!?])\s+/)
+const hasAside = tool
+---
+
+<section class:list={['svc-hero surface-deep', hasAside && 'svc-hero--tool']}>
+  <div class="container svc-hero__grid">
+    <div class="svc-hero__copy">
+      {crumbs && (
+        <nav aria-label="Breadcrumb" class="svc-hero__crumbs">
+          <ol>
+            {crumbs.map((crumb, i) => (
+              <li aria-current={i === crumbs.length - 1 ? 'page' : undefined}>{crumb.href && i < crumbs.length - 1 ? <a href={crumb.href}>{crumb.label}</a> : crumb.label}</li>
+            ))}
+          </ol>
+        </nav>
+      )}
+      <h1 class="t-display svc-hero__h">{sentences.map((s, i) => <>{i > 0 && " "}<span class="svc-hero__sent">{s}</span></>)}</h1>
+      {subhead && <p class="svc-hero__sub">{subhead}</p>}
+      {(primary || secondary) && (
+        <div class="actions">
+          {primary && <Btn href={primary.href} icon="arrow">{primary.text}</Btn>}
+          {secondary && <Btn href={secondary.href} variant="secondary">{secondary.text}</Btn>}
+        </div>
+      )}
+      {note && <p class="svc-hero__note">{note}</p>}
+      <slot name="copy" />
+    </div>
+    {hasAside ? (
+      <div class="svc-hero__tool"><slot name="aside" /></div>
+    ) : photo && (
+      <figure class="media svc-hero__photo">
+        <img src={photo.src} alt={photo.alt} width="1400" height="1600" loading="eager" fetchpriority="high" />
+        {notes.length > 0 && (
+          <ul class="svc-hero__notes">
+            {notes.map((n, i) => (
+              <li class="float-note" style={`--i: ${i}`}><span class="icon-chip icon-chip--ui"><Icon name={n.icon} /></span><div><strong>{n.title}</strong><span>{n.text}</span></div></li>
+            ))}
+          </ul>
+        )}
+      </figure>
+    )}
+  </div>
+  {trust.length > 0 && (
+    <div class="container">
+      <ul class="hero__trust">
+        {trust.map((item, i) => (
+          <li style={`--i: ${i}`}><Icon name={item.icon} />{item.text}</li>
+        ))}
+      </ul>
+    </div>
+  )}
+</section>
+
+<style>
+  .svc-hero { padding-block: var(--space-12) var(--space-10); overflow: hidden; }
+  .svc-hero__grid { display: grid; gap: var(--space-10); align-items: center; }
+  .svc-hero__crumbs { margin-bottom: var(--space-8); }
+  .svc-hero__crumbs ol { display: flex; flex-wrap: wrap; gap: var(--space-2); font-size: var(--text-sm); color: var(--surface-muted); }
+  /* The separator ends the item before it, so a wrapped line never starts with "/". */
+  .svc-hero__crumbs li:not(:last-child)::after { content: '/'; margin-left: var(--space-2); color: var(--color-text-inverse-faint); }
+  .svc-hero__crumbs a { color: var(--surface-body); transition: color var(--dur-fast) var(--ease-out); }
+  .svc-hero__crumbs a:hover { color: var(--surface-fg); }
+  @media (pointer: coarse) {
+    .svc-hero__crumbs { margin-bottom: var(--space-5); }
+    .svc-hero__crumbs ol { align-items: center; }
+    .svc-hero__crumbs a { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; padding-inline: var(--space-2); margin-inline: calc(var(--space-2) * -1); }
+  }
+  .svc-hero__sent { display: inline-block; }
+  .svc-hero__h { font-size: var(--text-display-sm); max-width: calc(17 * var(--ch)); }
+  .svc-hero__sub { margin: var(--stack-body) 0 var(--stack-actions); font-size: var(--text-body-lg); line-height: var(--leading-body); max-width: calc(46 * var(--ch)); color: var(--surface-body); }
+  .svc-hero__note { margin-top: var(--space-4); font-size: var(--text-sm); color: var(--surface-muted); }
+  .svc-hero__photo { margin: 0; aspect-ratio: 7 / 8; max-height: 36rem; width: 100%; }
+  .svc-hero__notes { position: absolute; left: var(--space-5); right: var(--space-5); bottom: var(--space-5); display: grid; gap: var(--space-2); justify-items: start; }
+  .svc-hero__notes li:nth-child(2) { margin-left: var(--space-8); }
+  .svc-hero__tool { min-width: 0; }
+  .hero__trust { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3) var(--space-10); padding-top: var(--space-12); }
+  @media (max-width: 959px) { .hero__trust { flex-direction: column; justify-content: flex-start; } }
+  .hero__trust li { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-body); color: var(--surface-body); }
+  .hero__trust :global(.icon) { width: var(--icon-size); height: var(--icon-size); color: var(--color-accent); flex: none; }
+  @media (min-width: 960px) {
+    .svc-hero { padding-block: var(--space-14) var(--space-12); }
+    .svc-hero__grid { grid-template-columns: 7fr 5fr; gap: var(--space-16); }
+    /* With a tool (the quiz, a form) beside it, the copy stays at the top while the tool changes height. */
+    .svc-hero--tool .svc-hero__grid { grid-template-columns: 6fr 6fr; gap: var(--space-12); align-items: start; }
+  }
+  @media (max-width: 959px) { .svc-hero__photo { aspect-ratio: 4 / 3; } }
+  @media (max-width: 640px) {
+    .svc-hero { padding-top: var(--space-8); }
+    .svc-hero__notes li:nth-child(n) { margin-left: 0; }
+    .hero__trust { flex-direction: column; justify-content: flex-start; }
+    /* With a tool on a phone (the quiz, a form), it starts higher, so all its options show without a scroll.
+       The breadcrumb and the hero note give way; the tool repeats the note. */
+    .svc-hero--tool { padding-top: var(--space-5); }
+    .svc-hero--tool .svc-hero__crumbs, .svc-hero--tool .svc-hero__note { display: none; }
+    .svc-hero--tool .svc-hero__grid { gap: var(--space-6); }
+    .svc-hero--tool .svc-hero__sub { margin-bottom: 0; }
+  }
+</style>

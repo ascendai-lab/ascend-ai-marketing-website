@@ -3,29 +3,56 @@ import BaseLayout from '@layouts/BaseLayout.astro'
 import PageBuilder from '@components/blocks/PageBuilder.astro'
 import DetailHeader from '@components/layout/DetailHeader.astro'
 import PortableText from '@components/ui/PortableText'
+import ServicePage from '@components/service/ServicePage.astro'
 import { loadQuery } from '@cms/lib/load'
 import { editAttr } from '@cms/lib/visualEditing'
+import { emptyLayout } from '@cms/lib/types'
 import { layoutQuery, serviceQuery } from '@cms/queries'
 import { stegaClean } from '@sanity/client/stega'
+import { brand } from '@/content/home'
+import { findService, lookFor, serviceHref } from '@/content/services'
 
 const slug = Astro.params.slug!
 const { draftMode } = Astro.locals
-const [layout, service] = await Promise.all([loadQuery(draftMode, layoutQuery), loadQuery(draftMode, serviceQuery, { slug })])
-if (!service) return Astro.rewrite('/404')
+// If the CMS can't be reached or has no document for this slug, the page renders from the approved copy.
+const [layout, service] = await Promise.all([
+  loadQuery(draftMode, layoutQuery).catch(() => emptyLayout),
+  loadQuery(draftMode, serviceQuery, { slug }).catch(() => null),
+])
+const copy = service ? undefined : findService(slug)
+if (!service && !copy) return Astro.rewrite('/404')
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Service',
-  name: stegaClean(service.title),
-  description: stegaClean(service.excerpt) || undefined,
-  provider: { '@type': stegaClean(layout.settings?.businessType) || 'LocalBusiness', name: stegaClean(layout.settings?.siteName) },
-}
+const origin = Astro.site ?? new URL(Astro.url.origin)
+const provider = { '@type': stegaClean(layout.settings?.businessType) || 'LocalBusiness', name: stegaClean(layout.settings?.siteName) || brand.name }
+const jsonLd = service
+  ? [{ '@context': 'https://schema.org', '@type': 'Service', name: stegaClean(service.title), description: stegaClean(service.excerpt) || undefined, provider }]
+  : [
+      { '@context': 'https://schema.org', '@type': 'Service', name: copy!.title, description: copy!.short, serviceType: copy!.category, areaServed: 'US', provider },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: new URL('/', origin).href },
+          { '@type': 'ListItem', position: 2, name: 'Services', item: new URL('/services', origin).href },
+          { '@type': 'ListItem', position: 3, name: lookFor(copy!.category).name, item: new URL(lookFor(copy!.category).href, origin).href },
+          { '@type': 'ListItem', position: 4, name: copy!.title, item: new URL(serviceHref(copy!.slug), origin).href },
+        ],
+      },
+    ]
 ---
 
-<BaseLayout layout={layout} title={service.title} seo={service.seo} description={service.excerpt} image={service.image} jsonLd={[jsonLd]}>
-  <DetailHeader title={service.title} intro={service.excerpt} image={service.image} document={service} introField="excerpt" backHref="/services" backLabel="All services" />
-  {service.body?.length ? (
-    <section class="section"><div class="container" data-sanity={editAttr(draftMode, service, 'body')}><PortableText value={service.body} className="prose detail-body" /></div></section>
-  ) : null}
-  <PageBuilder blocks={service.pageBuilder} document={service} settings={layout.settings} firstHeroIsH1={false} />
-</BaseLayout>
+{
+  service ? (
+    <BaseLayout layout={layout} title={service.title} seo={service.seo} description={service.excerpt} image={service.image} jsonLd={jsonLd}>
+      <DetailHeader title={service.title} intro={service.excerpt} image={service.image} document={service} introField="excerpt" backHref="/services" backLabel="All services" />
+      {service.body?.length ? (
+        <section class="section"><div class="container" data-sanity={editAttr(draftMode, service, 'body')}><PortableText value={service.body} className="prose detail-body" /></div></section>
+      ) : null}
+      <PageBuilder blocks={service.pageBuilder} document={service} settings={layout.settings} firstHeroIsH1={false} />
+    </BaseLayout>
+  ) : (
+    <BaseLayout layout={layout} seo={{ metaTitle: copy!.seo.title, metaDescription: copy!.seo.description }} jsonLd={jsonLd} quizTag={copy!.quizTag}>
+      <ServicePage page={copy!} />
+    </BaseLayout>
+  )
+}

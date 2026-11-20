@@ -1,0 +1,17 @@
+---
+/** Draws one icon from the sprite in Icons.astro. Icons are decorative unless a label is given. */
+export type IconName = 'arrow' | 'arrow-ur' | 'phone' | 'phone-missed' | 'msg' | 'inbox' | 'bell' | 'cal' | 'star' | 'pin' | 'shield' | 'check' | 'x' | 'play' | 'pause' | 'clock' | 'key' | 'users' | 'layout' | 'file' | 'reply' | 'server' | 'sun' | 'snow' | 'drop' | 'zap' | 'plus' | 'help' | 'search' | 'megaphone' | 'bot' | 'flow' | 'code' | 'map' | 'chevron-left' | 'chevron-right' | 'chevron-down'
+
+interface Props {
+  name: IconName
+  label?: string
+  fill?: boolean
+  class?: string
+}
+
+const { name, label, fill = false, class: className } = Astro.props
+---
+
+<svg class:list={['icon', fill && 'icon--fill', className]} aria-hidden={label ? undefined : 'true'} role={label ? 'img' : undefined} aria-label={label}>
+  <use href={`#i-${name}`} />
+</svg>

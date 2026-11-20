@@ -11,8 +11,8 @@ Maybe you tried an agency. You paid every month and got a report, not jobs. Wors
 It wears on you. You know the work is good. Still, money slips away every week.
 A good shop should not lose a job to a voicemail.
 We built this for shops that are too busy to answer.
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
-Our founder, Mark Johnson, has more than 20 years of building websites. He has built hundreds of them. Ascend AI started in 2019. You work with real people you can reach, not a ticket system.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
+Our founder, Mark Johnson, has more than 20 years of building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. You work with real people you can reach, not a ticket system.
 Etheric Networks (past client): local SEO and a custom website. 45 qualified leads in 60 days. "Within just two months, we saw incredible results." Camille, Etheric Networks
 A fence and tree company (past client): local SEO and Google Ads. Over $100,000 in revenue. The #1 spot on Google Maps for "fence company," "fence contractor" and "fence installation."
 What comes with the HVAC lead system.
@@ -50,7 +50,7 @@ Custom workflows that go past the built-in follow-up. Custom quote, plus upkeep 
 Custom software, such as a CRM built for your shop. Custom quote, plus upkeep from $199 a month.
 We'll walk you through your options on a 15-minute call.
 Take the 60-second quiz
-Why work with Ascend AI.
+Why work with Ascend AI Marketing.
 Speed. Live in 72 hours, not 72 days.
 Fast replies. Every missed call gets a text back in seconds.
 Real people. You reach a real team that answers.

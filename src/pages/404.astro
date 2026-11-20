@@ -2,12 +2,13 @@
 import BaseLayout from '@layouts/BaseLayout.astro'
 import { loadQuery } from '@cms/lib/load'
 import { layoutQuery } from '@cms/queries'
+import { emptyLayout } from '@cms/lib/types'
 
 Astro.response.status = 404
-const layout = await loadQuery(Astro.locals.draftMode ?? false, layoutQuery)
+const layout = await loadQuery(Astro.locals.draftMode ?? false, layoutQuery).catch(() => emptyLayout)
 ---
 
-<BaseLayout layout={layout} title="Page not found" seo={{ noIndex: true }}>
+<BaseLayout layout={layout} title="Page not found | Ascend AI Marketing" seo={{ noIndex: true }}>
   <section class="section">
     <div class="container not-found">
       <h1 class="section-heading">We couldn't find that page</h1>

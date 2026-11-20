@@ -6,7 +6,7 @@ Live in 72 hours. You own your site. Real people who answer.
 Hero video (60 to 90 seconds, Mark on camera, real setting, no stock footage):
 You run an HVAC shop. You're on a roof or under a house when the phone rings. You can't pick up.
 That homeowner doesn't leave a message. They call the next shop on Google. And that shop gets the job.
-I'm Mark Johnson, founder of Ascend AI. We've watched good contractors lose jobs this way. So we built the fix.
+I'm Mark Johnson, founder of Ascend AI Marketing. We've watched good contractors lose jobs this way. So we built the fix.
 We build you a website made for HVAC. We set up a call tracking number that forwards to the number you already have.
 If you miss a call, the homeowner gets a text back in seconds. Every lead lands in one inbox. Follow-up goes out on its own. After the job, your customer gets a review request.
 It goes live 72 hours after we have everything we need. And you own all of it. The site, the domain, the Google profile. Not us.
@@ -24,7 +24,7 @@ It's frustrating. You know your work is good. But you can't be on a roof and at 
 A good shop should not lose a job to a voicemail.
 We've seen good shops lose to slow callbacks. We built the fix.
 We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
-Our founder, Mark Johnson, has built websites for more than 20 years. He has built hundreds of them. Ascend AI started in 2019.
+Our founder, Mark Johnson, has built websites for more than 20 years. He has built hundreds of them. Ascend AI Marketing started in 2019.
 When you reach out, you get real people. Not a ticket system. Not a call center.
 Etheric Networks (past client): local SEO and a custom website. 45 qualified leads in 60 days. "Within just two months, we saw incredible results." Camille, Etheric Networks
 A fence and tree company (past client): local SEO and Google Ads. Over $100,000 in revenue. The #1 spot on Google Maps for "fence company," "fence contractor" and "fence installation."

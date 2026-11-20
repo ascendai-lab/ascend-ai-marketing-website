@@ -1,0 +1,96 @@
+---
+import Section from '@components/ui/Section.astro'
+import SectionHead from '@components/ui/SectionHead.astro'
+import Btn from '@components/ui/Btn.astro'
+import Icon from '@components/ui/Icon.astro'
+import { reviews, reviewSummary, links } from '@/content/home'
+---
+
+{
+  reviews.length > 0 && (
+    <Section surface="white" anchorId="reviews">
+      <SectionHead eyebrow="Google reviews" heading={`${reviewSummary.rating} stars on Google.`} align="split">
+        <Btn href={links.reviews} variant="link" icon="arrow-ur">See more reviews on Google</Btn>
+      </SectionHead>
+      <ul class="grid-3">
+        {reviews.slice(0, 3).map((review, i) => (
+          <li class="card review">
+            <p class="review__stars" aria-label="5 out of 5 stars">
+              {[0, 1, 2, 3, 4].map(() => <Icon name="star" fill />)}
+            </p>
+            <div class="review__text" id={`review-${i}`}><p>{review.text}</p></div>
+            <button type="button" class="link review__more" aria-controls={`review-${i}`} aria-expanded="false">Show more</button>
+            <p class="review__who"><strong>{review.name}</strong><span>{review.detail}</span></p>
+          </li>
+        ))}
+      </ul>
+    </Section>
+  )
+}
+
+<script>
+  // Long reviews start collapsed: the last lines fade out under a gradient. "Show more" opens the whole review in place.
+  import { animateHeight } from '@/scripts/animate-height'
+  document.querySelectorAll<HTMLButtonElement>('.review__more').forEach((button) => {
+    const text = document.getElementById(button.getAttribute('aria-controls') ?? '')
+    if (!text) return
+    const check = () => {
+      if (button.getAttribute('aria-expanded') === 'true') return
+      text.classList.remove('is-short')
+      const short = text.scrollHeight <= text.clientHeight + 2
+      text.classList.toggle('is-short', short)
+      button.hidden = short
+    }
+    check()
+    window.addEventListener('resize', check)
+    document.fonts?.ready.then(check)
+    button.addEventListener('click', () => {
+      const open = button.getAttribute('aria-expanded') !== 'true'
+      // Start from where it is right now, even mid-animation.
+      const from = text.getBoundingClientRect().height
+      text.getAnimations().forEach((a) => { if (!(a instanceof CSSTransition)) a.cancel() })
+      // Measure the other state, then animate to it. Closing keeps the text open until it has slid shut.
+      text.classList.toggle('is-open', open)
+      const to = text.offsetHeight
+      if (!open) text.classList.add('is-open')
+      text.classList.toggle('is-expanded', open)
+      button.setAttribute('aria-expanded', String(open))
+      button.textContent = open ? 'Show less' : 'Show more'
+      const animation = animateHeight(text, from, to)
+      if (!open) {
+        if (animation) animation.addEventListener('finish', () => { if (button.getAttribute('aria-expanded') !== 'true') text.classList.remove('is-open') })
+        else text.classList.remove('is-open')
+      }
+    })
+  })
+</script>
+
+<style>
+  .review { display: flex; flex-direction: column; gap: var(--space-5); align-self: start; }
+  .review__stars { display: flex; gap: 2px; color: var(--color-brand); }
+  .review__stars :global(.icon) { width: 1.125rem; height: 1.125rem; }
+  /* Shows about 6 lines. The last line is cut through the middle and fades into the card,
+     with a plain "Show more" link right under it. */
+  @property --review-fade { syntax: '<length>'; inherits: false; initial-value: 0px; }
+  .review__text {
+    --line: 1.55em;
+    --review-fade: calc(var(--line) * 1.1);
+    max-height: calc(var(--line) * 6.6); overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - var(--review-fade)), transparent);
+    mask-image: linear-gradient(to bottom, #000 calc(100% - var(--review-fade)), transparent);
+    transition: --review-fade var(--dur-accordion) var(--ease-reveal);
+  }
+  /* The faded last line eases in and out with the open and close, instead of switching. */
+  .review__text.is-expanded { --review-fade: 0px; }
+  .review__text p { font-size: var(--text-body); line-height: 1.55; color: var(--surface-fg); }
+  .review__text.is-open { max-height: none; }
+  .review__text.is-short { max-height: none; -webkit-mask-image: none; mask-image: none; }
+  /* The shared .link text style (underlined, no background), just smaller and quieter. */
+  .review__more { align-self: flex-start; margin-top: calc(var(--space-5) * -1 + var(--space-1)); padding: 0; border: 0; background: none; cursor: pointer; font-family: inherit; font-size: var(--text-sm); color: var(--surface-muted); transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out); }
+  .review__more[hidden] { display: none; }
+  .review__more:hover { color: var(--surface-fg); }
+  .review__who { margin-top: auto; padding-top: var(--space-5); border-top: 1px solid var(--surface-line); font-size: var(--text-sm); color: var(--surface-muted); display: grid; gap: var(--space-1); }
+  .review__who strong { color: var(--surface-fg); font-weight: var(--weight-strong); }
+  /* Three narrow columns: room for a detail line that wraps, so the cards end level. */
+  @media (min-width: 760px) and (max-width: 1279px) { .review__who span { min-height: calc(2 * 1.5em); } }
+</style>

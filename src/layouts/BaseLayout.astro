@@ -8,6 +8,8 @@ import { applyTitleTemplate } from '@/lib/format'
 import { toOpeningHoursSpec } from '@/lib/hours'
 import Header from '@components/layout/Header.astro'
 import Footer from '@components/layout/Footer.astro'
+import Icons from '@components/ui/Icons.astro'
+import CookieConsent from '@components/ui/CookieConsent.astro'
 import type { SanityImageValue } from '@components/ui/SanityImage.astro'
 
 interface Seo {
@@ -32,13 +34,15 @@ interface Props {
   modifiedAt?: string | null
   /** Extra JSON-LD objects for this page. */
   jsonLd?: Record<string, unknown>[]
+  /** The quiz interest tag for this page ("google-ads"). Every quiz link on the page carries it. */
+  quizTag?: string
 }
 
-const { layout, title, seo, description, image, type = 'website', publishedAt, modifiedAt, jsonLd = [] } = Astro.props
+const { layout, title, seo, description, image, type = 'website', publishedAt, modifiedAt, jsonLd = [], quizTag } = Astro.props
 const { settings } = layout
 const { draftMode } = Astro.locals
 
-const siteName = stegaClean(settings?.siteName) || 'Website'
+const siteName = stegaClean(settings?.siteName) || 'Ascend AI Marketing'
 const defaults = settings?.defaultSeo
 const rawTitle = stegaClean(seo?.metaTitle || title || defaults?.metaTitle) || ''
 const pageTitle = rawTitle ? applyTitleTemplate(settings?.titleTemplate, rawTitle) : siteName
@@ -46,7 +50,8 @@ const pageDescription = stegaClean(seo?.metaDescription || description || defaul
 const site = Astro.site ?? new URL(Astro.url.origin)
 const canonical = stegaClean(seo?.canonicalUrl) || new URL(Astro.url.pathname, site).href
 const shareImage = [seo?.ogImage, image, defaults?.ogImage].find((img) => img?.asset)
-const shareImageUrl = shareImage ? urlFor(shareImage as Parameters<typeof urlFor>[0]).width(1200).height(630).fit('crop').url() : null
+// Without a CMS image, the default share card (public/og-default.png, 1200×630).
+const shareImageUrl = shareImage ? urlFor(shareImage as Parameters<typeof urlFor>[0]).width(1200).height(630).fit('crop').url() : new URL('/og-default.png', site).href
 const shareImageAlt = stegaClean(shareImage?.alt) || pageTitle
 const noIndex = Boolean(seo?.noIndex) || draftMode
 const favicon = settings?.faviconUrl
@@ -79,7 +84,17 @@ const businessJsonLd = settings
       openingHoursSpecification: settings.hours?.length ? toOpeningHoursSpec(settings.hours) : undefined,
       sameAs: settings.socialLinks?.map((s) => stegaClean(s.url)).filter(Boolean),
     }
-  : null
+  : {
+      // No site settings in the CMS yet: still say who we are.
+      '@context': 'https://schema.org',
+      '@type': 'ProfessionalService',
+      name: siteName,
+      url: site.href,
+      description: pageDescription || undefined,
+      logo: new URL('/brand/logo.svg', site).href,
+      image: shareImageUrl,
+      areaServed: { '@type': 'Country', name: 'United States' },
+    }
 const structuredData = [businessJsonLd, ...jsonLd].filter(Boolean)
 ---
 
@@ -88,6 +103,16 @@ const structuredData = [businessJsonLd, ...jsonLd].filter(Boolean)
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      // Turn on entrance animations before first paint, unless the visitor prefers reduced motion.
+      // If the motion script never loads, show everything after 3 seconds.
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('motion')
+        document.addEventListener('DOMContentLoaded', function () {
+          setTimeout(function () { if (!window.__motionReady) document.documentElement.classList.remove('motion') }, 3000)
+        })
+      }
+    </script>
     <title>{pageTitle}</title>
     {pageDescription && <meta name="description" content={pageDescription} />}
     <link rel="canonical" href={canonical} />
@@ -119,60 +144,18 @@ const structuredData = [businessJsonLd, ...jsonLd].filter(Boolean)
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       )
     }
+    <!-- Self-hosted Google Sans Flex (OFL), trimmed to the weights and roundness the site uses. -->
+    <link rel="preload" href="/fonts/google-sans-flex.woff2" as="font" type="font/woff2" crossorigin />
+    <meta name="theme-color" content="#11301c" />
     <link rel="sitemap" href="/sitemap.xml" />
     {tracking?.googleSiteVerification && <meta name="google-site-verification" content={stegaClean(tracking.googleSiteVerification)} />}
 
     {structuredData.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
 
-    {
-      tracking?.gtmId && (
-        <script is:inline define:vars={{ id: stegaClean(tracking.gtmId) }}>
-          ;(function (w, d, s, l, i) {
-            w[l] = w[l] || []
-            w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' })
-            var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''
-            j.async = true
-            j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl
-            f.parentNode.insertBefore(j, f)
-          })(window, document, 'script', 'dataLayer', id)
-        </script>
-      )
-    }
-    {
-      tracking?.gaId && !tracking.gtmId && (
-        <>
-          <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${stegaClean(tracking.gaId)}`} />
-          <script is:inline define:vars={{ id: stegaClean(tracking.gaId) }}>
-            window.dataLayer = window.dataLayer || []
-            function gtag() { dataLayer.push(arguments) }
-            gtag('js', new Date())
-            gtag('config', id)
-          </script>
-        </>
-      )
-    }
-    {
-      tracking?.metaPixelId && (
-        <script is:inline define:vars={{ id: stegaClean(tracking.metaPixelId) }}>
-          !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-          n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-          n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-          t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
-          document,'script','https://connect.facebook.net/en_US/fbevents.js');
-          fbq('init', id); fbq('track', 'PageView');
-        </script>
-      )
-    }
   </head>
 
-  <body>
-    {
-      tracking?.gtmId && (
-        <noscript>
-          <iframe src={`https://www.googletagmanager.com/ns.html?id=${stegaClean(tracking.gtmId)}`} height="0" width="0" style="display:none;visibility:hidden" />
-        </noscript>
-      )
-    }
+  <body data-quiz-tag={quizTag}>
+    <Icons />
     <a href="#main-content" class="skip-link btn btn--primary">Skip to content</a>
 
     <Header layout={layout} />
@@ -184,6 +167,63 @@ const structuredData = [businessJsonLd, ...jsonLd].filter(Boolean)
     <Footer layout={layout} />
 
     {
+      (tracking?.gtmId || tracking?.gaId || tracking?.metaPixelId) && (
+        <CookieConsent
+          gtmId={stegaClean(tracking.gtmId) ?? ''}
+          gaId={stegaClean(tracking.gaId) ?? ''}
+          metaPixelId={stegaClean(tracking.metaPixelId) ?? ''}
+        />
+      )
+    }
+
+    <script is:inline>
+      // Quiz links carry the page's interest tag, so a lead from the Google Ads page is tagged Google Ads.
+      // On the quiz page itself, quiz links scroll up to the quiz instead of reloading the page.
+      ;(function () {
+        var tag = document.body.getAttribute('data-quiz-tag')
+        var path = location.pathname.replace(/\/$/, '')
+        var here = path === '/missed-calls'
+        // On the booking page and the quiz results, call buttons jump to the calendar.
+        if (path === '/book' || path === '/missed-calls/results') document.querySelectorAll('a[href="/book"]').forEach(function (a) { a.setAttribute('href', '#calendar') })
+        document.querySelectorAll('a[href^="/missed-calls"]').forEach(function (a) {
+          var url = new URL(a.getAttribute('href'), location.origin)
+          if (url.pathname !== '/missed-calls') return
+          if (here && !url.search) { a.setAttribute('href', '#quiz'); return }
+          if (tag && !url.searchParams.has('interest')) url.searchParams.set('interest', tag)
+          a.setAttribute('href', url.pathname + url.search + url.hash)
+        })
+        // An in-page jump takes focus along, so keyboard and screen-reader users carry on from there.
+        // From the keyboard, a jump to a form lands on its first field; otherwise focus goes to the
+        // section's heading (after a tap too, so a phone's keyboard doesn't pop up unasked).
+        function focusTarget(target, keyboard) {
+          var field = keyboard && !matchMedia('(pointer: coarse)').matches && target.querySelector('.quiz__step:not([hidden]) :is([aria-pressed="true"], .quiz__option, input), input:not([type="hidden"]):not([tabindex="-1"]), select, textarea, iframe')
+          // A jump to a form (the calendar, the quiz) lands on the form, so the next Tab goes into it.
+          var form = !field && (target.matches('[data-quiz]') ? target : target.querySelector('form'))
+          // On a touch screen, land on the section's heading: focusing the form could open the keyboard over it.
+          if (form && form.tagName === 'FORM' && matchMedia('(pointer: coarse)').matches) form = null
+          var el = field || form || target.querySelector('h1, h2, h3, legend') || target
+          if (!field && !el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1')
+          el.focus({ preventScroll: true })
+        }
+        document.addEventListener('click', function (event) {
+          var a = event.target.closest && event.target.closest('a[href*="#"]')
+          if (!a || a.target === '_blank') return
+          var url = new URL(a.href, location.href)
+          if (!url.hash || url.pathname.replace(/\/$/, '') !== location.pathname.replace(/\/$/, '')) return
+          var target = document.getElementById(decodeURIComponent(url.hash.slice(1)))
+          if (!target) return
+          var keyboard = event.detail === 0
+          setTimeout(function () { focusTarget(target, keyboard) }, 0)
+        })
+        // Arriving from another page at /page#section: focus starts at that section too.
+        if (location.hash.length > 1) {
+          var arrived = document.getElementById(decodeURIComponent(location.hash.slice(1)))
+          if (arrived) window.addEventListener('load', function () { focusTarget(arrived, false) }, { once: true })
+        }
+      })()
+    </script>
+
+    {
       draftMode && (
         <div class="draft-banner" id="draft-banner" hidden>
           Previewing unpublished changes. <a href={`/api/draft-mode/disable?redirect=${encodeURIComponent(Astro.url.pathname)}`}>Exit preview</a>
@@ -191,6 +231,10 @@ const structuredData = [businessJsonLd, ...jsonLd].filter(Boolean)
       )
     }
     <VisualEditing enabled={draftMode} zIndex={1000} />
+    <script>
+      import '@/scripts/motion'
+      ;(window as unknown as { __motionReady: boolean }).__motionReady = true
+    </script>
   </body>
 </html>
 

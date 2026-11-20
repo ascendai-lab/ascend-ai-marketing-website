@@ -10,8 +10,8 @@ Those tools pull from websites, reviews and listings. If your site is unclear, t
 You never even knew you were in the running. And when a homeowner does call, the crew is on a job. The call goes to voicemail.
 It's one more thing to keep up with, on top of running a shop. A good shop should not lose a job because a machine couldn't read its website.
 We build sites that machines can read.
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
-Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI started in 2019. The same work that helps AI search read your site helps you on Google too. You don't pay twice.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
+Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. The same work that helps AI search read your site helps you on Google too. You don't pay twice.
 Etheric Networks (past client): local SEO and a custom website. 45 qualified leads in 60 days.
 "Within just two months, we saw incredible results." Camille, Etheric Networks
 Three steps to a site AI search can read.

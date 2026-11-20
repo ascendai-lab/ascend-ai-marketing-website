@@ -1,0 +1,170 @@
+---
+/**
+ * Quiz results (/missed-calls/results): the visitor's dollar range, call handling score and 3 fixes,
+ * then the plan and the booking calendar. The quiz hands its result over in this browser tab only
+ * (sessionStorage), so nothing personal is in the address. Not indexed. Approved copy, used as written.
+ */
+import BaseLayout from '@layouts/BaseLayout.astro'
+import Section from '@components/ui/Section.astro'
+import Btn from '@components/ui/Btn.astro'
+import PlanBox from '@components/ui/PlanBox.astro'
+import VideoButton from '@components/ui/VideoButton.astro'
+import BookingCalendar from '@components/ui/BookingCalendar.astro'
+import { loadQuery } from '@cms/lib/load'
+import { emptyLayout } from '@cms/lib/types'
+import { layoutQuery } from '@cms/queries'
+import { about, hero, links } from '@/content/home'
+import { GRADES, RESULT_KEY, results as copy } from '@/content/quiz'
+
+const layout = await loadQuery(Astro.locals.draftMode, layoutQuery).catch(() => emptyLayout)
+---
+
+<BaseLayout layout={layout} title="Your missed call results | Ascend AI Marketing" description="Your estimate of what missed calls may cost your shop each month, your call handling score and 3 fixes, from Ascend AI Marketing." seo={{ noIndex: true }}>
+  <section class="results-hero surface-deep" data-results data-quiz={links.quiz} data-quiz-label={hero.primary} data-key={RESULT_KEY} data-grades={JSON.stringify(GRADES)}>
+    <div class="container">
+      <!-- Shown until the result loads, and to anyone who opens the page without taking the quiz. -->
+      <div class="results-empty" data-empty>
+        <h1 class="t-display results__h">{copy.empty.heading}</h1>
+        <p class="results__sub">{copy.empty.body}</p>
+        <div class="actions"><Btn href={links.quiz} icon="arrow">{hero.primary}</Btn><Btn href={links.book} variant="secondary">{hero.secondary}</Btn></div>
+      </div>
+      <div class="results-grid" data-filled hidden>
+        <div class="results__copy">
+          <h1 class="t-display results__h" data-headline></h1>
+          <div class="results__score">
+            <span class="results__grade" data-grade></span>
+            <div><p class="results__score-line">{copy.scoreLine} <strong data-grade-text></strong></p><p class="results__grade-line" data-grade-line></p></div>
+          </div>
+          <div class="actions"><Btn href="#calendar" icon="arrow">{copy.book}</Btn></div>
+        </div>
+        <div class="card surface-white results__fixes">
+          <p class="t-h4" data-fixes-title>{copy.fixesTitle}</p>
+          <ol data-fixes></ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Section surface="cream">
+    <div class="split results-why">
+      <div data-reveal>
+        <p class="lead results__meaning">{copy.meaning}</p>
+        <p class="body-lg results__picture">{copy.picture}</p>
+      </div>
+      <div class="card results-mark">
+        <figure class="media results-mark__photo"><img src={about.photo.src} alt={about.photo.alt} width="800" height="800" loading="lazy" /></figure>
+        <div class="results-mark__copy">
+          {copy.video.url && <VideoButton url={copy.video.url} label={copy.video.title} title={copy.video.title} fallbackHref="#calendar" fallbackLabel={copy.book} />}
+          <p>{copy.empathy}</p>
+          <p class="text-muted">{copy.authority}</p>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <Section surface="white" anchorId="calendar">
+    <!-- Phones: heading, then the form, then the plan. Desktop: the form on the right. -->
+    <div class="split split--top results-book">
+      <div class="results-book__head" data-reveal>
+        <h2 class="t-h2">{copy.calendarHeading}</h2>
+      </div>
+      <div class="results-book__cal"><BookingCalendar id="results-calendar" /></div>
+      <div class="results-plan">
+        <div data-filled hidden><PlanBox heading={copy.plan.heading} steps={copy.plan.steps} after={copy.plan.after} /></div>
+        <div data-empty><PlanBox heading={copy.plan.heading} steps={copy.plan.steps.map((step) => step.replace(/\s*\(Done\.\)$/, ''))} after={copy.plan.after} /></div>
+        <p class="results__pricing">{copy.pricing.text} <a class="link" href={links.plan}>{copy.pricing.link}</a></p>
+        <Btn href={links.teardown} variant="link" icon="arrow-ur">{copy.notReady}</Btn>
+      </div>
+    </div>
+  </Section>
+</BaseLayout>
+
+<script>
+  import type { QuizResult } from '@/content/quiz'
+
+  const root = document.querySelector<HTMLElement>('[data-results]')
+  let result: QuizResult | null = null
+  try { result = JSON.parse(sessionStorage.getItem(root?.dataset.key ?? '') ?? 'null') } catch { result = null }
+  if (!(root && result?.first && result.range)) {
+    document.querySelectorAll<HTMLElement>('[data-filled]').forEach((el) => el.remove())
+    // "What it means" explains a result, so without one it goes too.
+    document.querySelector('.results-why')?.closest('section')?.remove()
+    // No result yet: the quiz comes first, so the header and footer buttons offer it instead of the call.
+    document.querySelectorAll<HTMLAnchorElement>(':is(.site-header, .site-footer) a[href="#calendar"]').forEach((a) => {
+      a.href = root?.dataset.quiz ?? '/missed-calls'
+      const walker = document.createTreeWalker(a, NodeFilter.SHOW_TEXT)
+      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+        if (/book/i.test(node.textContent ?? '')) { node.textContent = a.classList.contains('site-header__quick') ? 'Take the quiz' : (root?.dataset.quizLabel ?? 'Take the quiz'); break }
+      }
+    })
+    // A footer list that already links to the quiz keeps just that one link.
+    document.querySelectorAll<HTMLAnchorElement>('.site-footer li a').forEach((a) => {
+      const list = a.closest('ul')
+      const twin = list && [...list.querySelectorAll<HTMLAnchorElement>('a')].find((b) => b !== a && b.pathname === a.pathname && b.compareDocumentPosition(a) & Node.DOCUMENT_POSITION_FOLLOWING)
+      if (twin) a.closest('li')?.remove()
+    })
+  }
+  if (root && result?.first && result.range) {
+    const grades = JSON.parse(root.dataset.grades ?? '{}') as Record<string, string>
+    const set = (sel: string, text: string) => { const el = root.querySelector(sel); if (el) el.textContent = text }
+    set('[data-headline]', `${result.first}, missed calls may be costing ${result.shop} ${result.range} a month.`)
+    set('[data-grade]', result.grade)
+    set('[data-grade-text]', result.grade)
+    set('[data-grade-line]', grades[result.grade] ?? '')
+    // "Your 3 fixes" says how many there really are.
+    const title = root.querySelector('[data-fixes-title]')
+    if (title && result.fixes.length !== 3) title.textContent = (title.textContent ?? '').replace('3', String(result.fixes.length)).replace(/fixes(?=\W*$)/, result.fixes.length === 1 ? 'fix' : 'fixes')
+    const list = root.querySelector('[data-fixes]')
+    result.fixes.forEach(([title, text]) => {
+      const li = document.createElement('li')
+      const strong = document.createElement('strong')
+      strong.textContent = title
+      const body = document.createElement('div')
+      const line = document.createElement('p')
+      line.textContent = text
+      body.append(strong, line)
+      li.append(body)
+      list?.append(li)
+    })
+    // Only one version stays in the page, so it has a single h1.
+    document.querySelectorAll<HTMLElement>('[data-empty]').forEach((el) => el.remove())
+    document.querySelectorAll<HTMLElement>('[data-filled]').forEach((el) => { el.hidden = false })
+    // The call request form (shown when there's no calendar) comes filled in with what they gave the quiz.
+    const fill: Record<string, string | undefined> = { name: result.first, shop: result.shop, email: result.email, phone: result.phone }
+    document.querySelectorAll<HTMLInputElement>('#results-calendar input[name]').forEach((input) => {
+      const value = fill[input.name]
+      if (value && !input.value) input.value = value
+    })
+  }
+</script>
+
+<style>
+  .results-hero { padding-block: var(--space-12) var(--space-14); }
+  .results-grid { display: grid; gap: var(--space-10); align-items: center; }
+  .results-grid[hidden], .results-empty[hidden], [data-filled][hidden], [data-empty][hidden] { display: none; }
+  .results__h { font-size: var(--text-display-sm); max-width: calc(20 * var(--ch)); }
+  .results__sub { margin: var(--stack-body) 0 var(--stack-actions); font-size: var(--text-body-lg); color: var(--surface-body); max-width: calc(46 * var(--ch)); }
+  .results__score { display: flex; gap: var(--space-4); align-items: center; margin: var(--space-8) 0; padding: var(--space-4) var(--space-5); border-radius: var(--radius-md); background: var(--color-control-inverse); max-width: 34rem; }
+  .results__grade { flex: none; width: 3.5rem; height: 3.5rem; border-radius: var(--radius-full); display: grid; place-items: center; font-size: var(--text-figure); font-weight: var(--weight-strong); background: var(--color-accent); color: var(--color-green-950); }
+  .results__score-line { font-size: var(--text-body); color: var(--surface-fg); }
+  .results__grade-line { font-size: var(--text-sm); color: var(--surface-body); }
+  .results__fixes { display: grid; gap: var(--space-5); color: var(--color-text); }
+  .results__fixes ol { counter-reset: fx; display: grid; gap: var(--space-4); }
+  .results__fixes li { counter-increment: fx; display: grid; grid-template-columns: 2rem 1fr; gap: var(--space-3); font-size: var(--text-body); line-height: 1.5; color: var(--color-text-body); }
+  .results__fixes li::before { content: counter(fx); width: 1.75rem; height: 1.75rem; border-radius: var(--radius-full); display: grid; place-items: center; font-size: var(--text-xs); font-weight: var(--weight-strong); background: var(--color-brand-deep); color: var(--color-white); }
+  .results__fixes :global(strong) { display: block; color: var(--color-text); }
+  .results__meaning { max-width: calc(30 * var(--ch)); margin-top: var(--space-2); }
+  .results__picture { margin-top: var(--space-6); max-width: calc(46 * var(--ch)); }
+  .results-mark { display: grid; grid-template-columns: 9rem 1fr; gap: var(--space-6); align-items: center; }
+  .results-mark__photo { margin: 0; aspect-ratio: 1; border-radius: var(--radius-md); }
+  .results-mark__copy { display: grid; gap: var(--space-3); font-size: var(--text-body); }
+  .results-book { grid-template-areas: 'head' 'cal' 'plan'; row-gap: var(--space-8); }
+  .results-book__head { grid-area: head; }
+  .results-book__cal { grid-area: cal; }
+  .results-plan { grid-area: plan; display: grid; gap: var(--space-6); align-content: start; }
+  @media (min-width: 960px) { .results-book { grid-template-areas: 'head cal' 'plan cal'; grid-template-rows: auto 1fr; row-gap: var(--space-6); } }
+  .results__pricing { font-size: var(--text-body); color: var(--surface-muted); }
+  .results-plan :global(.link) { justify-self: start; }
+  @media (min-width: 960px) { .results-grid { grid-template-columns: 7fr 5fr; gap: var(--space-16); } }
+  @media (max-width: 640px) { .results-mark { grid-template-columns: 6rem 1fr; gap: var(--space-4); align-items: start; } }
+</style>

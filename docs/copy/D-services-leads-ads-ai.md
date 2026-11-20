@@ -11,7 +11,7 @@ Build note: ### lines are build labels and do not show on the site. **Headline:*
 **Slug:** /services/missed-call-text-back-hvac
 **Category:** HVAC Lead Management
 
-**SEO title:** Missed Call Text Back for HVAC Companies | Ascend AI
+**SEO title:** Missed Call Text Back for HVAC Companies | Ascend AI Marketing
 **SEO description:** Miss a call, send a text in seconds. Missed call text back keeps HVAC callers from calling the next shop. You keep your number.
 **Short description:** When you miss a call, the caller gets a text from your shop in seconds. They wait for you instead of calling the next shop on Google. You keep your phone number.
 
@@ -33,9 +33,9 @@ It's frustrating. You do good work. Still, money slips away each time the phone 
 ### 3. About us
 **Heading:** We've watched good shops lose jobs this way
 
-We've watched good contractors lose jobs to slow callbacks. That's why Ascend AI exists. Missed call text back is one of the first things we set up for your shop. It starts working the day you go live.
+We've watched good contractors lose jobs to slow callbacks. That's why Ascend AI Marketing exists. Missed call text back is one of the first things we set up for your shop. It starts working the day you go live.
 
-Mark Johnson founded Ascend AI in 2019. He has 20+ years building websites and has built hundreds of them. You work with a real team you can reach, not a ticket system.
+Mark Johnson founded Ascend AI Marketing in 2019. He has 20+ years building websites and has built hundreds of them. You work with a real team you can reach, not a ticket system.
 
 **Past client result:** Etheric Networks (past client) got 45 qualified leads in 60 days. "Within just two months, we saw incredible results." Camille, Etheric Networks.
 
@@ -130,7 +130,7 @@ You do. Your contact list belongs to your shop, not to us.
 **Slug:** /services/gohighlevel-crm-setup-hvac
 **Category:** HVAC Lead Management
 
-**SEO title:** GoHighLevel CRM Setup for HVAC Companies | Ascend AI
+**SEO title:** GoHighLevel CRM Setup for HVAC Companies | Ascend AI Marketing
 **SEO description:** GoHighLevel CRM set up for HVAC shops. Calls, texts, forms and reviews in one place, so no lead slips. Live in 72 hours.
 **Short description:** Every call, form, text and review in one place. We set up GoHighLevel for how an HVAC shop works, from fast repair replies to follow-up on big install quotes.
 
@@ -152,9 +152,9 @@ You know jobs are falling through the cracks. You can't see where. It feels like
 ### 3. About us
 **Heading:** We set up GoHighLevel CRM for how HVAC works
 
-We've watched good contractors lose jobs to slow callbacks. We've seen them lose their websites to agencies too. That's why Ascend AI exists.
+We've watched good contractors lose jobs to slow callbacks. We've seen them lose their websites to agencies too. That's why Ascend AI Marketing exists.
 
-Mark Johnson founded Ascend AI in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
+Mark Johnson founded Ascend AI Marketing in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
 
 **Past client result:** Etheric Networks (past client) got 45 qualified leads in 60 days. "Within just two months, we saw incredible results." Camille, Etheric Networks. We also linked their web forms to their sales team, so every lead got a fast follow-up.
 
@@ -252,7 +252,7 @@ You do. Your contact list belongs to your shop, not to us.
 **Slug:** /services/speed-to-lead-hvac
 **Category:** HVAC Lead Management
 
-**SEO title:** Speed to Lead for HVAC Companies | Ascend AI
+**SEO title:** Speed to Lead for HVAC Companies | Ascend AI Marketing
 **SEO description:** Reply to every HVAC web lead in seconds with instant texts and alerts. Be the first shop to answer and win more chances at the job.
 **Short description:** Whoever replies first gets the first shot at the job. We set up instant replies and alerts, so every web lead hears from your HVAC shop in seconds.
 
@@ -274,9 +274,9 @@ You're on a job, not at a desk. But it stings to know a lead went cold before yo
 ### 3. About us
 **Heading:** We build replies that don't wait on you
 
-We've watched good contractors lose jobs to slow callbacks. That's why Ascend AI exists. You can't drop a job to answer every form. You don't have to.
+We've watched good contractors lose jobs to slow callbacks. That's why Ascend AI Marketing exists. You can't drop a job to answer every form. You don't have to.
 
-Mark Johnson founded Ascend AI in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
+Mark Johnson founded Ascend AI Marketing in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
 
 **Past client result:** Etheric Networks (past client) got 45 qualified leads in 60 days. "Within just two months, we saw incredible results." Camille, Etheric Networks. We also linked their web forms to their sales team, so every lead got a fast follow-up.
 
@@ -373,7 +373,7 @@ They get the same fast reply as every other lead.
 **Slug:** /services/google-ads-hvac
 **Category:** HVAC Ads
 
-**SEO title:** Google Ads Management for HVAC Companies | Ascend AI
+**SEO title:** Google Ads Management for HVAC Companies | Ascend AI Marketing
 **SEO description:** Google Ads for HVAC shops, paired with a system that answers every call. Your ad account, your ad spend, your leads.
 **Short description:** We run Google Ads for HVAC shops and make sure every call gets a fast reply. You own the ad account and pay Google for ad spend in your own account.
 
@@ -397,7 +397,7 @@ Now you're not sure ads even work. It feels like you're paying Google to send jo
 
 We've watched good contractors pay for clicks, then lose the job to a slow callback. That's why our ads work best with a lead system that replies in seconds.
 
-Mark Johnson founded Ascend AI in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
+Mark Johnson founded Ascend AI Marketing in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
 
 **Past client result:** A fence and tree company (past client) made over $100,000 from our local SEO and Google Ads work. We cut ad spend outside their service area. We also fixed their ads so more leads turned into booked jobs.
 
@@ -488,7 +488,7 @@ No. Nobody can promise that.
 **Slug:** /services/facebook-instagram-ads-hvac
 **Category:** HVAC Ads
 
-**SEO title:** Facebook and Instagram Ads for HVAC Companies | Ascend AI
+**SEO title:** Facebook and Instagram Ads for HVAC Companies | Ascend AI Marketing
 **SEO description:** Facebook and Instagram ads for HVAC shops. Fill slow weeks with tune-ups and maintenance plans. Your ad account, your ad spend.
 **Short description:** We run Facebook and Instagram ads for HVAC shops to sell seasonal tune-ups and maintenance plans. Every lead gets a fast reply. You own the ad account.
 
@@ -512,7 +512,7 @@ It's frustrating. The homeowners are out there, and you can't reach them. And wh
 
 We've watched good contractors spend on ads, then lose the leads to slow follow-up. That's why our Facebook and Instagram ads work best with a lead system that replies in seconds.
 
-Mark Johnson founded Ascend AI in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
+Mark Johnson founded Ascend AI Marketing in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
 
 ### 4. Steps
 **Heading:** Facebook and Instagram ads in three steps
@@ -604,7 +604,7 @@ A seasonal tune-up offer is a good place to start. We'll pick yours together on 
 **Slug:** /services/ai-agents-hvac
 **Category:** AI Agents and Automation
 
-**SEO title:** AI Agents for HVAC Companies | Ascend AI
+**SEO title:** AI Agents for HVAC Companies | Ascend AI Marketing
 **SEO description:** AI agents for HVAC shops answer calls, reply to texts, follow up with leads and book appointments. You set the rules.
 **Short description:** We build AI agents for HVAC shops. An agent answers calls, replies to texts, follows up with leads and books appointments. You set the rules, and your people stay in charge.
 
@@ -626,9 +626,9 @@ So you answer at dinner. Or you don't, and the job goes to the next shop. It's t
 ### 3. About us
 **Heading:** We build AI agents that work inside your rules
 
-We've watched good contractors lose jobs to slow callbacks. That's why Ascend AI exists. We build AI agents that answer calls and texts and book the visit. Hard cases go to your people.
+We've watched good contractors lose jobs to slow callbacks. That's why Ascend AI Marketing exists. We build AI agents that answer calls and texts and book the visit. Hard cases go to your people.
 
-Mark Johnson founded Ascend AI in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
+Mark Johnson founded Ascend AI Marketing in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
 
 ### 4. Steps
 **Heading:** Your AI agent in three steps
@@ -729,7 +729,7 @@ You do. Your contact list belongs to your shop, not to us.
 **Slug:** /services/automated-workflows-hvac
 **Category:** AI Agents and Automation
 
-**SEO title:** Automated Workflows for HVAC Companies | Ascend AI
+**SEO title:** Automated Workflows for HVAC Companies | Ascend AI Marketing
 **SEO description:** Custom automated workflows for HVAC shops. We map the repeat work in your office and build flows that run on their own, in your voice.
 **Short description:** Your plan already covers missed call text back, lead alerts, review requests and lead follow-up. Custom automated workflows go further. We map the repeat work in your shop and build flows around it.
 
@@ -751,9 +751,9 @@ You know these things matter. There's no time. Every task that slips feels like 
 ### 3. About us
 **Heading:** We build workflows around how your shop runs
 
-We've watched good contractors lose jobs to slow callbacks and missed follow-up. That's why Ascend AI exists. We build simple workflows that do the repeat work for you.
+We've watched good contractors lose jobs to slow callbacks and missed follow-up. That's why Ascend AI Marketing exists. We build simple workflows that do the repeat work for you.
 
-Mark Johnson founded Ascend AI in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
+Mark Johnson founded Ascend AI Marketing in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
 
 ### 4. Steps
 **Heading:** Custom workflows in three steps
