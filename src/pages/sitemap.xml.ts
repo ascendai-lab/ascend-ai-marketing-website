@@ -11,7 +11,7 @@ export const GET: APIRoute = async ({ site, url }) => {
   const docs = await loadQuery(false, sitemapQuery).catch(() => [])
   // Pages that are still drawn from the approved copy (no CMS document yet).
   const cmsPaths = new Set(docs.map((doc) => hrefFor(doc._type, doc.slug)))
-  const copyPages = ['/', '/privacy', ...sitePages.map((page) => page.path), ...servicePages.map((page) => serviceHref(page.slug))].filter((path) => !cmsPaths.has(path))
+  const copyPages = ['/', '/privacy', '/terms', '/cookies', ...sitePages.map((page) => page.path), ...servicePages.map((page) => serviceHref(page.slug))].filter((path) => !cmsPaths.has(path))
 
   const entries = [
     ...docs.flatMap((doc) => {

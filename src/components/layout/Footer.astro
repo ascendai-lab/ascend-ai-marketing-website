@@ -32,7 +32,7 @@ const columns: FooterColumn[] = navigation?.footerColumns?.length
       }),
     }))
   : fallback.columns
-import { PRIVACY_PATH } from '@/content/legal'
+import { PRIVACY_PATH, TERMS_PATH, COOKIES_PATH, cookieBanner } from '@/content/legal'
 ---
 
 <footer class="site-footer surface-cream">
@@ -98,6 +98,9 @@ import { PRIVACY_PATH } from '@/content/legal'
       <p>© {year} {copyright}. All rights reserved.</p>
       <ul>
         <li><a href={PRIVACY_PATH}>Privacy policy</a></li>
+        <li><a href={TERMS_PATH}>Terms and conditions</a></li>
+        <li><a href={COOKIES_PATH}>Cookie policy</a></li>
+        <li hidden data-cookie-settings><button type="button" class="site-footer__cookie-btn">{cookieBanner.settings}</button></li>
         {footerPages.map((page) => page.slug && (
           <li><a href={routes.page(page.slug)}>{page.title}</a></li>
         ))}
@@ -193,6 +196,8 @@ import { PRIVACY_PATH } from '@/content/legal'
   .site-footer__bottom { margin-top: var(--space-14); padding-top: var(--space-6); border-top: 1px solid var(--surface-line); display: flex; flex-wrap: wrap; gap: var(--space-4); justify-content: space-between; font-size: var(--text-sm); }
   .site-footer__bottom p { color: var(--surface-muted); }
   .site-footer__bottom ul { display: flex; flex-wrap: wrap; gap: var(--space-5); color: var(--surface-muted); }
+  .site-footer__cookie-btn { background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; }
+  .site-footer__cookie-btn:hover { color: var(--surface-fg, inherit); text-decoration: underline; }
   /* Phones: two columns; a third column on its own takes the full row. */
   @media (max-width: 640px) {
     .site-footer__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -213,7 +218,7 @@ import { PRIVACY_PATH } from '@/content/legal'
   }
   /* Touch screens: every footer link is at least a 44px tap target. */
   @media (pointer: coarse), (max-width: 959px) {
-    .site-footer :is(.site-footer__cols, .site-footer__services ul, .site-footer__bottom) a { display: flex; align-items: center; min-height: 44px; padding-block: 0; }
+    .site-footer :is(.site-footer__cols, .site-footer__services ul, .site-footer__bottom) :is(a, .site-footer__cookie-btn) { display: flex; align-items: center; min-height: 44px; padding-block: 0; }
     .site-footer__services .site-footer__heading a { display: inline-flex; align-items: center; min-height: 44px; }
   }
 </style>

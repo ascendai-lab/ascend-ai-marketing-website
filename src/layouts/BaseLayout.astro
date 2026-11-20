@@ -9,6 +9,7 @@ import { toOpeningHoursSpec } from '@/lib/hours'
 import Header from '@components/layout/Header.astro'
 import Footer from '@components/layout/Footer.astro'
 import Icons from '@components/ui/Icons.astro'
+import CookieConsent from '@components/ui/CookieConsent.astro'
 import type { SanityImageValue } from '@components/ui/SanityImage.astro'
 
 interface Seo {
@@ -151,55 +152,9 @@ const structuredData = [businessJsonLd, ...jsonLd].filter(Boolean)
 
     {structuredData.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
 
-    {
-      tracking?.gtmId && (
-        <script is:inline define:vars={{ id: stegaClean(tracking.gtmId) }}>
-          ;(function (w, d, s, l, i) {
-            w[l] = w[l] || []
-            w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' })
-            var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''
-            j.async = true
-            j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl
-            f.parentNode.insertBefore(j, f)
-          })(window, document, 'script', 'dataLayer', id)
-        </script>
-      )
-    }
-    {
-      tracking?.gaId && !tracking.gtmId && (
-        <>
-          <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${stegaClean(tracking.gaId)}`} />
-          <script is:inline define:vars={{ id: stegaClean(tracking.gaId) }}>
-            window.dataLayer = window.dataLayer || []
-            function gtag() { dataLayer.push(arguments) }
-            gtag('js', new Date())
-            gtag('config', id)
-          </script>
-        </>
-      )
-    }
-    {
-      tracking?.metaPixelId && (
-        <script is:inline define:vars={{ id: stegaClean(tracking.metaPixelId) }}>
-          !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-          n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-          n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-          t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
-          document,'script','https://connect.facebook.net/en_US/fbevents.js');
-          fbq('init', id); fbq('track', 'PageView');
-        </script>
-      )
-    }
   </head>
 
   <body data-quiz-tag={quizTag}>
-    {
-      tracking?.gtmId && (
-        <noscript>
-          <iframe src={`https://www.googletagmanager.com/ns.html?id=${stegaClean(tracking.gtmId)}`} height="0" width="0" style="display:none;visibility:hidden" />
-        </noscript>
-      )
-    }
     <Icons />
     <a href="#main-content" class="skip-link btn btn--primary">Skip to content</a>
 
@@ -210,6 +165,16 @@ const structuredData = [businessJsonLd, ...jsonLd].filter(Boolean)
     </main>
 
     <Footer layout={layout} />
+
+    {
+      (tracking?.gtmId || tracking?.gaId || tracking?.metaPixelId) && (
+        <CookieConsent
+          gtmId={stegaClean(tracking.gtmId) ?? ''}
+          gaId={stegaClean(tracking.gaId) ?? ''}
+          metaPixelId={stegaClean(tracking.metaPixelId) ?? ''}
+        />
+      )
+    }
 
     <script is:inline>
       // Quiz links carry the page's interest tag, so a lead from the Google Ads page is tagged Google Ads.
