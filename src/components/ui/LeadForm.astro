@@ -5,7 +5,7 @@
  * pushed to the dataLayer as `event`, so it can be tracked as a conversion.
  */
 import Icon from './Icon.astro'
-import { consent, PRIVACY_PATH } from '@/content/legal'
+import { consent, smsConsent, PRIVACY_PATH, TERMS_PATH } from '@/content/legal'
 
 type FieldName = 'name' | 'shop' | 'website' | 'email' | 'phone'
 interface Props {
@@ -33,7 +33,7 @@ const types: Record<FieldName, { type: 'text' | 'url' | 'email' | 'tel'; auto: s
 }
 ---
 
-<form class:list={['lead-form', surface === 'white' && 'surface-white']} id={id} data-lead-form data-source={source} data-subject={subject} data-event={event} data-redirect={redirect} novalidate>
+<form class:list={['lead-form', surface === 'white' && 'surface-white']} id={id} data-lead-form data-source={source} data-subject={subject} data-event={event} data-redirect={redirect} data-sms-needs-phone={smsConsent.needsPhone} novalidate>
   <div class="lead-form__fields">
     {fields.map((f) => (
       <label class="lead-form__field">
@@ -43,6 +43,15 @@ const types: Record<FieldName, { type: 'text' | 'url' | 'email' | 'tel'; auto: s
       </label>
     ))}
   </div>
+  {fields.some((f) => f.name === 'phone') && (
+    <div class="sms-consent">
+      <label class="sms-consent__label">
+        <input type="checkbox" name="smsConsent" value="yes" id={`${id}-sms`} aria-describedby={`${id}-sms-error`} />
+        <span>{smsConsent.text} <a href={PRIVACY_PATH}>{smsConsent.privacy}</a> · <a href={TERMS_PATH}>{smsConsent.terms}</a></span>
+      </label>
+      <span class="lead-form__error" id={`${id}-sms-error`}></span>
+    </div>
+  )}
   <input type="text" name="hp" tabindex="-1" autocomplete="off" class="sr-only" aria-hidden="true" />
   <button type="submit" class="btn btn--primary lead-form__submit">{button}<Icon name="arrow" /></button>
   <p class="lead-form__error lead-form__send-error" role="alert"></p>
@@ -67,6 +76,17 @@ const types: Record<FieldName, { type: 'text' | 'url' | 'email' | 'tel'; auto: s
         if (error) error.textContent = !bad ? '' : empty ? (label ? `Enter your ${label}.` : 'Please fill this in.') : input.type === 'email' ? 'Enter a valid email, like you@yourshop.com.' : 'Enter your website address, like yourshop.com.'
         if (bad && ok) { input.focus(); ok = false }
       })
+      // Ticking the text box needs a mobile number to text.
+      const sms = form.querySelector<HTMLInputElement>('input[name="smsConsent"]')
+      const phone = form.querySelector<HTMLInputElement>('input[name="phone"]')
+      const smsError = sms && document.getElementById(`${sms.id}-error`)
+      if (smsError) smsError.textContent = ''
+      if (ok && sms?.checked && phone && !phone.value.trim()) {
+        phone.setAttribute('aria-invalid', 'true')
+        if (smsError) smsError.textContent = form.dataset.smsNeedsPhone ?? ''
+        phone.focus()
+        ok = false
+      }
       if (!ok) return
       const data = new FormData(form)
       const get = (k: string) => String(data.get(k) ?? '').trim()
@@ -84,6 +104,7 @@ const types: Record<FieldName, { type: 'text' | 'url' | 'email' | 'tel'; auto: s
             name: get('name') || get('shop'),
             email: get('email'),
             phone: get('phone') || undefined,
+            smsConsent: Boolean(get('phone')) && data.get('smsConsent') === 'yes',
             message: lines.join('\n'),
             page: window.location.pathname,
             source: form.dataset.source,

@@ -11,10 +11,22 @@ export const TERMS_PATH = '/terms'
 export const COOKIES_PATH = '/cookies'
 export const CONTACT_EMAIL = 'hello@ascendaimarketing.com'
 
-/** Under every form that asks for an email or a mobile number. */
+/** Under every form that asks for an email or a mobile number. Texts need the separate box below. */
 export const consent = {
-  text: 'By sending this, you agree that Ascend AI Marketing can contact you about your request by email, phone and text. Message and data rates may apply. Reply STOP to opt out.',
+  text: 'By sending this, you agree that Ascend AI Marketing can contact you about your request by email and phone. We only text you if you tick the box above.',
   link: 'Privacy policy',
+}
+
+/**
+ * The text message (A2P 10DLC) opt-in on every form with a phone number. Mark's approved wording.
+ * The box is never ticked for the visitor and is optional: the form sends without it.
+ */
+export const smsConsent = {
+  text: 'I agree to receive text messages from Ascend AI Marketing about my inquiry, appointments and account. Message frequency varies. Message and data rates may apply. Reply STOP to opt out or HELP for help.',
+  privacy: 'Privacy Policy',
+  terms: 'Terms',
+  /** Shown when the box is ticked but the phone field is empty. */
+  needsPhone: 'Enter your mobile number to get texts, or untick the box.',
 }
 
 export interface LegalSection {

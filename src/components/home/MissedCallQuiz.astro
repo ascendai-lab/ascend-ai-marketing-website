@@ -13,10 +13,10 @@ interface Props {
 const { id, interest } = Astro.props
 import { links } from '@/content/home'
 import { RESULTS_PATH } from '@/content/quiz'
-import { consent, PRIVACY_PATH } from '@/content/legal'
+import { consent, smsConsent, PRIVACY_PATH, TERMS_PATH } from '@/content/legal'
 ---
 
-<div class="quiz surface-white" id={id} data-quiz data-book={links.book} data-results={RESULTS_PATH} data-interest={interest} data-consent={consent.text} data-privacy={PRIVACY_PATH}>
+<div class="quiz surface-white" id={id} data-quiz data-book={links.book} data-results={RESULTS_PATH} data-interest={interest} data-consent={consent.text} data-privacy={PRIVACY_PATH} data-terms={TERMS_PATH} data-sms={smsConsent.text} data-sms-privacy={smsConsent.privacy} data-sms-terms={smsConsent.terms} data-sms-needs-phone={smsConsent.needsPhone}>
   <!-- Shown until the quiz script builds the questions (and if it can't run). -->
   <p class="quiz__fallback">Want to know what missed calls cost your shop? <a href={links.book}>Book a 15-minute call</a> and we'll walk through it with you.</p>
 </div>
@@ -89,7 +89,9 @@ import { consent, PRIVACY_PATH } from '@/content/legal'
       field(id, 'shop', 'Shop name', 'text', 'organization', true) +
       field(id, 'email', 'Email', 'email', 'email', true) +
       field(id, 'mobile', 'Mobile (optional)', 'tel', 'tel', false) +
-      '</div><input type="text" name="website" tabindex="-1" autocomplete="off" class="sr-only" aria-hidden="true">' +
+      '</div>' +
+      `<div class="sms-consent"><label class="sms-consent__label"><input type="checkbox" name="smsConsent" value="yes" id="${id}-sms" aria-describedby="${id}-sms-error"><span>${root.dataset.sms ?? ''} <a href="${root.dataset.privacy ?? '/privacy'}">${root.dataset.smsPrivacy ?? 'Privacy Policy'}</a> · <a href="${root.dataset.terms ?? '/terms'}">${root.dataset.smsTerms ?? 'Terms'}</a></span></label><span class="field__error" id="${id}-sms-error"></span></div>` +
+      '<input type="text" name="website" tabindex="-1" autocomplete="off" class="sr-only" aria-hidden="true">' +
       `<button type="submit" class="btn btn--primary">Show my results ${ARROW}</button>` +
       '<p class="quiz__form-error field__error" role="alert"></p>' +
       '<p class="quiz__small">You\'ll get your report and a few short emails from our team.</p>' +
@@ -176,6 +178,17 @@ import { consent, PRIVACY_PATH } from '@/content/legal'
         if (error) error.textContent = !bad ? '' : input.type === 'email' && !empty ? 'Enter a valid email, like you@yourshop.com.' : label ? `Enter your ${label}.` : 'Please fill this in.'
         if (bad && ok) { input.focus(); ok = false }
       })
+      // Ticking the text box needs a mobile number to text.
+      const sms = form.querySelector<HTMLInputElement>('input[name="smsConsent"]')
+      const mobile = form.querySelector<HTMLInputElement>('input[name="mobile"]')
+      const smsError = document.getElementById(`${id}-sms-error`)
+      if (smsError) smsError.textContent = ''
+      if (ok && sms?.checked && mobile && !mobile.value.trim()) {
+        mobile.setAttribute('aria-invalid', 'true')
+        if (smsError) smsError.textContent = root.dataset.smsNeedsPhone ?? ''
+        mobile.focus()
+        ok = false
+      }
       if (!ok) return
       const data = new FormData(form)
       const first = String(data.get('first')).trim()
@@ -203,6 +216,7 @@ import { consent, PRIVACY_PATH } from '@/content/legal'
             name: first.length > 1 ? first : `${first} (${shop})`,
             email: String(data.get('email')).trim(),
             phone: String(data.get('mobile') || '').trim() || undefined,
+            smsConsent: Boolean(String(data.get('mobile') || '').trim()) && data.get('smsConsent') === 'yes',
             message: `Missed call quiz. Shop: ${shop}. Estimate: ${range} a month. Score: ${grade}.\n${summary}`,
             page: window.location.pathname,
             source: 'missed-call-quiz',
@@ -253,6 +267,7 @@ import { consent, PRIVACY_PATH } from '@/content/legal'
   .quiz :global(.quiz__bar li.done), .quiz :global(.quiz__bar li.now) { background: var(--color-brand-deep); }
   .quiz :global(.quiz__step) { border: 0; min-width: 0; }
   .quiz :global(.quiz__q) { display: block; color: var(--color-text); padding: 0; font-size: var(--text-question); line-height: 1.25; letter-spacing: -0.01em; font-weight: var(--weight-medium); margin-bottom: var(--space-5); }
+  .quiz :global(.sms-consent) { margin-block: var(--space-4) var(--space-5); }
   .quiz :global(.quiz__consent) { margin-top: var(--space-3); font-size: var(--text-xs); line-height: 1.5; color: var(--color-text-muted); }
   .quiz :global(.quiz__consent a) { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
   .quiz :global(.quiz__options) { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
