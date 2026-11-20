@@ -6,7 +6,7 @@ interface Props {
   successMessage?: string | null
 }
 
-/** Posts to /api/contact, which validates and forwards to n8n. */
+/** Posts to /api/contact, which validates and forwards to LeadLine. */
 export default function ContactForm({ successMessage }: Props) {
   const [state, setState] = useState<FormState>('idle')
   const [errorMsg, setErrorMsg] = useState('')
