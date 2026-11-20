@@ -27,6 +27,13 @@
 # Astro's Netlify adapter routes /api/* and every page to its SSR function
 # automatically. No manual redirects needed.
 
+# The old site's privacy page lived at /privacy-policy, and the SMS (A2P 10DLC) campaign
+# and texting terms link there. Keep that address working.
+[[redirects]]
+  from = "/privacy-policy"
+  to = "/privacy"
+  status = 301
+
 # The self-hosted font never changes under the same name: cache it for a year.
 [[headers]]
   for = "/fonts/*"
