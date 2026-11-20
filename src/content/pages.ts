@@ -63,7 +63,9 @@ export function lookForPage(page: PageCopy): CategoryLook {
   const category = categoryFor[page.path]
   if (category) return categories[category]
   const base = categories['HVAC Lead Management']
-  if (page.path === '/about' || page.path === '/book') return { ...base, name: 'Ascend AI Marketing', photo: about.photo, notes: [] }
+  if (page.path === '/about')
+    return { ...base, name: 'Ascend AI Marketing', photo: about.portraits.hero, notes: [], storyPhoto: about.photo }
+  if (page.path === '/book') return { ...base, name: 'Ascend AI Marketing', photo: about.photo, notes: [] }
   if (page.path === '/work') return { ...base, name: 'Our work', photo: success.photo, notes: success.notes }
   if (page.path === '/hvac-lead-system') return { ...base, name: 'The 72-hour HVAC lead system' }
   return { ...base, name: 'Ascend AI Marketing' }

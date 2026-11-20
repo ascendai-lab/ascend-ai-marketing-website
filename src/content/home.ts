@@ -98,7 +98,12 @@ export const about = {
     "We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.",
     'Our founder, Mark Johnson, has built websites for more than 20 years. He has built hundreds of them. Ascend AI Marketing started in 2019.',
   ],
-  photo: { src: photo('1728516687003-58347d3412b3'), alt: 'Mark Johnson, founder of Ascend AI Marketing' },
+  photo: { src: '/images/about/mark-at-desk.webp', alt: 'Mark Johnson, founder of Ascend AI Marketing, at work at his desk' },
+  /** Mark cut out from his background: these sit on the green photo backdrop (`.media--cutout`). */
+  portraits: {
+    hero: { src: '/images/about/mark-arms-crossed-cutout.webp', alt: 'Mark Johnson, founder of Ascend AI Marketing, smiling with his arms crossed', cutout: true },
+    founder: { src: '/images/about/mark-shirt-tie-cutout.webp', alt: 'Mark Johnson, founder of Ascend AI Marketing, smiling behind his laptop', cutout: true },
+  },
   chips: [
     { icon: 'users', title: 'Real people', text: 'Not a ticket system. Not a call center.' },
     { icon: 'clock', title: 'Live in 72 hours', text: 'After we have everything we need.' },

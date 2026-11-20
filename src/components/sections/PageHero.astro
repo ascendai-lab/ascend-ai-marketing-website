@@ -17,7 +17,7 @@ interface Props {
   secondary?: { text: string; href: string } | null
   /** A short line under the buttons. */
   note?: string
-  photo?: { src: string; alt: string }
+  photo?: { src: string; alt: string; cutout?: boolean }
   notes?: { icon: IconName; title: string; text: string }[]
   trust?: { icon: IconName; text: string }[]
   /** The page puts a tool (the quiz, a form) in the `aside` slot instead of the photo. */
@@ -67,7 +67,7 @@ const hasAside = tool
     {hasAside ? (
       <div class="svc-hero__tool"><slot name="aside" /></div>
     ) : photo && (
-      <figure class="media svc-hero__photo">
+      <figure class:list={['media svc-hero__photo', photo.cutout && 'media--cutout']}>
         <img src={photo.src} alt={photo.alt} width="1400" height="1600" loading="eager" fetchpriority="high" />
         {notes.length > 0 && (
           <ul class="svc-hero__notes">

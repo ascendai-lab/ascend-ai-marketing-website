@@ -71,9 +71,14 @@ export interface CategoryLook {
   /** The category's hub page. */
   href: string
   icon: IconName
-  photo: { src: string; alt: string }
+  photo: Photo
   notes: Note[]
+  /** The photo in the "what changes" story, when it isn't the hero's. */
+  storyPhoto?: Photo
 }
+
+/** `cutout`: the subject has no background of its own, so it's drawn on the green photo backdrop. */
+export type Photo = { src: string; alt: string; cutout?: boolean }
 
 export const categories: Record<string, CategoryLook> = {
   'HVAC Website Design': {

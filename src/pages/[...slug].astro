@@ -37,7 +37,7 @@ const jsonLd = !copy
     : copy.path === '/about'
       ? [
           { '@context': 'https://schema.org', '@type': 'AboutPage', name: copy.seo.title, description: copy.seo.description, url: new URL(copy.path, origin).href },
-          { '@context': 'https://schema.org', '@type': 'Person', name: 'Mark Johnson', jobTitle: 'Founder', worksFor: provider, image: about.photo.src },
+          { '@context': 'https://schema.org', '@type': 'Person', name: 'Mark Johnson', jobTitle: 'Founder', worksFor: provider, image: new URL(about.photo.src, origin).href },
           crumbs([{ name: 'Home', path: '/' }, { name: 'About', path: copy.path }]),
         ]
       : [crumbs([{ name: 'Home', path: '/' }, { name: copy.title, path: copy.path }])]
