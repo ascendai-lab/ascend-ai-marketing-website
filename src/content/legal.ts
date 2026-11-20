@@ -41,7 +41,7 @@ export const privacy: LegalPage = {
     {
       heading: 'Who we are',
       body: [
-        `Ascend AI Marketing runs this website, ascendaimarketing.com. When this policy says "we", "us" or "our", it means Ascend AI Marketing. If you have a question about your information, email us at ${CONTACT_EMAIL}.`,
+        `Ascend AI Marketing, a business registered in New Jersey, runs this website, ascendaimarketing.com. When this policy says "we", "us" or "our", it means Ascend AI Marketing. If you have a question about your information, email us at ${CONTACT_EMAIL}.`,
       ],
     },
     {
@@ -75,8 +75,8 @@ export const privacy: LegalPage = {
       ],
       list: [
         'Website hosting: Netlify hosts this website. It handles every visit, which includes your IP address and the technical details above.',
-        'Form handling and our CRM: when you send a form, it goes through our automation tool (n8n) into our customer relationship software, where we keep track of your request.',
-        'Booking calendar: our booking calendar runs on HighLevel (GoHighLevel). When you book a call, the details you enter go to HighLevel.',
+        'Form handling and our CRM: when you send a form, it goes through our automation tool (n8n) into our customer relationship software, LeadLine and HighLevel (GoHighLevel), where we keep track of your request and follow up.',
+        'Booking calendar: our booking calendar also runs on HighLevel. When you book a call, the details you enter go to HighLevel.',
         'Text messages: LeadLine and Twilio deliver our texts.',
         'Email: the email service we use to reply to you and send follow-ups.',
         'Analytics and advertising: Google (Google Analytics and Google Tag Manager) and Meta (the Meta Pixel), only if you accept cookies. See "Cookies, analytics and advertising" below.',
@@ -127,7 +127,7 @@ export const privacy: LegalPage = {
         'reply STOP to any text to stop getting texts',
       ],
       after: [
-        "Residents of some states, such as California, Colorado, Connecticut, Virginia, Texas and others with privacy laws, have these rights by law, along with the right to limit how sensitive information is used. We honor them for everyone.",
+        "Residents of some states, such as New Jersey, California, Colorado, Connecticut, Virginia, Texas and others with privacy laws, have these rights by law, along with the right to limit how sensitive information is used. We honor them for everyone.",
         `To make a request, email ${CONTACT_EMAIL}. We will confirm we got it and answer within 45 days. We may ask you to confirm who you are first. You can also have an authorized agent ask for you, with your written permission. We will not charge you or treat you differently for using your rights.`,
         `If we turn down your request, you can appeal by replying to our answer or emailing ${CONTACT_EMAIL} with "Appeal" in the subject. We will answer your appeal within 60 days. If you are not happy with the result, you can contact your state attorney general.`,
       ],
@@ -233,6 +233,12 @@ export const terms: LegalPage = {
       heading: 'Your responsibility',
       body: [
         'If you misuse this site or break these terms, you agree to cover the costs and claims that Ascend AI Marketing faces because of it, as far as the law allows.',
+      ],
+    },
+    {
+      heading: 'Governing law',
+      body: [
+        'These terms are governed by the laws of the State of New Jersey, without regard to its conflict of law rules. Any dispute about this website or these terms will be handled in the state or federal courts located in New Jersey, unless the law where you live gives you the right to bring it elsewhere.',
       ],
     },
     {
