@@ -78,7 +78,7 @@ const drawn = sections.map((section, index) => {
         return <StepsSection eyebrow="Getting started" heading={section.heading} note={paragraphs(section)[0]} items={items} more={more} />
       }
       case 'life':
-        return <StorySection eyebrow={eyebrow} heading={section.heading} body={paragraphs(section)} photo={look.photo} surface={light} />
+        return <StorySection eyebrow={eyebrow} heading={section.heading} body={paragraphs(section)} photo={look.storyPhoto ?? look.photo} surface={light} />
       case 'stakes':
         return <ServiceStakes section={section} />
       case 'nationwide':

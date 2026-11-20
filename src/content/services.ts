@@ -73,6 +73,8 @@ export interface CategoryLook {
   icon: IconName
   photo: { src: string; alt: string }
   notes: Note[]
+  /** The photo in the "what changes" story, when it isn't the hero's. */
+  storyPhoto?: { src: string; alt: string }
 }
 
 export const categories: Record<string, CategoryLook> = {
