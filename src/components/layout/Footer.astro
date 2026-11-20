@@ -1,25 +1,23 @@
 ---
 import type { Layout } from '@cms/lib/types'
-import { resolveLink } from '@cms/lib/links'
+import { resolveLink, telHref } from '@cms/lib/links'
 import { routes } from '@cms/routes'
 import SocialIcon from '@components/ui/SocialIcon.astro'
 import SanityImage from '@components/ui/SanityImage.astro'
-import Btn from '@components/ui/Btn.astro'
-import ContactDetails from './ContactDetails.astro'
+import Icon from '@components/ui/Icon.astro'
 import { stegaClean } from '@sanity/client/stega'
-import { brand, footer as fallback, links, hero } from '@/content/home'
+import { PRIVACY_PATH, TERMS_PATH, COOKIES_PATH, CONTACT_EMAIL, cookieBanner } from '@/content/legal'
+import { brand, footer as fallback } from '@/content/home'
 
 interface Props {
   layout: Layout
 }
 
 const { settings, navigation, footerPages } = Astro.props.layout
-// After the quiz and on the booking page, the footer button books the call too.
-const footerPath = Astro.url.pathname.replace(/\/$/, '')
-const bookingPage = footerPath === '/book' || footerPath === '/missed-calls/results'
 const year = new Date().getFullYear()
 const name = stegaClean(settings?.siteName) || brand.name
 const copyright = settings?.copyrightName || name
+const email = stegaClean(settings?.email) || CONTACT_EMAIL
 type FooterColumn = { heading: string; links: { label: string; href: string; target?: string; rel?: string }[] }
 const columns: FooterColumn[] = navigation?.footerColumns?.length
   ? navigation.footerColumns.map((column) => ({
@@ -30,7 +28,6 @@ const columns: FooterColumn[] = navigation?.footerColumns?.length
       }),
     }))
   : fallback.columns
-import { PRIVACY_PATH, TERMS_PATH, COOKIES_PATH, cookieBanner } from '@/content/legal'
 ---
 
 <footer class="site-footer surface-cream">
@@ -39,7 +36,10 @@ import { PRIVACY_PATH, TERMS_PATH, COOKIES_PATH, cookieBanner } from '@/content/
       <div class="site-footer__brand">
         {settings?.logo?.asset ? <SanityImage image={settings.logo} width={210} sizes="210px" /> : <img src="/brand/logo.svg" alt={name} width="210" height="36" />}
         <p>{settings?.footerText || brand.tagline}</p>
-        {bookingPage ? <Btn href="#calendar" variant="secondary" icon="arrow">{hero.secondary}</Btn> : <Btn href={links.quiz} variant="secondary" icon="arrow">{hero.primary}</Btn>}
+        <ul class="site-footer__contact">
+          <li><a href={`mailto:${email}`}><Icon name="inbox" />{email}</a></li>
+          {settings?.phone && <li><a href={telHref(settings.phone)}><Icon name="phone" />{settings.phone}</a></li>}
+        </ul>
         {
           settings?.socialLinks?.length ? (
             <ul class="site-footer__social">
@@ -68,16 +68,15 @@ import { PRIVACY_PATH, TERMS_PATH, COOKIES_PATH, cookieBanner } from '@/content/
             </nav>
           ))
         }
-        {settings && <ContactDetails settings={settings} />}
       </div>
     </div>
 
     <div class="site-footer__bottom">
       <p>© {year} {copyright}. All rights reserved.</p>
       <ul>
-        <li><a href={PRIVACY_PATH}>Privacy policy</a></li>
-        <li><a href={TERMS_PATH}>Terms and conditions</a></li>
-        <li><a href={COOKIES_PATH}>Cookie policy</a></li>
+        <li><a href={PRIVACY_PATH}>Privacy</a></li>
+        <li><a href={TERMS_PATH}>Terms</a></li>
+        <li><a href={COOKIES_PATH}>Cookies</a></li>
         <li hidden data-cookie-settings><button type="button" class="site-footer__cookie-btn">{cookieBanner.settings}</button></li>
         {footerPages.map((page) => page.slug && (
           <li><a href={routes.page(page.slug)}>{page.title}</a></li>
@@ -105,46 +104,55 @@ import { PRIVACY_PATH, TERMS_PATH, COOKIES_PATH, cookieBanner } from '@/content/
 <style>
   .site-footer { padding-top: var(--section-y); overflow: hidden; }
   .site-footer__top { display: grid; gap: var(--space-12); }
+
+  /* Brand column: logo, one line, how to reach us, socials. */
   .site-footer__brand { display: grid; gap: var(--space-5); justify-items: start; align-content: start; }
   .site-footer__brand :global(img) { width: 13rem; height: auto; }
-  .site-footer__brand p { max-width: calc(36 * var(--ch)); }
-  .site-footer__cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-8) var(--space-4); }
-  .site-footer__heading { font-size: var(--text-sm); font-weight: var(--weight-medium); letter-spacing: 0; color: var(--surface-muted); margin-bottom: var(--space-3); }
+  .site-footer__brand p { max-width: calc(36 * var(--ch)); color: var(--surface-body); }
+  .site-footer__contact { gap: var(--space-2); }
+  .site-footer__contact a { display: inline-flex; align-items: center; gap: var(--space-2); padding-bottom: 2px; border-bottom: 1px solid currentColor; color: var(--surface-fg); }
+  .site-footer__contact a:hover { text-decoration: none; border-bottom-color: transparent; }
+  .site-footer__contact :global(.icon) { width: 1rem; height: 1rem; flex: none; }
+  .site-footer__social { display: flex !important; gap: var(--space-4); margin-top: var(--space-2); }
+
+  /* Link columns: a clear heading over a quiet list. */
+  .site-footer__cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-10) var(--space-6); }
+  .site-footer__heading { font-size: var(--text-h4); font-weight: var(--weight-strong); letter-spacing: 0; color: var(--surface-fg); margin-bottom: var(--space-4); }
   .site-footer ul { display: grid; }
-  .site-footer__cols a { display: block; padding: 0.4375rem 0; font-size: var(--text-body); }
-  .site-footer a:hover { text-decoration: underline; text-underline-offset: 4px; }
-  .site-footer__social { display: flex !important; gap: var(--space-3); }
-  /* The name sits in the cream like a watermark: wide, light, fading into the bottom edge. */
+  .site-footer__cols a { display: block; padding: 0.375rem 0; font-size: var(--text-ui); color: var(--surface-body); }
+  .site-footer a:hover { color: var(--surface-fg); text-decoration: underline; text-underline-offset: 4px; }
+
+  /* Bottom row: copyright on the left, legal links in the middle. */
+  .site-footer__bottom { margin-top: var(--space-16); padding-block: var(--space-6); border-top: 1px solid var(--surface-line); display: grid; gap: var(--space-4); font-size: var(--text-sm); color: var(--surface-body); }
+  .site-footer__bottom ul { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-8); }
+  .site-footer__cookie-btn { background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; }
+  .site-footer__cookie-btn:hover { color: var(--surface-fg); text-decoration: underline; text-underline-offset: 4px; }
+
+  /* The name sits in the cream like a watermark: wide, faint, cut off by the bottom edge. */
   .site-footer__name {
-    --wordmark-top: color-mix(in oklab, var(--color-green-900) 20%, transparent);
-    --wordmark-bottom: color-mix(in oklab, var(--color-green-900) 0%, transparent);
-    margin: var(--space-12) 0 -0.16em;
-    font-size: clamp(2.25rem, 8.6vw, 8rem); line-height: 1; letter-spacing: 0.045em; font-weight: var(--weight-display);
+    --wordmark-top: color-mix(in oklab, var(--color-green-900) 9%, transparent);
+    --wordmark-bottom: color-mix(in oklab, var(--color-green-900) 2%, transparent);
+    margin: var(--space-10) 0 -0.3em;
+    font-size: clamp(2.25rem, 8.6vw, 8rem); line-height: 1; letter-spacing: 0.01em; font-weight: var(--weight-strong);
     white-space: nowrap; user-select: none;
     color: transparent;
-    background: linear-gradient(180deg, var(--wordmark-top) 15%, var(--wordmark-bottom) 92%);
+    background: linear-gradient(180deg, var(--wordmark-top) 20%, var(--wordmark-bottom) 95%);
     -webkit-background-clip: text; background-clip: text;
   }
   .site-footer__name span { display: inline-block; }
-  .site-footer__bottom { margin-top: var(--space-14); padding-top: var(--space-6); border-top: 1px solid var(--surface-line); display: flex; flex-wrap: wrap; gap: var(--space-4); justify-content: space-between; font-size: var(--text-sm); }
-  .site-footer__bottom p { color: var(--surface-muted); }
-  .site-footer__bottom ul { display: flex; flex-wrap: wrap; gap: var(--space-5); color: var(--surface-muted); }
-  .site-footer__cookie-btn { background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; }
-  .site-footer__cookie-btn:hover { color: var(--surface-fg, inherit); text-decoration: underline; }
+
   /* Phones: two columns; a third column on its own takes the full row. */
   @media (max-width: 640px) {
     .site-footer__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .site-footer__cols > :last-child:nth-child(odd) { grid-column: 1 / -1; }
   }
-  @media (min-width: 641px) {
-    .site-footer__cols { grid-template-columns: repeat(3, 1fr); }
-  }
   @media (min-width: 960px) {
-    .site-footer__top { grid-template-columns: 1fr 1.3fr; }
+    .site-footer__top { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: var(--space-16); }
+    .site-footer__bottom { grid-template-columns: 1fr auto 1fr; align-items: center; }
   }
   /* Touch screens: every footer link is at least a 44px tap target. */
   @media (pointer: coarse), (max-width: 959px) {
-    .site-footer :is(.site-footer__cols, .site-footer__services ul, .site-footer__bottom) :is(a, .site-footer__cookie-btn) { display: flex; align-items: center; min-height: 44px; padding-block: 0; }
-    .site-footer__services .site-footer__heading a { display: inline-flex; align-items: center; min-height: 44px; }
+    .site-footer :is(.site-footer__cols, .site-footer__bottom) :is(a, .site-footer__cookie-btn) { display: flex; align-items: center; min-height: 44px; padding-block: 0; }
+    .site-footer__contact a { min-height: 44px; }
   }
 </style>
