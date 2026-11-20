@@ -599,6 +599,11 @@
   }
   :is(.contact-form__field, .lead-form__field) :is(input, textarea):focus-visible { outline: 2px solid var(--color-brand); outline-offset: 1px; }
   .contact-form__error { color: var(--color-error); font-size: 0.9rem; }
+  /* The optional text message opt-in on every form with a phone number. Never pre-ticked. */
+  .sms-consent { display: grid; gap: var(--space-2); }
+  .sms-consent__label { display: grid; grid-template-columns: auto 1fr; gap: var(--space-3); align-items: start; font-size: var(--text-xs); line-height: 1.5; color: var(--color-text-muted); cursor: pointer; }
+  .sms-consent__label input { width: 1.125rem; height: 1.125rem; margin: 0.1rem 0 0; accent-color: var(--color-brand-deep); cursor: pointer; }
+  .sms-consent__label a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
   .contact-form .btn { justify-self: start; }
   .contact-form__success { padding: 1.5rem; border-radius: var(--radius-md); background: var(--color-sage-100); }
   .contact-form__success p { color: var(--color-text); font-weight: 600; }
