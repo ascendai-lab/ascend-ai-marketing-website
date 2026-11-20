@@ -6,7 +6,7 @@ interface ImportMetaEnv {
   readonly PUBLIC_SANITY_PROJECT_ID: string
   readonly PUBLIC_SANITY_DATASET?: string
   readonly PUBLIC_SANITY_PREVIEW_ORIGIN?: string
-  readonly N8N_CONTACT_WEBHOOK_URL?: string
+  readonly LEADLINE_WEBHOOK_URL?: string
   readonly PUBLIC_GHL_CALENDAR_URL?: string
 }
 

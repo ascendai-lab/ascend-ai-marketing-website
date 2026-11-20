@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="robots" content="noindex"><title>Forms</title></head>
+<body>
+  <!--
+    Netlify Forms reads this file at deploy time so it knows the "website-leads" form exists.
+    /api/contact posts a copy of every lead here, and Netlify emails it (Forms → Form notifications).
+    Keep the field names in step with the email copy in src/pages/api/contact.ts.
+  -->
+  <form name="website-leads" data-netlify="true" netlify-honeypot="bot-field" hidden>
+    <input name="bot-field">
+    <input name="name">
+    <input name="email">
+    <input name="phone">
+    <textarea name="message"></textarea>
+    <input name="source">
+    <input name="interest">
+    <input name="sms_consent">
+    <input name="page">
+  </form>
+</body>
+</html>

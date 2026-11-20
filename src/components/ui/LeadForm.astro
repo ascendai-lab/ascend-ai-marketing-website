@@ -1,6 +1,6 @@
 ---
 /**
- * A short lead form (teardown request, call request). It posts to /api/contact (→ n8n) with fetch,
+ * A short lead form (teardown request, call request). It posts to /api/contact (→ LeadLine) with fetch,
  * never a form action, then shows its thank-you line or goes to `redirect`. Each send is also
  * pushed to the dataLayer as `event`, so it can be tracked as a conversion.
  */
@@ -13,7 +13,7 @@ interface Props {
   fields: { name: FieldName; label: string; required?: boolean }[]
   button: string
   source: 'teardown-request' | 'call-request'
-  /** What the lead asked for, as the first line of the message n8n receives. */
+  /** What the lead asked for, as the first line of the message LeadLine receives. */
   subject: string
   /** The dataLayer event pushed on a successful send. */
   event: string
