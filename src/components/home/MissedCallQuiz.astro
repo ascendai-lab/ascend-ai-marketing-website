@@ -12,13 +12,81 @@ interface Props {
 }
 const { id, interest } = Astro.props
 import { links } from '@/content/home'
-import { RESULTS_PATH } from '@/content/quiz'
+import { RESULTS_PATH, QUESTIONS } from '@/content/quiz'
 import { consent, smsConsent, PRIVACY_PATH, TERMS_PATH } from '@/content/legal'
+import Icon from '@components/ui/Icon.astro'
+
+// The quiz is rendered here, on the server, so the first question is on screen with the page;
+// the script only adds the behavior. A link from another page's quiz card (?a=2) starts at question 2.
+const a = Astro.url.searchParams.get('a')
+const preset = a !== null && /^\d+$/.test(a) && Number(a) < QUESTIONS[0].a.length ? Number(a) : null
+const startStep = preset === null ? 0 : 1
+const letter = (j: number) => String.fromCharCode(65 + j)
+const fields = [
+  { name: 'first', label: 'First name', type: 'text', auto: 'given-name', required: true },
+  { name: 'shop', label: 'Shop name', type: 'text', auto: 'organization', required: true },
+  { name: 'email', label: 'Email', type: 'email', auto: 'email', required: true },
+  { name: 'mobile', label: 'Mobile (optional)', type: 'tel', auto: 'tel', required: false },
+] as const
 ---
 
-<div class="quiz surface-white" id={id} data-quiz data-book={links.book} data-results={RESULTS_PATH} data-interest={interest} data-consent={consent.text} data-privacy={PRIVACY_PATH} data-terms={TERMS_PATH} data-sms={smsConsent.text} data-sms-privacy={smsConsent.privacy} data-sms-terms={smsConsent.terms} data-sms-needs-phone={smsConsent.needsPhone}>
-  <!-- Shown until the quiz script builds the questions (and if it can't run). -->
-  <p class="quiz__fallback">Want to know what missed calls cost your shop? <a href={links.book}>Book a 15-minute call</a> and we'll walk through it with you.</p>
+<div class="quiz surface-white" id={id} data-quiz data-book={links.book} data-results={RESULTS_PATH} data-interest={interest} data-sms-needs-phone={smsConsent.needsPhone}>
+  <div class="quiz__top">
+    <p class="quiz__count" aria-live="polite">{startStep === 0 ? 'Question 1 of 5' : 'Question 2 of 5'}</p>
+    <ol class="quiz__bar" aria-hidden="true">
+      {QUESTIONS.map((_, i) => <li class={i < startStep ? 'done' : i === startStep ? 'now' : undefined} />)}
+    </ol>
+  </div>
+  {QUESTIONS.map((item, i) => (
+    <fieldset class="quiz__step" data-step={i} hidden={i !== startStep}>
+      <legend class="quiz__q">{item.q}</legend>
+      <div class="quiz__options">
+        {item.a.map((label, j) => (
+          <button type="button" class="quiz__option" data-answer={j} aria-pressed={i === 0 && preset === j ? 'true' : undefined}>
+            <span class="quiz__key">{letter(j)}</span><span>{label}</span>
+          </button>
+        ))}
+      </div>
+    </fieldset>
+  ))}
+  <form class="quiz__step quiz__form" data-step="5" hidden novalidate>
+    <p class="quiz__ready">Your results are ready.</p>
+    <p class="quiz__q">Where should we send your full report?</p>
+    <div class="quiz__fields">
+      {fields.map((f) => (
+        <label class="field">
+          <span>{f.label}</span>
+          <input
+            name={f.name}
+            type={f.type}
+            autocomplete={f.auto}
+            required={f.required}
+            id={`${id}-${f.name}`}
+            aria-describedby={`${id}-${f.name}-error`}
+            enterkeyhint={f.name === 'mobile' ? 'send' : 'next'}
+            {...(f.name === 'email' ? { autocapitalize: 'none', autocorrect: 'off', spellcheck: 'false' } : {})}
+          />
+          <span class="field__error" id={`${id}-${f.name}-error`}></span>
+        </label>
+      ))}
+    </div>
+    <div class="sms-consent">
+      <label class="sms-consent__label">
+        <input type="checkbox" name="smsConsent" value="yes" id={`${id}-sms`} aria-describedby={`${id}-sms-error`} />
+        <span>{smsConsent.text} <a href={PRIVACY_PATH}>{smsConsent.privacy}</a> · <a href={TERMS_PATH}>{smsConsent.terms}</a></span>
+      </label>
+      <span class="field__error" id={`${id}-sms-error`}></span>
+    </div>
+    <input type="text" name="website" tabindex="-1" autocomplete="off" class="sr-only" aria-hidden="true" />
+    <button type="submit" class="btn btn--primary">Show my results <Icon name="arrow" /></button>
+    <p class="quiz__form-error field__error" role="alert"></p>
+    <p class="quiz__small">You'll get your report and a few short emails from our team.</p>
+    <p class="quiz__consent">{consent.text} <a href={PRIVACY_PATH}>Privacy policy</a>.</p>
+  </form>
+  <button type="button" class="quiz__back" hidden={startStep === 0}>Back</button>
+  <noscript>
+    <p class="quiz__fallback">Want to know what missed calls cost your shop? <a href={links.book}>Book a 15-minute call</a> and we'll walk through it with you.</p>
+  </noscript>
 </div>
 
 <script>
@@ -55,14 +123,11 @@ import { consent, smsConsent, PRIVACY_PATH, TERMS_PATH } from '@/content/legal'
     { when: () => true, fix: ['Follow up on every quote.', 'A short check-in a few days later wins jobs that would go quiet.'] },
     { when: () => true, fix: ['Ask for a review after every job.', 'Reviews help homeowners pick you over the next shop.'] },
   ]
-  const ARROW = '<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>'
 
   const money = (n: number) => {
     const step = n < 1000 ? 50 : n < 10000 ? 100 : 500
     return '$' + (Math.round(n / step) * step).toLocaleString('en-US')
   }
-  const field = (id: string, name: string, label: string, type: string, auto: string, req: boolean) =>
-    `<label class="field"><span>${label}</span><input name="${name}" type="${type}" autocomplete="${auto}"${req ? ' required' : ''} id="${id}-${name}" aria-describedby="${id}-${name}-error"><span class="field__error" id="${id}-${name}-error"></span></label>`
 
   function build(root: HTMLElement) {
     const id = root.id
@@ -70,34 +135,6 @@ import { consent, smsConsent, PRIVACY_PATH, TERMS_PATH } from '@/content/legal'
     let current = 0
     const params = new URLSearchParams(window.location.search)
     const interest = (params.get('interest') || root.dataset.interest || '').replace(/[^a-z0-9-]/g, '')
-
-    let html = '<div class="quiz__top"><p class="quiz__count" aria-live="polite"></p><ol class="quiz__bar" aria-hidden="true">'
-    html += QUESTIONS.map(() => '<li></li>').join('') + '</ol></div>'
-    QUESTIONS.forEach((item, i) => {
-      html += `<fieldset class="quiz__step" data-step="${i}" hidden><legend class="quiz__q">${item.q}</legend><div class="quiz__options">`
-      item.a.forEach((label, j) => {
-        html += `<button type="button" class="quiz__option" data-answer="${j}"><span class="quiz__key">${String.fromCharCode(65 + j)}</span><span>${label}</span></button>`
-      })
-      html += '</div></fieldset>'
-    })
-    html +=
-      '<form class="quiz__step quiz__form" data-step="5" hidden novalidate>' +
-      '<p class="quiz__ready">Your results are ready.</p>' +
-      '<p class="quiz__q">Where should we send your full report?</p>' +
-      '<div class="quiz__fields">' +
-      field(id, 'first', 'First name', 'text', 'given-name', true) +
-      field(id, 'shop', 'Shop name', 'text', 'organization', true) +
-      field(id, 'email', 'Email', 'email', 'email', true) +
-      field(id, 'mobile', 'Mobile (optional)', 'tel', 'tel', false) +
-      '</div>' +
-      `<div class="sms-consent"><label class="sms-consent__label"><input type="checkbox" name="smsConsent" value="yes" id="${id}-sms" aria-describedby="${id}-sms-error"><span>${root.dataset.sms ?? ''} <a href="${root.dataset.privacy ?? '/privacy'}">${root.dataset.smsPrivacy ?? 'Privacy Policy'}</a> · <a href="${root.dataset.terms ?? '/terms'}">${root.dataset.smsTerms ?? 'Terms'}</a></span></label><span class="field__error" id="${id}-sms-error"></span></div>` +
-      '<input type="text" name="website" tabindex="-1" autocomplete="off" class="sr-only" aria-hidden="true">' +
-      `<button type="submit" class="btn btn--primary">Show my results ${ARROW}</button>` +
-      '<p class="quiz__form-error field__error" role="alert"></p>' +
-      '<p class="quiz__small">You\'ll get your report and a few short emails from our team.</p>' +
-      `<p class="quiz__consent">${root.dataset.consent ?? ''} <a href="${root.dataset.privacy ?? '/privacy'}">Privacy policy</a>.</p></form>`
-    html += '<button type="button" class="quiz__back" hidden>Back</button>'
-    root.innerHTML = html
 
     // Moving between steps: the old step fades out, then the panel eases to its new height
     // while the new step slides up into place. `after` runs once the new step is on screen.
@@ -166,17 +203,38 @@ import { consent, smsConsent, PRIVACY_PATH, TERMS_PATH } from '@/content/legal'
     })
 
     const form = root.querySelector<HTMLFormElement>('.quiz__form')!
+    // Fields are checked when the visitor leaves them (once typed in), and a message clears as soon as
+    // the value is fixed. Submitting checks everything and moves to the first problem.
+    const required = [...form.querySelectorAll<HTMLInputElement>('input[required]')]
+    const problem = (input: HTMLInputElement) => {
+      const value = input.value.trim()
+      if (!value) {
+        const label = input.closest('label')?.querySelector('span')?.textContent?.trim().toLowerCase()
+        return label ? `Enter your ${label}.` : 'Please fill this in.'
+      }
+      if (input.type === 'email' && (input.validity.typeMismatch || !/^\S+@\S+\.\S+$/.test(value))) return 'Enter a valid email, like you@yourshop.com.'
+      return ''
+    }
+    const showError = (input: HTMLInputElement, message: string) => {
+      input.setAttribute('aria-invalid', message ? 'true' : 'false')
+      const error = document.getElementById(`${input.id}-error`)
+      if (error) error.textContent = message
+    }
+    required.forEach((input) => {
+      let edited = false
+      input.addEventListener('input', () => {
+        edited = true
+        if (input.getAttribute('aria-invalid') === 'true' && !problem(input)) showError(input, '')
+      })
+      input.addEventListener('blur', () => { if (edited) showError(input, problem(input)) })
+    })
     form.addEventListener('submit', async (event) => {
       event.preventDefault()
       let ok = true
-      form.querySelectorAll<HTMLInputElement>('input[required]').forEach((input) => {
-        const empty = !input.value.trim()
-        const bad = empty || (input.type === 'email' && !/^\S+@\S+\.\S+$/.test(input.value))
-        input.setAttribute('aria-invalid', bad ? 'true' : 'false')
-        const error = document.getElementById(`${input.id}-error`)
-        const label = input.closest('label')?.querySelector('span')?.textContent?.trim().toLowerCase()
-        if (error) error.textContent = !bad ? '' : input.type === 'email' && !empty ? 'Enter a valid email, like you@yourshop.com.' : label ? `Enter your ${label}.` : 'Please fill this in.'
-        if (bad && ok) { input.focus(); ok = false }
+      required.forEach((input) => {
+        const message = problem(input)
+        showError(input, message)
+        if (message && ok) { input.focus(); ok = false }
       })
       // Ticking the text box needs a mobile number to text.
       const sms = form.querySelector<HTMLInputElement>('input[name="smsConsent"]')
@@ -231,7 +289,8 @@ import { consent, smsConsent, PRIVACY_PATH, TERMS_PATH } from '@/content/legal'
       submit.disabled = false
       // Only show results once the lead is saved, so nobody walks away thinking we have their details.
       if (!saved) {
-        formError.innerHTML = `We couldn't send that just now. Please try again in a moment, or <a href="${root.dataset.book ?? '/book'}">book a 15-minute call</a>.`
+        const link = Object.assign(document.createElement('a'), { href: root.dataset.book ?? '/book', textContent: 'book a 15-minute call' })
+        formError.replaceChildren("We couldn't send that just now. Please try again in a moment, or ", link, '.')
         submit.focus()
         return
       }
@@ -283,10 +342,6 @@ import { consent, smsConsent, PRIVACY_PATH, TERMS_PATH } from '@/content/legal'
   .quiz :global(.field__error) { font-size: var(--text-xs); font-weight: var(--weight-medium); color: var(--color-error); }
   .quiz :global(.field__error:empty) { display: none; }
   .quiz__fallback { font-size: var(--text-body-lg); }
-  /* Until the script builds the first question, the card keeps about its height, so the page doesn't jump. */
-  .quiz:has(> .quiz__fallback) { min-height: 27rem; }
-  @media (min-width: 641px) { .quiz:has(> .quiz__fallback) { min-height: 17rem; } }
-  @media (min-width: 960px) { .quiz:has(> .quiz__fallback) { min-height: 18rem; } }
   .quiz__fallback a { color: var(--color-brand); text-decoration: underline; text-underline-offset: 4px; }
   .quiz :global(.field input[aria-invalid='true']) { border-color: var(--color-error); box-shadow: 0 0 0 1px var(--color-error); }
   .quiz :global(.quiz__small) { margin-top: var(--space-3); font-size: var(--text-xs); color: var(--color-text-muted); }

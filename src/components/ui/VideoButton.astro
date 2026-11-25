@@ -26,7 +26,7 @@ const src = embed ? `${embed}${embed.includes('?') ? '&' : '?'}autoplay=1&rel=0&
     <span>{label}</span>
   </button>
 
-  <dialog class="video-modal" aria-label={title} data-video-dialog>
+  <dialog class="video-modal" aria-label={title} closedby="any" data-video-dialog>
     <div class="video-modal__inner">
       <button type="button" class="video-modal__close" data-video-close aria-label={src ? 'Close video' : 'Close'}><Icon name="x" /></button>
       {
@@ -47,53 +47,48 @@ const src = embed ? `${embed}${embed.includes('?') ? '&' : '?'}autoplay=1&rel=0&
 </div>
 
 <script>
+  // Native <dialog>: showModal() makes the page inert, traps focus, closes on Escape and returns focus.
+  // closedby="any" adds click-outside-to-close. The fade in and out is CSS (see the styles below).
+  const reduce = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const lightDismissIsNative = 'closedBy' in HTMLDialogElement.prototype
+
+  /** Plays the CSS closing fade (data-closing), then closes, so every way of closing animates the same. */
+  async function closeWithFade(dialog: HTMLDialogElement) {
+    if (!dialog.open || dialog.hasAttribute('data-closing')) return
+    if (!reduce()) {
+      dialog.setAttribute('data-closing', '')
+      const animations = dialog.getAnimations({ subtree: true })
+      if (animations.length) await Promise.race([Promise.allSettled(animations.map((a) => a.finished)), new Promise((r) => setTimeout(r, 800))])
+      if (!dialog.hasAttribute('data-closing')) return
+    }
+    dialog.close()
+    dialog.removeAttribute('data-closing')
+  }
+
   document.querySelectorAll<HTMLElement>('[data-video]').forEach((root) => {
     const dialog = root.querySelector<HTMLDialogElement>('[data-video-dialog]')
     const frame = root.querySelector<HTMLIFrameElement>('iframe[data-src]')
     if (!dialog) return
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    let closing = false
-    // Closing fades the player and the dark backdrop out together, then closes the dialog.
-    const close = () => {
-      if (closing || !dialog.open) return
-      if (reduce) { dialog.close(); return }
-      closing = true
-      // Start from wherever the opening fade is, so a quick close never jumps.
-      const opacity = getComputedStyle(dialog).opacity
-      const transform = getComputedStyle(dialog).transform
-      const backdrop = getComputedStyle(dialog, '::backdrop').opacity
-      dialog.getAnimations({ subtree: true }).forEach((a) => a.cancel())
-      dialog.classList.add('is-closing')
-      const fade = { duration: 240, easing: 'cubic-bezier(0.33, 0, 0.67, 1)', fill: 'forwards' as const }
-      try {
-        dialog.animate([{ opacity: backdrop }, { opacity: 0 }], { ...fade, pseudoElement: '::backdrop' })
-      } catch {
-        // Older browsers can't animate the backdrop; it simply goes with the dialog.
-      }
-      dialog.animate([{ opacity, transform: transform === 'none' ? 'scale(1)' : transform }, { opacity: 0, transform: 'scale(0.96)' }], fade)
-        .finished.then(() => {
-          dialog.close()
-          dialog.getAnimations({ subtree: true }).forEach((a) => a.cancel())
-          dialog.classList.remove('is-closing')
-          closing = false
-        })
-    }
-    // Escape uses the same fade (handled on keydown, so a second quick Escape can't skip it).
-    dialog.addEventListener('keydown', (event) => { if (event.key === 'Escape') { event.preventDefault(); close() } })
-    dialog.addEventListener('cancel', (event) => { event.preventDefault(); close() })
     root.querySelector('[data-video-open]')?.addEventListener('click', () => {
       if (frame?.dataset.src) frame.src = frame.dataset.src
+      dialog.removeAttribute('data-closing')
       dialog.showModal()
-      document.documentElement.classList.add('menu-open')
     })
-    root.querySelector('[data-video-close]')?.addEventListener('click', close)
-    // Clicking the dark area around the player closes it.
-    dialog.addEventListener('click', (event) => { if (event.target === dialog) close() })
-    // Closing (button, Escape or backdrop) stops the video.
-    dialog.addEventListener('close', () => {
-      if (frame) frame.src = 'about:blank'
-      document.documentElement.classList.remove('menu-open')
-    })
+    root.querySelector('[data-video-close]')?.addEventListener('click', () => closeWithFade(dialog))
+    // Escape, the back gesture and (with closedby="any") a click outside all arrive as a close request.
+    dialog.addEventListener('cancel', (event) => { event.preventDefault(); closeWithFade(dialog) })
+    // Older browsers without closedby: a press and release both outside the player close it.
+    if (!lightDismissIsNative) {
+      const outside = (e: PointerEvent) => {
+        const r = (dialog.querySelector('.video-modal__inner') ?? dialog).getBoundingClientRect()
+        return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom
+      }
+      let pressedOutside = false
+      dialog.addEventListener('pointerdown', (e) => { pressedOutside = outside(e) })
+      dialog.addEventListener('pointerup', (e) => { if (pressedOutside && outside(e)) closeWithFade(dialog) })
+    }
+    // However it closed, the video stops.
+    dialog.addEventListener('close', () => { if (frame) frame.src = 'about:blank' })
   })
 </script>
 
@@ -109,12 +104,34 @@ const src = embed ? `${embed}${embed.includes('?') ? '&' : '?'}autoplay=1&rel=0&
   .video-btn__open:hover :global(.video-btn__play .icon) { transform: none; }
 
   .video-modal { margin: auto; inset: 0; max-height: none; width: min(64rem, calc(100vw - 2 * var(--container-padding-x))); max-width: none; padding: var(--space-16) 0 0; border: 0; background: transparent; overflow: visible; }
-  .video-modal::backdrop { background: var(--color-overlay); }
-  .video-modal[open]::backdrop { animation: backdrop-in var(--dur-accordion) var(--ease-reveal); }
-  .video-modal.is-closing, .video-modal.is-closing::backdrop { animation: none; }
-  @keyframes backdrop-in { from { opacity: 0; } }
-  .video-modal[open] { animation: video-in var(--dur-accordion) var(--ease-reveal); }
-  @keyframes video-in { from { opacity: 0; transform: scale(0.96); } }
+  /* The page behind doesn't scroll: scroll gestures stop at the pop-up and its backdrop (no lock on <body>). */
+  .video-modal:modal { overscroll-behavior: contain; }
+  .video-modal::backdrop { background: var(--color-overlay); overflow: hidden; overscroll-behavior: contain; }
+
+  /* Open and close: a fade (and a slight scale, unless reduced motion), in CSS.
+     Closed state first; the open state and its @starting-style come after it. */
+  .video-modal, .video-modal::backdrop {
+    opacity: 0;
+    transition-property: opacity, transform, display, overlay;
+    transition-duration: var(--dur-accordion);
+    transition-timing-function: var(--ease-reveal);
+    transition-behavior: allow-discrete;
+  }
+  .video-modal[open]:where(:not([data-closing])), .video-modal[open]:where(:not([data-closing]))::backdrop {
+    opacity: 1;
+    @starting-style { opacity: 0; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .video-modal { transform: scale(0.96); }
+    .video-modal[open]:where(:not([data-closing])) {
+      transform: none;
+      @starting-style { transform: scale(0.96); }
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .video-modal, .video-modal::backdrop { transition-duration: 0.1s; }
+  }
+
   .video-modal__inner { position: relative; }
   .video-modal__frame { aspect-ratio: 16 / 9; border-radius: var(--radius-lg); overflow: hidden; background: var(--color-green-950); box-shadow: var(--shadow-lg); }
   .video-modal__frame iframe { width: 100%; height: 100%; border: 0; display: block; }
@@ -127,5 +144,4 @@ const src = embed ? `${embed}${embed.includes('?') ? '&' : '?'}autoplay=1&rel=0&
   .video-modal__soon { box-shadow: var(--shadow-lg); border-radius: var(--radius-lg); padding: clamp(var(--space-8), 6vw, var(--space-16)); display: grid; gap: var(--space-4); justify-items: start; }
   .video-modal__soon .btn { margin-top: var(--space-4); }
   @media (max-width: 640px) { .video-btn { flex: 1 1 100%; } .video-btn__open { width: 100%; } }
-  @media (prefers-reduced-motion: reduce) { .video-modal[open], .video-modal[open]::backdrop { animation: none; } }
 </style>

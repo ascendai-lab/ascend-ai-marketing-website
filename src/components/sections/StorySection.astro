@@ -1,4 +1,5 @@
 ---
+import { photoSrcset, HALF_SIZES } from '@/lib/images'
 /** "What it feels like": a photo with product notes floating over it, and a short story beside it. */
 import Section from '@components/ui/Section.astro'
 import Icon, { type IconName } from '@components/ui/Icon.astro'
@@ -20,7 +21,7 @@ const { heading, body, close, photo = success.photo, notes = success.notes, surf
 <Section surface={surface}>
   <div class="split">
     <figure class="media story__photo">
-      <img src={photo.src} alt={photo.alt} width="1400" height="1100" loading="lazy" />
+      <img src={photo.src} srcset={photoSrcset(photo.src)} sizes={HALF_SIZES} alt={photo.alt} width="1400" height="1100" loading="lazy" />
       <ul class="story__notes">
         {notes.map((note) => (
           <li class="float-note"><span class="icon-chip icon-chip--ui"><Icon name={note.icon} /></span><div><strong>{note.title}</strong><span>{note.text}</span></div></li>

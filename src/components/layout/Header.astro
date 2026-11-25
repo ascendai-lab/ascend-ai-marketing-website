@@ -425,16 +425,24 @@ const inServices = currentPath.startsWith('/services') || servicesByCategory.som
   /* Phones and tablets: logo, then the main action and the menu button side by side. */
   @media (max-width: 1023px) {
     .site-header__inner { gap: var(--space-3); }
-    .site-header__logo { margin-right: auto; }
+    .site-header__logo { margin-right: auto; min-width: 0; flex: 0 1 auto; }
+    .site-header__logo :global(img) { max-width: 100%; }
     .site-header__quick { white-space: nowrap; min-height: 44px; }
   }
-  @media (max-width: 400px) {
+  /* These steps are in em, so they also kick in when the phone's text size is set larger
+     in the browser. 25em is 400px at the default size. */
+  @media (max-width: 25em) {
     .site-header__logo :global(img) { width: 10.25rem; }
     .site-header__quick { padding-inline: var(--space-4); }
   }
-  @media (max-width: 370px) {
+  @media (max-width: 23.125em) {
     .site-header__inner { gap: var(--space-2); }
     .site-header__logo :global(img) { width: 9rem; }
     .site-header__quick { padding-inline: var(--space-3); }
+  }
+  /* Very large text: the quick button would push the menu button off screen, so it steps aside
+     (the same action is in the menu). */
+  @media (max-width: 21.5em) {
+    .site-header__quick { display: none; }
   }
 </style>

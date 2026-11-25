@@ -1,4 +1,5 @@
 ---
+import { photoSrcset, HALF_SIZES } from '@/lib/images'
 /**
  * The hero every inner page uses: breadcrumb, headline and the two calls to action,
  * beside a photo with product notes (or whatever the page puts in the `aside` slot: the quiz, a form).
@@ -68,7 +69,7 @@ const hasAside = tool
       <div class="svc-hero__tool"><slot name="aside" /></div>
     ) : photo && (
       <figure class="media svc-hero__photo">
-        <img src={photo.src} alt={photo.alt} width="1400" height="1600" loading="eager" fetchpriority="high" />
+        <img src={photo.src} srcset={photoSrcset(photo.src)} sizes={HALF_SIZES} alt={photo.alt} width="1400" height="1600" loading="eager" fetchpriority="high" />
         {notes.length > 0 && (
           <ul class="svc-hero__notes">
             {notes.map((n, i) => (

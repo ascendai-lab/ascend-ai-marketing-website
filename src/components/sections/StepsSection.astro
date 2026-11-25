@@ -1,4 +1,5 @@
 ---
+import { photoSrcset, HALF_SIZES } from '@/lib/images'
 /** "Three steps": numbered steps on the deepest green, beside a photo with the lead inbox floating over it. */
 import { twoDigit } from '@/lib/format'
 import { inline } from '@/lib/inline'
@@ -38,7 +39,7 @@ const photo = homeSteps.photo
     {more.map((line) => <p class="steps__more" set:html={inline(line)} />)}
     </div>
     <figure class="media steps__scene">
-      <img src={photo.src} alt={photo.alt} width="1600" height="1200" loading="lazy" />
+      <img src={photo.src} srcset={photoSrcset(photo.src)} sizes={HALF_SIZES} alt={photo.alt} width="1600" height="1200" loading="lazy" />
       <div class="ui-panel steps__inbox">
         <p class="steps__inbox-title"><Icon name="inbox" />One inbox for every lead</p>
         <ul>

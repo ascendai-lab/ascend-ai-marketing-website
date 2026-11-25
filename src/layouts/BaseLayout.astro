@@ -96,6 +96,27 @@ const businessJsonLd = settings
       areaServed: { '@type': 'Country', name: 'United States' },
     }
 const structuredData = [businessJsonLd, ...jsonLd].filter(Boolean)
+
+const speculationRules = {
+  prefetch: [
+    {
+      tag: 'site-links',
+      eagerness: 'moderate',
+      where: {
+        and: [
+          { href_matches: '/*' },
+          // Never the Studio, the API, draft-mode switches or the post-booking page (it counts as a conversion).
+          { not: { href_matches: '/studio' } },
+          { not: { href_matches: '/studio/*' } },
+          { not: { href_matches: '/api/*' } },
+          { not: { href_matches: '/book/confirmed' } },
+          { not: { href_matches: '/book/confirmed/*' } },
+          { not: { selector_matches: '[rel~=nofollow], [target=_blank], [download]' } },
+        ],
+      },
+    },
+  ],
+}
 ---
 
 <!doctype html>
@@ -144,6 +165,11 @@ const structuredData = [businessJsonLd, ...jsonLd].filter(Boolean)
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       )
     }
+    <!-- Page-to-page fades wait until the main content is parsed, so a fade never lands on a half-drawn page. -->
+    <link rel="expect" href="#main-content" blocking="render" />
+    <!-- Photo hosts: start the connection early (hero slides come from Unsplash, CMS images from Sanity). -->
+    <link rel="preconnect" href="https://images.unsplash.com" />
+    <link rel="preconnect" href="https://cdn.sanity.io" />
     <!-- Self-hosted Google Sans Flex (OFL), trimmed to the weights and roundness the site uses. -->
     <link rel="preload" href="/fonts/google-sans-flex.woff2" as="font" type="font/woff2" crossorigin />
     <meta name="theme-color" content="#11301c" />
@@ -151,6 +177,11 @@ const structuredData = [businessJsonLd, ...jsonLd].filter(Boolean)
     {tracking?.googleSiteVerification && <meta name="google-site-verification" content={stegaClean(tracking.googleSiteVerification)} />}
 
     {structuredData.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
+
+    {/* Fetch the next page as soon as the visitor hovers or starts to tap a link, so it opens instantly.
+        Prefetch only (no prerender), so no page scripts or tracking run for pages nobody opened.
+        Browsers without Speculation Rules ignore it. Off in draft mode. */}
+    {!draftMode && <script type="speculationrules" is:inline set:html={JSON.stringify(speculationRules)} />}
 
   </head>
 

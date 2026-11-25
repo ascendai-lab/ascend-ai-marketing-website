@@ -58,7 +58,7 @@ export default function ContactForm({ successMessage }: Props) {
     <form className="contact-form" onSubmit={handleSubmit} noValidate={false}>
       <div className="contact-form__row">
         <Field label="Name" name="name" type="text" autoComplete="name" required />
-        <Field label="Email" name="email" type="email" autoComplete="email" required />
+        <Field label="Email" name="email" type="email" autoComplete="email" required plain />
       </div>
       <Field label="Phone" name="phone" type="tel" autoComplete="tel" />
       <div className="sms-consent">
@@ -71,7 +71,7 @@ export default function ContactForm({ successMessage }: Props) {
       </div>
       <div className="contact-form__field">
         <label htmlFor="cf-message">Message *</label>
-        <textarea id="cf-message" name="message" required minLength={10} rows={5} />
+        <textarea id="cf-message" name="message" required minLength={10} rows={5} enterKeyHint="enter" />
       </div>
 
       {/* Honeypot: hidden from people, bots fill it in. */}
@@ -99,12 +99,15 @@ function Field({
   type,
   required,
   autoComplete,
+  plain,
 }: {
   label: string
   name: string
   type: string
   required?: boolean
   autoComplete?: string
+  /** Addresses and the like: no auto capitals, autocorrect or spellcheck. */
+  plain?: boolean
 }) {
   return (
     <div className="contact-form__field">
@@ -112,7 +115,15 @@ function Field({
         {label}
         {required && ' *'}
       </label>
-      <input id={`cf-${name}`} name={name} type={type} required={required} autoComplete={autoComplete} />
+      <input
+        id={`cf-${name}`}
+        name={name}
+        type={type}
+        required={required}
+        autoComplete={autoComplete}
+        enterKeyHint="next"
+        {...(plain ? { autoCapitalize: 'none', autoCorrect: 'off', spellCheck: false } : {})}
+      />
     </div>
   )
 }
