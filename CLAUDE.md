@@ -33,6 +33,18 @@ Tailwind utility classes map to those properties wherever possible.
 
 ---
 
+## Browser Support
+
+**Browser Support:** Use Baseline Widely available features freely. Newer features (Newly available or
+Chrome-only) are allowed only as progressive enhancements that fall back to today's working behavior,
+with feature detection where needed. No polyfills or fallback code over ~20 lines and no new dependencies
+for them. Phones (iOS Safari) matter most: never let a newer feature change how the site works there.
+
+Before building or changing UI, CSS, animation or client-side JS, check Google Chrome's Modern Web
+Guidance (`npx -y modern-web-guidance@latest search "<2–5 word query>"`, then `retrieve "<id>"`).
+
+---
+
 ## File Conventions
 
 ### Astro components (`.astro`)

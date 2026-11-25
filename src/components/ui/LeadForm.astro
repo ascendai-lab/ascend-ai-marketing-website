@@ -24,6 +24,8 @@ interface Props {
 }
 
 const { id, fields, button, source, subject, event, note, success, redirect, surface = 'white' } = Astro.props
+/** Emails and web addresses: no auto-capitals, autocorrect or spellcheck squiggles. */
+const identifier = (name: FieldName) => name === 'email' || name === 'website'
 const types: Record<FieldName, { type: 'text' | 'url' | 'email' | 'tel'; auto: string }> = {
   name: { type: 'text', auto: 'name' },
   shop: { type: 'text', auto: 'organization' },
@@ -35,10 +37,20 @@ const types: Record<FieldName, { type: 'text' | 'url' | 'email' | 'tel'; auto: s
 
 <form class:list={['lead-form', surface === 'white' && 'surface-white']} id={id} data-lead-form data-source={source} data-subject={subject} data-event={event} data-redirect={redirect} data-sms-needs-phone={smsConsent.needsPhone} novalidate>
   <div class="lead-form__fields">
-    {fields.map((f) => (
+    {fields.map((f, i) => (
       <label class="lead-form__field">
         <span>{f.label}</span>
-        <input name={f.name} type={types[f.name].type} autocomplete={types[f.name].auto} required={f.required !== false} id={`${id}-${f.name}`} aria-describedby={`${id}-${f.name}-error`} inputmode={f.name === 'website' ? 'url' : undefined} />
+        <input
+          name={f.name}
+          type={types[f.name].type}
+          autocomplete={types[f.name].auto}
+          required={f.required !== false}
+          id={`${id}-${f.name}`}
+          aria-describedby={`${id}-${f.name}-error`}
+          inputmode={f.name === 'website' ? 'url' : undefined}
+          enterkeyhint={i === fields.length - 1 ? 'send' : 'next'}
+          {...(identifier(f.name) ? { autocapitalize: 'none', autocorrect: 'off', spellcheck: 'false' } : {})}
+        />
         <span class="lead-form__error" id={`${id}-${f.name}-error`}></span>
       </label>
     ))}
@@ -63,18 +75,43 @@ const types: Record<FieldName, { type: 'text' | 'url' | 'email' | 'tel'; auto: s
 <script>
   type Layer = { push: (event: Record<string, unknown>) => void }
   document.querySelectorAll<HTMLFormElement>('[data-lead-form]').forEach((form) => {
+    // Each field is checked when the visitor leaves it (once they've typed in it), and its message clears
+    // as soon as the value is fixed. Submitting checks everything and moves to the first problem.
+    const inputs = [...form.querySelectorAll<HTMLInputElement>('.lead-form__field input')]
+    const problem = (input: HTMLInputElement) => {
+      const value = input.value.trim()
+      if (input.required && !value) {
+        const label = input.closest('label')?.querySelector('span')?.textContent?.replace(/\s*\(optional\)/i, '').trim().toLowerCase()
+        return label ? `Enter your ${label}.` : 'Please fill this in.'
+      }
+      if (!value) return ''
+      // The browser's own email check, plus a dot in the domain (it accepts "you@shop" on its own).
+      if (input.type === 'email' && (input.validity.typeMismatch || !/^\S+@\S+\.\S+$/.test(value))) return 'Enter a valid email, like you@yourshop.com.'
+      // Web addresses without https:// are fine ("yourshop.com"), so this one is our own check.
+      if (input.type === 'url' && !/\S+\.\S+/.test(value)) return 'Enter your website address, like yourshop.com.'
+      return ''
+    }
+    const show = (input: HTMLInputElement, message: string) => {
+      input.setAttribute('aria-invalid', message ? 'true' : 'false')
+      const error = document.getElementById(`${input.id}-error`)
+      if (error) error.textContent = message
+    }
+    inputs.forEach((input) => {
+      let edited = false
+      input.addEventListener('input', () => {
+        edited = true
+        if (input.getAttribute('aria-invalid') === 'true' && !problem(input)) show(input, '')
+      })
+      input.addEventListener('blur', () => { if (edited) show(input, problem(input)) })
+    })
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault()
       let ok = true
-      form.querySelectorAll<HTMLInputElement>('.lead-form__field input').forEach((input) => {
-        const value = input.value.trim()
-        const empty = input.required && !value
-        const bad = empty || (value !== '' && input.type === 'email' && !/^\S+@\S+\.\S+$/.test(value)) || (value !== '' && input.type === 'url' && !/\S+\.\S+/.test(value))
-        input.setAttribute('aria-invalid', bad ? 'true' : 'false')
-        const error = document.getElementById(`${input.id}-error`)
-        const label = input.closest('label')?.querySelector('span')?.textContent?.replace(/\s*\(optional\)/i, '').trim().toLowerCase()
-        if (error) error.textContent = !bad ? '' : empty ? (label ? `Enter your ${label}.` : 'Please fill this in.') : input.type === 'email' ? 'Enter a valid email, like you@yourshop.com.' : 'Enter your website address, like yourshop.com.'
-        if (bad && ok) { input.focus(); ok = false }
+      inputs.forEach((input) => {
+        const message = problem(input)
+        show(input, message)
+        if (message && ok) { input.focus(); ok = false }
       })
       // Ticking the text box needs a mobile number to text.
       const sms = form.querySelector<HTMLInputElement>('input[name="smsConsent"]')

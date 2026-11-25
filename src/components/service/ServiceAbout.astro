@@ -1,4 +1,5 @@
 ---
+import { photoSrcset, HALF_SIZES } from '@/lib/images'
 /** About us: who we are beside the founder photo, then past client results. */
 import Section from '@components/ui/Section.astro'
 import Btn from '@components/ui/Btn.astro'
@@ -24,7 +25,7 @@ const proof = section.blocks.filter((b) => b.type === 'result' || b.type === 'qu
       <div class="actions about__actions"><Btn href={links.book}>{hero.secondary}</Btn></div>
     </div>
     <figure class="media about__photo">
-      <img src={about.photo.src} alt={about.photo.alt} width="1200" height="1400" loading="lazy" />
+      <img src={about.photo.src} srcset={photoSrcset(about.photo.src)} sizes={HALF_SIZES} alt={about.photo.alt} width="1200" height="1400" loading="lazy" />
       <ul class="about__chips">
         {about.chips.map((chip) => (
           <li class="ui-row"><span class="icon-chip icon-chip--ui"><Icon name={chip.icon} /></span><div><strong>{chip.title}</strong><span>{chip.text}</span></div></li>

@@ -1,22 +1,30 @@
 ---
 import Icon from '@components/ui/Icon.astro'
 import { slides, inbox } from '@/content/home'
+import { photoSrcset } from '@/lib/images'
+
+// The first photo can be the largest thing on screen: it loads first. The next two are already in the
+// row, so they load now but after it; the rest wait until they come near.
+const priority = (i: number): { loading: 'eager' | 'lazy'; fetchpriority?: 'high' | 'low' } =>
+  i === 0 ? { loading: 'eager', fetchpriority: 'high' } : i < 3 ? { loading: 'eager', fetchpriority: 'low' } : { loading: 'lazy' }
+const slideSizes = '(max-width: 640px) 80vw, 26rem'
+const slideWidths = [480, 800, 1000]
 ---
 
-<div class="slider" data-slider data-autoplay="3500">
-  <ul class="slider__track" data-track aria-label="What the system does" tabindex="0">
+<div class="slider" data-slider data-autoplay="3500" role="region" aria-roledescription="carousel" aria-label="What the system does">
+  <div class="slider__track" data-track role="group" aria-label="Slides" tabindex="0">
     {
       slides.map((slide, i) => (
-        <li class:list={['slide', `slide--${slide.kind}`]} style={`--i: ${i}`}>
+        <div class:list={['slide', `slide--${slide.kind}`]} style={`--i: ${i}`} role="group" aria-roledescription="slide" aria-label={`${i + 1} of ${slides.length}`}>
           {slide.kind === 'photo' && (
             <figure class="media slide__media">
-              <img src={slide.src} alt={slide.alt} width="1000" height="800" loading={i < 3 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : 'auto'} />
+              <img src={slide.src} srcset={photoSrcset(slide.src, slideWidths)} sizes={slideSizes} alt={slide.alt} width="1000" height="800" {...priority(i)} />
               {slide.caption && <figcaption class="slide__caption">{slide.caption}</figcaption>}
             </figure>
           )}
           {slide.kind === 'booked' && (
             <figure class="media slide__media">
-              <img src={slide.src} alt={slide.alt} width="1000" height="800" loading={i < 3 ? 'eager' : 'lazy'} />
+              <img src={slide.src} srcset={photoSrcset(slide.src, slideWidths)} sizes={slideSizes} alt={slide.alt} width="1000" height="800" {...priority(i)} />
               <div class="float-note slide__note">
                 <span class="icon-chip icon-chip--ui"><Icon name="cal" /></span>
                 <div><strong>New job booked</strong><span>On your calendar by lunch</span></div>
@@ -43,12 +51,15 @@ import { slides, inbox } from '@/content/home'
               </div>
             </div>
           )}
-        </li>
+        </div>
       ))
     }
-  </ul>
+  </div>
+  {/* Says which slide is showing after the visitor moves the slider (not on every autoplay step). */}
+  <p class="sr-only" role="status" aria-live="polite" data-status></p>
   <div class="container slider__controls">
-    <button type="button" class="slider__btn" data-toggle aria-label="Pause slides" aria-pressed="false"><Icon name="pause" class="when-playing" /><Icon name="play" class="when-paused" /></button>
+    {/* The label says what pressing it does ("Pause slides" / "Play slides"), so no aria-pressed as well. */}
+    <button type="button" class="slider__btn" data-toggle aria-label="Pause slides"><Icon name="pause" class="when-playing" /><Icon name="play" class="when-paused" /></button>
     <button type="button" class="slider__btn" data-prev aria-label="Previous slide"><Icon name="chevron-left" /></button>
     <button type="button" class="slider__btn" data-next aria-label="Next slide"><Icon name="chevron-right" /></button>
   </div>
@@ -79,6 +90,8 @@ import { slides, inbox } from '@/content/home'
     // overshoot, and an extra click (or a change of direction) carries the current speed along
     // instead of restarting the motion. Snapping is paused while it glides.
     let target: number | null = null
+    /** True while the current move came from autoplay, so the status line stays quiet. */
+    let auto = false
     let raf = 0
     let x = 0
     let v = 0 // px per second, signed
@@ -106,6 +119,7 @@ import { slides, inbox } from '@/content/home'
           last = 0
           track.style.scrollSnapType = ''
           update()
+          settle()
           // A click that needs to wrap waits for the glide to land, so the track never stops between slides.
           const next = queued
           queued = 0
@@ -132,6 +146,7 @@ import { slides, inbox } from '@/content/home'
         track.animate([{ opacity: 0 }, { opacity: 1 }], fade).finished.then(() => {
           out.cancel()
           wrapping = false
+          settle()
           const next = queued
           queued = 0
           if (next) go(next)
@@ -170,12 +185,13 @@ import { slides, inbox } from '@/content/home'
     const stop = () => { window.clearInterval(timer); timer = 0 }
     const start = () => {
       stop()
-      if (!paused && !holding && visible && !document.hidden && !document.documentElement.classList.contains('menu-open')) timer = window.setInterval(() => go(1), delay)
+      // The mobile menu adds .menu-open to <html>; an open pop-up (the video) is an open <dialog>.
+      const covered = document.documentElement.classList.contains('menu-open') || document.querySelector('dialog[open]')
+      if (!paused && !holding && visible && !document.hidden && !covered) timer = window.setInterval(() => { auto = true; go(1) }, delay)
     }
     const setPaused = (value: boolean) => {
       paused = value
       slider.classList.toggle('is-paused', paused)
-      toggle?.setAttribute('aria-pressed', String(paused))
       toggle?.setAttribute('aria-label', paused ? 'Play slides' : 'Pause slides')
       start()
     }
@@ -188,19 +204,46 @@ import { slides, inbox } from '@/content/home'
     track.addEventListener('touchstart', () => hold(true), { passive: true })
     track.addEventListener('touchend', () => window.setTimeout(() => hold(false), delay), { passive: true })
     document.addEventListener('visibilitychange', start)
-    // The menu and the video pop-up add .menu-open to <html>; the slides wait behind them.
+    // The slides wait behind the mobile menu and the video pop-up.
     new MutationObserver(start).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    document.addEventListener('toggle', (event) => { if (event.target instanceof HTMLDialogElement) start() }, { capture: true })
     new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; start() }).observe(slider)
     if (!delay) toggle?.remove()
     setPaused(paused)
 
-    prev.addEventListener('click', () => { go(-1); start() })
-    next.addEventListener('click', () => { go(1); start() })
+    prev.addEventListener('click', () => { auto = false; go(-1); start() })
+    next.addEventListener('click', () => { auto = false; go(1); start() })
     track.addEventListener('scroll', update, { passive: true })
     track.addEventListener('keydown', (event) => {
-      if (event.key === 'ArrowRight') { event.preventDefault(); go(1) }
-      if (event.key === 'ArrowLeft') { event.preventDefault(); go(-1) }
+      if (event.key === 'ArrowRight') { event.preventDefault(); auto = false; go(1) }
+      if (event.key === 'ArrowLeft') { event.preventDefault(); auto = false; go(-1) }
     })
+    // A swipe or drag is the visitor's own move too.
+    track.addEventListener('pointerdown', () => { auto = false }, { passive: true })
+
+    // Once the slider comes to rest, say which slide is showing ("Slide 2 of 5"), but only when the
+    // visitor moved it and the slide changed: autoplay stays quiet so screen readers aren't interrupted.
+    const status = slider.querySelector<HTMLElement>('[data-status]')
+    const slideEls = [...track.querySelectorAll<HTMLElement>('.slide')]
+    const currentIndex = () => {
+      const left = track.scrollLeft
+      const first = slideEls[0]?.offsetLeft ?? 0
+      let best = 0
+      slideEls.forEach((el, i) => { if (Math.abs(el.offsetLeft - first - left) < Math.abs(slideEls[best].offsetLeft - first - left)) best = i })
+      return atEnd() ? slideEls.length - 1 : best
+    }
+    let settled = currentIndex()
+    const settle = () => {
+      if (target !== null || wrapping) return
+      const now = currentIndex()
+      if (now !== settled && !auto && status) status.textContent = `Slide ${now + 1} of ${slideEls.length}`
+      settled = now
+    }
+    if ('onscrollend' in window) track.addEventListener('scrollend', settle)
+    else {
+      let settleTimer = 0
+      track.addEventListener('scroll', () => { window.clearTimeout(settleTimer); settleTimer = window.setTimeout(settle, 150) }, { passive: true })
+    }
     window.addEventListener('resize', update)
     update()
   })
@@ -211,6 +254,8 @@ import { slides, inbox } from '@/content/home'
     --slide-h: 18rem;
     display: flex; gap: var(--grid-gap);
     overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+    /* A swipe that reaches the end stays on the slider: no page scroll or browser back gesture. */
+    overscroll-behavior-x: contain;
     padding-inline: max(var(--container-padding-x), calc((100vw - var(--container-max)) / 2));
     scroll-padding-inline: max(var(--container-padding-x), calc((100vw - var(--container-max)) / 2));
   }

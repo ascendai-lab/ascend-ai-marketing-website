@@ -599,6 +599,8 @@
   }
   :is(.contact-form__field, .lead-form__field) :is(input, textarea):focus-visible { outline: 2px solid var(--color-brand); outline-offset: 1px; }
   .contact-form__error { color: var(--color-error); font-size: 0.9rem; }
+  /* Native checks, marked only after the visitor has interacted with the field (or tried to send). */
+  .contact-form__field :is(input, textarea):user-invalid { border-color: var(--color-error); box-shadow: 0 0 0 1px var(--color-error); }
   /* The optional text message opt-in on every form with a phone number. Never pre-ticked. */
   .sms-consent { display: grid; gap: var(--space-2); }
   .sms-consent__label { display: grid; grid-template-columns: auto 1fr; gap: var(--space-3); align-items: start; font-size: var(--text-xs); line-height: 1.5; color: var(--color-text-muted); cursor: pointer; }
@@ -681,8 +683,36 @@
   .site-header { transition: box-shadow var(--dur-base) var(--ease-out); }
   .site-header.is-scrolled { box-shadow: 0 8px 24px rgb(0 0 0 / 0.18); }
 
+  /* Reduced motion: nothing moves, slides, scales or grows. Colour, shadow and opacity changes stay,
+     so hover and focus feedback still eases instead of snapping (motion guide: dampen movement only). */
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
-    .btn:hover, .card:hover, .card:hover .icon-chip, .media:hover img, .btn:hover .icon, .link:hover .icon { transform: none; }
+    *, *::before, *::after {
+      animation: none !important;
+      scroll-behavior: auto !important;
+      transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, opacity, box-shadow, visibility !important;
+    }
+    .btn:hover, .btn:active, .card:hover, .card:hover .icon-chip, .media:hover img, .btn:hover .icon, .link:hover .icon,
+    :is(.result, .review, .card--feature):hover, .accordion summary:hover .plus { transform: none; }
+    .accordion details[open] summary:hover .plus { transform: rotate(45deg); }
   }
+}
+
+/* ─── Page-to-page fades ───────────────────────────────────────────────────────
+   Same-site navigations cross-fade (cross-document View Transitions; other browsers just navigate).
+   The header stays put while the page under it fades. BaseLayout holds the first paint until
+   #main-content is parsed (link rel="expect"), so the fade never lands on a half-drawn page. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+}
+.site-header { view-transition-name: site-header; }
+::view-transition-group(root) { animation-duration: 220ms; }
+
+/* ─── Forced colors (Windows High Contrast) ────────────────────────────────────
+   Backgrounds and shadows are replaced there, so controls drawn only with a fill get a real border,
+   and the current page keeps a visible marker. */
+@media (forced-colors: active) {
+  :is(.btn, .slider__btn, .site-header__toggle, .video-modal__close, .svc-menu__toggle, .quiz__option, .icon-chip, .cookie-banner, .lead-form, .card) { border: 1px solid ButtonText; }
+  .site-nav__item > a[aria-current='page'], .svc-menu__toggle.is-current { outline: 2px solid Highlight; outline-offset: -2px; }
+  .bars, .bars::before, .bars::after { background: ButtonText; }
+  .site-header__toggle[aria-expanded='true'] .bars { background: transparent; }
 }

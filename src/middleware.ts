@@ -40,6 +40,48 @@ const CSP = [
   'upgrade-insecure-requests',
 ].join('; ')
 
+/**
+ * A stricter policy, sent as Report-Only for now: it blocks nothing, the browser only reports what it
+ * would have blocked to /api/csp-report. It drops 'unsafe-inline' for scripts and allows each inline
+ * script on the page by its hash instead, so an injected inline script would no longer run. Once the
+ * reports are quiet for a couple of weeks it can replace the script-src above.
+ */
+const REPORT_ENDPOINT = '/api/csp-report'
+const strictPolicy = (hashes: string[]) =>
+  CSP.replace(
+    /script-src [^;]+/,
+    `script-src 'self' ${hashes.join(' ')} 'report-sample' https://www.googletagmanager.com https://*.google-analytics.com https://connect.facebook.net`,
+  )
+    // Browsers ignore these two in a report-only policy and warn about them, so they're left out here.
+    .replace(/; frame-ancestors [^;]+/, '')
+    .replace('; upgrade-insecure-requests', '') + `; report-uri ${REPORT_ENDPOINT}; report-to csp`
+
+// Inline <script> blocks (no src). JSON-LD is data, not code, so it needs no hash.
+const INLINE_SCRIPT = /<script\b(?![^>]*\bsrc=)([^>]*)>([\s\S]*?)<\/script>/gi
+
+async function sha256(text: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))
+  return `'sha256-${btoa(String.fromCharCode(...new Uint8Array(digest)))}'`
+}
+
+/** Adds the report-only policy, with a hash for each inline script in the page. Never breaks the page. */
+async function withReportOnlyPolicy(response: Response): Promise<Response> {
+  try {
+    const html = await response.clone().text()
+    const hashes = new Set<string>()
+    for (const [, attrs, body] of html.matchAll(INLINE_SCRIPT)) {
+      if (/type\s*=\s*["']?application\/(ld\+)?json/i.test(attrs) || !body) continue
+      hashes.add(await sha256(body))
+    }
+    const headers = new Headers(response.headers)
+    headers.set('Content-Security-Policy-Report-Only', strictPolicy([...hashes]))
+    headers.set('Reporting-Endpoints', `csp="${REPORT_ENDPOINT}"`)
+    return new Response(html, { status: response.status, statusText: response.statusText, headers })
+  } catch {
+    return response
+  }
+}
+
 const skipPrefixes = ['/studio', '/api/', '/_astro/', '/_image']
 
 export const onRequest = defineMiddleware(async (context, next) => {
@@ -80,5 +122,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
     // Some responses (e.g. redirects) have immutable headers. Nothing to add there.
   }
 
-  return response
+  const isHtml = response.headers.get('content-type')?.includes('text/html')
+  return isHtml && !context.locals.draftMode && (response.status === 200 || response.status === 404) ? withReportOnlyPolicy(response) : response
 })
