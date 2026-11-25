@@ -1,0 +1,147 @@
+---
+/**
+ * A play button that opens a YouTube or Vimeo video in a pop-up player on the page.
+ * With no `url` yet, the pop-up says the video is coming and offers `fallbackHref` instead.
+ * The player only loads when opened, and stops when closed.
+ */
+import Icon from './Icon.astro'
+import { getEmbedUrl } from '@/lib/video'
+
+interface Props {
+  url?: string
+  label: string
+  title: string
+  fallbackHref: string
+  fallbackLabel: string
+}
+
+const { url, label, title, fallbackHref, fallbackLabel } = Astro.props
+const embed = getEmbedUrl(url)
+const src = embed ? `${embed}${embed.includes('?') ? '&' : '?'}autoplay=1&rel=0&playsinline=1` : ''
+---
+
+<div class="video-btn" data-video>
+  <button type="button" class="btn btn--secondary video-btn__open" data-video-open aria-haspopup="dialog">
+    <span class="video-btn__play" aria-hidden="true"><Icon name="play" fill /></span>
+    <span>{label}</span>
+  </button>
+
+  <dialog class="video-modal" aria-label={title} closedby="any" data-video-dialog>
+    <div class="video-modal__inner">
+      <button type="button" class="video-modal__close" data-video-close aria-label={src ? 'Close video' : 'Close'}><Icon name="x" /></button>
+      {
+        src ? (
+          <div class="video-modal__frame">
+            <iframe title={title} data-src={src} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy" />
+          </div>
+        ) : (
+          <div class="video-modal__soon surface-deep">
+            <p class="t-h3">Our video is coming soon.</p>
+            <p>In the meantime, we're happy to walk you through it ourselves.</p>
+            <a class="btn btn--primary" href={fallbackHref}><span>{fallbackLabel}</span><Icon name="arrow" /></a>
+          </div>
+        )
+      }
+    </div>
+  </dialog>
+</div>
+
+<script>
+  // Native <dialog>: showModal() makes the page inert, traps focus, closes on Escape and returns focus.
+  // closedby="any" adds click-outside-to-close. The fade in and out is CSS (see the styles below).
+  const reduce = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const lightDismissIsNative = 'closedBy' in HTMLDialogElement.prototype
+
+  /** Plays the CSS closing fade (data-closing), then closes, so every way of closing animates the same. */
+  async function closeWithFade(dialog: HTMLDialogElement) {
+    if (!dialog.open || dialog.hasAttribute('data-closing')) return
+    if (!reduce()) {
+      dialog.setAttribute('data-closing', '')
+      const animations = dialog.getAnimations({ subtree: true })
+      if (animations.length) await Promise.race([Promise.allSettled(animations.map((a) => a.finished)), new Promise((r) => setTimeout(r, 800))])
+      if (!dialog.hasAttribute('data-closing')) return
+    }
+    dialog.close()
+    dialog.removeAttribute('data-closing')
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-video]').forEach((root) => {
+    const dialog = root.querySelector<HTMLDialogElement>('[data-video-dialog]')
+    const frame = root.querySelector<HTMLIFrameElement>('iframe[data-src]')
+    if (!dialog) return
+    root.querySelector('[data-video-open]')?.addEventListener('click', () => {
+      if (frame?.dataset.src) frame.src = frame.dataset.src
+      dialog.removeAttribute('data-closing')
+      dialog.showModal()
+    })
+    root.querySelector('[data-video-close]')?.addEventListener('click', () => closeWithFade(dialog))
+    // Escape, the back gesture and (with closedby="any") a click outside all arrive as a close request.
+    dialog.addEventListener('cancel', (event) => { event.preventDefault(); closeWithFade(dialog) })
+    // Older browsers without closedby: a press and release both outside the player close it.
+    if (!lightDismissIsNative) {
+      const outside = (e: PointerEvent) => {
+        const r = (dialog.querySelector('.video-modal__inner') ?? dialog).getBoundingClientRect()
+        return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom
+      }
+      let pressedOutside = false
+      dialog.addEventListener('pointerdown', (e) => { pressedOutside = outside(e) })
+      dialog.addEventListener('pointerup', (e) => { if (pressedOutside && outside(e)) closeWithFade(dialog) })
+    }
+    // However it closed, the video stops.
+    dialog.addEventListener('close', () => { if (frame) frame.src = 'about:blank' })
+  })
+</script>
+
+<style>
+  .video-btn__open { padding-left: var(--space-2); }
+  .video-btn__play {
+    width: 2.25rem; height: 2.25rem; border-radius: var(--radius-full); display: grid; place-items: center;
+    background: var(--btn-bg, var(--color-brand-deep)); color: var(--btn-fg, var(--color-white));
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .video-btn__play :global(.icon) { width: 0.875rem; height: 0.875rem; margin-left: 2px; }
+  .video-btn__open:hover .video-btn__play { transform: scale(1.1); }
+  .video-btn__open:hover :global(.video-btn__play .icon) { transform: none; }
+
+  .video-modal { margin: auto; inset: 0; max-height: none; width: min(64rem, calc(100vw - 2 * var(--container-padding-x))); max-width: none; padding: var(--space-16) 0 0; border: 0; background: transparent; overflow: visible; }
+  /* The page behind doesn't scroll: scroll gestures stop at the pop-up and its backdrop (no lock on <body>). */
+  .video-modal:modal { overscroll-behavior: contain; }
+  .video-modal::backdrop { background: var(--color-overlay); overflow: hidden; overscroll-behavior: contain; }
+
+  /* Open and close: a fade (and a slight scale, unless reduced motion), in CSS.
+     Closed state first; the open state and its @starting-style come after it. */
+  .video-modal, .video-modal::backdrop {
+    opacity: 0;
+    transition-property: opacity, transform, display, overlay;
+    transition-duration: var(--dur-accordion);
+    transition-timing-function: var(--ease-reveal);
+    transition-behavior: allow-discrete;
+  }
+  .video-modal[open]:where(:not([data-closing])), .video-modal[open]:where(:not([data-closing]))::backdrop {
+    opacity: 1;
+    @starting-style { opacity: 0; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .video-modal { transform: scale(0.96); }
+    .video-modal[open]:where(:not([data-closing])) {
+      transform: none;
+      @starting-style { transform: scale(0.96); }
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .video-modal, .video-modal::backdrop { transition-duration: 0.1s; }
+  }
+
+  .video-modal__inner { position: relative; }
+  .video-modal__frame { aspect-ratio: 16 / 9; border-radius: var(--radius-lg); overflow: hidden; background: var(--color-green-950); box-shadow: var(--shadow-lg); }
+  .video-modal__frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .video-modal__close {
+    position: absolute; top: calc(var(--icon-chip) * -1 - var(--space-3)); right: 0; z-index: 1;
+    width: var(--icon-chip); height: var(--icon-chip); border: 0; border-radius: var(--radius-full);
+    display: grid; place-items: center; background: var(--color-white); color: var(--color-text); cursor: pointer;
+  }
+  .video-modal__close :global(.icon) { width: var(--icon-size); height: var(--icon-size); }
+  .video-modal__soon { box-shadow: var(--shadow-lg); border-radius: var(--radius-lg); padding: clamp(var(--space-8), 6vw, var(--space-16)); display: grid; gap: var(--space-4); justify-items: start; }
+  .video-modal__soon .btn { margin-top: var(--space-4); }
+  @media (max-width: 640px) { .video-btn { flex: 1 1 100%; } .video-btn__open { width: 100%; } }
+</style>

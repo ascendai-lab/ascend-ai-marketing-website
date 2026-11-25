@@ -1,0 +1,54 @@
+---
+/** FAQ: heading and the two calls to action on the left, an accordion on the right. Each question opens on its own, so opening one never closes another above it and the page never shifts. Adds FAQPage JSON-LD. */
+import Section from '@components/ui/Section.astro'
+import Btn from '@components/ui/Btn.astro'
+import Icon from '@components/ui/Icon.astro'
+import { links, hero } from '@/content/home'
+
+interface Props {
+  eyebrow?: string
+  heading: string
+  body?: string
+  items: { q: string; a: string }[]
+  anchorId?: string
+}
+
+const { heading, body, items, anchorId = 'faq' } = Astro.props
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: items.map((item) => ({ '@type': 'Question', name: item.q, acceptedAnswer: { '@type': 'Answer', text: item.a } })),
+}
+---
+
+<Section surface="cream" anchorId={anchorId}>
+  <div class="split split--top">
+    <div>
+      <h2 class="t-h2">{heading}</h2>
+      {body && <p class="body-lg faq__body">{body}</p>}
+      <div class="actions faq__actions">
+        <Btn href={links.quiz} icon="arrow">{hero.primary}</Btn>
+        <Btn href={links.book} variant="secondary">{hero.secondary}</Btn>
+      </div>
+    </div>
+    <div class="accordion">
+      {items.map((item, i) => (
+        <details open={i === 0}>
+          <summary>{item.q}<span class="plus"><Icon name="plus" /></span></summary>
+          <p>{item.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+  <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+</Section>
+
+<script>
+  import '@/scripts/accordion'
+</script>
+
+<style>
+  .faq__body { margin-top: var(--stack-body); }
+  .faq__actions { margin-top: var(--stack-actions); }
+</style>

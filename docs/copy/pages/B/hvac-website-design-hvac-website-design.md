@@ -9,8 +9,8 @@ It takes forever to load. The phone number is hard to find. Your services hide a
 Maybe an agency built it in their name. You got a bill and a report, not calls. It's frustrating. And now you're too busy to start over.
 A good shop should not lose a job to a voicemail, or to a slow website.
 We build HVAC websites around one goal: the call.
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
-Founder Mark Johnson has spent 20+ years building websites. He has built hundreds of them. We started Ascend AI in 2019. You reach a real team, not a ticket system.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
+Founder Mark Johnson has spent 20+ years building websites. He has built hundreds of them. We started Ascend AI Marketing in 2019. You reach a real team, not a ticket system.
 Every page we build has one job: get the call.
 Etheric Networks (past client): 45 qualified leads in 60 days. "Within just two months, we saw incredible results." Camille, Etheric Networks
 Miracle Temple C.O.G.I.C. (past client): over $750,000 given online through the giving system we built. We've been their web partner for 12+ years.

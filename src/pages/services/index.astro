@@ -1,20 +1,94 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro'
 import ServiceCard from '@components/cards/ServiceCard.astro'
+import Section from '@components/ui/Section.astro'
+import SectionHead from '@components/ui/SectionHead.astro'
+import Btn from '@components/ui/Btn.astro'
+import Icon from '@components/ui/Icon.astro'
+import QuizSection from '@components/sections/QuizSection.astro'
 import { loadQuery } from '@cms/lib/load'
+import { emptyLayout } from '@cms/lib/types'
 import { layoutQuery, servicesIndexQuery } from '@cms/queries'
+import { brand, finalCta, links, hero } from '@/content/home'
+import { categoryId, serviceHref, servicesByCategory } from '@/content/services'
+import { findPage } from '@/content/pages'
 
 const { draftMode } = Astro.locals
-const [layout, services] = await Promise.all([loadQuery(draftMode, layoutQuery), loadQuery(draftMode, servicesIndexQuery)])
+const [layout, services] = await Promise.all([
+  loadQuery(draftMode, layoutQuery).catch(() => emptyLayout),
+  loadQuery(draftMode, servicesIndexQuery).catch(() => []),
+])
+// CMS services show first; the copy pages fill in every service the CMS doesn't have yet.
+const cmsSlugs = new Set(services.map((service) => service.slug))
+const groups = servicesByCategory.map(({ look, pages }) => ({ look, pages: pages.filter((page) => !cmsSlugs.has(page.slug)) })).filter((group) => group.pages.length)
+const origin = Astro.site ?? new URL(Astro.url.origin)
+const jsonLd = [{
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: new URL('/', origin).href },
+    { '@type': 'ListItem', position: 2, name: 'Services', item: new URL('/services', origin).href },
+  ],
+}]
+const seo = { metaTitle: `HVAC Marketing Services | ${brand.name}`, metaDescription: 'Websites, lead systems, local SEO, ads, AI agents and custom software for HVAC shops. Get any service on its own, or add it to your plan.' }
 ---
 
-<BaseLayout layout={layout} title="Services">
-  <section class="section bg-muted">
+<BaseLayout layout={layout} seo={seo} jsonLd={jsonLd}>
+  <section class="svc-index-hero surface-deep">
     <div class="container">
-      <header class="section-header"><h1 class="section-heading">Our services</h1></header>
-      <div class="grid-cards" data-columns="3">
-        {services.map((service) => <ServiceCard service={service} />)}
+      <h1 class="t-display">Everything your shop needs to <em>book more jobs.</em></h1>
+      <p class="svc-index-hero__sub">{hero.body}</p>
+      <div class="actions">
+        <Btn href={links.quiz} icon="arrow">{hero.primary}</Btn>
+        <Btn href={links.book} variant="secondary">{hero.secondary}</Btn>
       </div>
     </div>
   </section>
+  {services.length > 0 && (
+    <Section surface="white">
+      <SectionHead eyebrow="Featured" heading="Our services" />
+      <div class="grid-3">{services.map((service) => <ServiceCard service={service} />)}</div>
+    </Section>
+  )}
+  {groups.map(({ look, pages }, i) => (
+    <Section surface={i % 2 ? 'white' : 'cream'} anchorId={categoryId(look.name)}>
+      <SectionHead eyebrow={`${pages.length} services`} heading={look.name} align="split">
+        <div class="svc-index__intro">
+          {findPage(look.href)?.hero.subhead && <p class="body-lg">{findPage(look.href)?.hero.subhead}</p>}
+          <Btn href={look.href} variant="link" icon="arrow">{`More on ${look.name}`}</Btn>
+        </div>
+      </SectionHead>
+      <ul class={pages.length % 3 === 0 ? 'grid-3' : 'grid-2 grid-2--fill'}>
+        {pages.map((page) => (
+          <li class="card card--feature svc-card">
+            <span class="icon-chip"><Icon name={look.icon} /></span>
+            <h3 class="t-h4"><a href={serviceHref(page.slug)} class="svc-card__link">{page.title}</a></h3>
+            <p>{page.short}</p>
+            <span class="link svc-card__more" aria-hidden="true">Learn more<Icon name="arrow" /></span>
+          </li>
+        ))}
+      </ul>
+    </Section>
+  ))}
+  <QuizSection heading={finalCta.heading} />
 </BaseLayout>
+
+<style>
+  /* The intro beside each category heading starts level with the heading. */
+  :global(.section-head--split:has(> .svc-index__intro)) { align-items: start; }
+  .svc-index__intro { display: grid; gap: var(--space-4); justify-items: start; max-width: calc(44 * var(--ch)); }
+  .svc-index-hero { padding-block: var(--space-16); }
+  .svc-index-hero .t-display { max-width: calc(18 * var(--ch)); }
+  .svc-index-hero__sub { margin: var(--stack-body) 0 var(--stack-actions); font-size: var(--text-body-lg); max-width: calc(52 * var(--ch)); color: var(--surface-body); }
+  .svc-card { position: relative; }
+  .svc-card__link::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+  .svc-card__link:focus-visible { outline: none; }
+  .svc-card:has(.svc-card__link:focus-visible) { outline: 2px solid var(--color-brand); outline-offset: 2px; }
+  .svc-card__more { margin-top: auto; padding-top: var(--space-4); color: var(--color-brand); }
+  .svc-card:hover .svc-card__more :global(.icon) { transform: translateX(3px); }
+  :global(.motion) .svc-index-hero .container > * { animation: rise var(--dur-reveal) var(--ease-reveal) both; }
+  :global(.motion) .svc-index-hero .container > :nth-child(2) { animation-delay: 80ms; }
+  :global(.motion) .svc-index-hero .container > :nth-child(3) { animation-delay: 160ms; }
+  :global(.motion) .svc-index-hero .container > :nth-child(4) { animation-delay: 240ms; }
+  @media (max-width: 959px) { .svc-card__more { display: none; } }
+</style>

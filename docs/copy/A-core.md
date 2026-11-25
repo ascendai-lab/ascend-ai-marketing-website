@@ -1,4 +1,4 @@
-# Ascend AI website copy v2: core pages (batch A)
+# Ascend AI Marketing website copy v2: core pages (batch A)
 
 Ten core pages, written to BRIEF.md and FIX-DECISIONS.md and checked against CHECKLIST.md. Each indexable page ends with its word count. Video scripts (lines that start with ">") are spoken, not on-page copy, so the count leaves them out. On the missed call quiz page, the main count covers only the copy below the quiz.
 
@@ -6,7 +6,7 @@ Ten core pages, written to BRIEF.md and FIX-DECISIONS.md and checked against CHE
 
 ## Home page (/)
 
-**SEO title:** HVAC Websites and Lead Systems | Ascend AI
+**SEO title:** HVAC Websites and Lead Systems | Ascend AI Marketing
 **SEO description:** Stop losing HVAC jobs to missed calls. We build a website and lead system that answers and follows up on every lead. Live in 72 hours. You own it.
 
 ### 1. Hero
@@ -25,7 +25,7 @@ Ten core pages, written to BRIEF.md and FIX-DECISIONS.md and checked against CHE
 
 > You run an HVAC shop. You're on a roof or under a house when the phone rings. You can't pick up.
 > That homeowner doesn't leave a message. They call the next shop on Google. And that shop gets the job.
-> I'm Mark Johnson, founder of Ascend AI. We've watched good contractors lose jobs this way. So we built the fix.
+> I'm Mark Johnson, founder of Ascend AI Marketing. We've watched good contractors lose jobs this way. So we built the fix.
 > We build you a website made for HVAC. We set up a call tracking number that forwards to the number you already have.
 > If you miss a call, the homeowner gets a text back in seconds. Every lead lands in one inbox. Follow-up goes out on its own. After the job, your customer gets a review request.
 > It goes live 72 hours after we have everything we need. And you own all of it. The site, the domain, the Google profile. Not us.
@@ -58,7 +58,7 @@ It's frustrating. You know your work is good. But you can't be on a roof and at 
 
 We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
 
-Our founder, Mark Johnson, has built websites for more than 20 years. He has built hundreds of them. Ascend AI started in 2019.
+Our founder, Mark Johnson, has built websites for more than 20 years. He has built hundreds of them. Ascend AI Marketing started in 2019.
 
 When you reach out, you get real people. Not a ticket system. Not a call center.
 
@@ -198,7 +198,7 @@ It takes 60 seconds. You'll get a dollar range, a call handling score and 3 fixe
 
 ## HVAC lead system offer page (/hvac-lead-system)
 
-**SEO title:** HVAC Lead System: Website, Text Back, Reviews | Ascend AI
+**SEO title:** HVAC Lead System: Website, Text Back, Reviews | Ascend AI Marketing
 **SEO description:** A website and lead system for HVAC shops. Call tracking, missed call text back, follow-up and reviews. Live in 72 hours. You own all of it.
 
 ### 1. Hero
@@ -233,9 +233,9 @@ It wears on you. You know the work is good. Still, money slips away every week.
 
 **Heading:** We built this for shops that are too busy to answer.
 
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
 
-Our founder, Mark Johnson, has more than 20 years of building websites. He has built hundreds of them. Ascend AI started in 2019. You work with real people you can reach, not a ticket system.
+Our founder, Mark Johnson, has more than 20 years of building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. You work with real people you can reach, not a ticket system.
 
 **Proof strip:** Etheric Networks (past client): local SEO and a custom website. 45 qualified leads in 60 days. "Within just two months, we saw incredible results." Camille, Etheric Networks
 
@@ -298,9 +298,9 @@ We'll walk you through your options on a 15-minute call.
 
 **Button:** Take the 60-second quiz
 
-### 7. Why Ascend AI
+### 7. Why Ascend AI Marketing
 
-**Heading:** Why work with Ascend AI.
+**Heading:** Why work with Ascend AI Marketing.
 
 - **Speed.** Live in 72 hours, not 72 days.
 - **Fast replies.** Every missed call gets a text back in seconds.
@@ -455,9 +455,9 @@ It takes about 60 seconds. The results page shows your number and an offer to bo
 
 **Heading:** Built by a founder who has built hundreds of websites.
 
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
 
-Our founder, Mark Johnson, has more than 20 years of building websites. He has built hundreds of them. Ascend AI started in 2019.
+Our founder, Mark Johnson, has more than 20 years of building websites. He has built hundreds of them. Ascend AI Marketing started in 2019.
 
 We serve HVAC shops across the U.S. You reach real people, not a ticket system.
 
@@ -543,11 +543,11 @@ Not indexed. No word minimum.
 
 **Video from Mark (about 60 seconds):**
 
-> Hey, it's Mark Johnson, founder of Ascend AI. You just saw your numbers.
+> Hey, it's Mark Johnson, founder of Ascend AI Marketing. You just saw your numbers.
 > Here's the thing. You don't need more leads first. You need to stop losing the ones you already get.
 > Book 15 minutes with our team. We'll show you where the leaks are and how to get those jobs back.
 
-**Empathy line under the video:** We've watched good contractors lose jobs to slow callbacks. That's why Ascend AI exists.
+**Empathy line under the video:** We've watched good contractors lose jobs to slow callbacks. That's why Ascend AI Marketing exists.
 
 **Authority line:** Mark Johnson has built websites for more than 20 years. He has built hundreds of them.
 
@@ -572,14 +572,14 @@ Not indexed. No word minimum.
 
 ## About page (/about)
 
-**SEO title:** About Ascend AI | HVAC Websites and Lead Systems
-**SEO description:** Ascend AI builds websites and lead systems for HVAC shops across the U.S. Led by Mark Johnson, with 20+ years and hundreds of websites built.
+**SEO title:** About Ascend AI Marketing | HVAC Websites and Lead Systems
+**SEO description:** Ascend AI Marketing builds websites and lead systems for HVAC shops across the U.S. Led by Mark Johnson, with 20+ years and hundreds of websites built.
 
 ### 1. Hero
 
 **Headline:** You run the jobs. We help you catch every call.
 
-**Subhead:** Ascend AI builds HVAC websites and lead systems that answer every lead and follow up for you. You own all of it.
+**Subhead:** Ascend AI Marketing builds HVAC websites and lead systems that answer every lead and follow up for you. You own all of it.
 
 **Main button:** Take the 60-second quiz
 
@@ -599,11 +599,11 @@ That's a hard spot. You're busy. An agency let you down before. And you're not s
 
 **Bold line:** A good shop should not lose a job to a voicemail.
 
-### 3. Why Ascend AI exists
+### 3. Why Ascend AI Marketing exists
 
 **Heading:** We've seen it too many times.
 
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
 
 So we built a different way to work. Fast setup. One simple price. Real people who answer.
 
@@ -611,15 +611,15 @@ And you own everything. That means the website, the domain, the Google profile, 
 
 ### 4. Meet our founder
 
-**Heading:** Mark Johnson, founder of Ascend AI.
+**Heading:** Mark Johnson, founder of Ascend AI Marketing.
 
 **Mark's story:** "I built my first website over 20 years ago. I've built hundreds since. When AI tools arrived in 2022, I jumped in early. Today I use AI every day to build sites, apps and marketing systems faster than a traditional agency can."
 
-Mark has an associate degree in Business Management. He also earned a bachelor's in Marketing from Wilmington University. He started Ascend AI in 2019.
+Mark has an associate degree in Business Management. He also earned a bachelor's in Marketing from Wilmington University. He started Ascend AI Marketing in 2019.
 
 Today, Mark leads a real team you can reach. When you have a question, you get a straight answer.
 
-**Founder quote:** "Some of my clients have been with me for over a decade. I'd rather earn your trust for years than make a quick sale." Mark Johnson, founder of Ascend AI
+**Founder quote:** "Some of my clients have been with me for over a decade. I'd rather earn your trust for years than make a quick sale." Mark Johnson, founder of Ascend AI Marketing
 
 **Giving back:** Mark also runs The N Johnson Foundation, a nonprofit that helps children in Belize. "Giving back keeps me grounded," he says.
 
@@ -682,8 +682,8 @@ If it isn't you, the next shop gets the job, the review and the customer for lif
 
 ### 10. FAQ
 
-**Who is behind Ascend AI?**
-Mark Johnson started Ascend AI in 2019. He has built websites for more than 20 years and leads the team today.
+**Who is behind Ascend AI Marketing?**
+Mark Johnson started Ascend AI Marketing in 2019. He has built websites for more than 20 years and leads the team today.
 
 **Do you work with shops in every state?**
 Yes. We build for HVAC shops in any state.
@@ -716,8 +716,8 @@ One simple monthly plan covers your website and lead system. See the full price 
 
 ## Our work (/work)
 
-**SEO title:** Our Work: Results From Past Clients | Ascend AI
-**SEO description:** Real results from past Ascend AI clients: $750,000+ given online, $100,000+ in revenue and 45 qualified leads in 60 days.
+**SEO title:** Our Work: Results From Past Clients | Ascend AI Marketing
+**SEO description:** Real results from past Ascend AI Marketing clients: $750,000+ given online, $100,000+ in revenue and 45 qualified leads in 60 days.
 
 ### 1. Hero
 
@@ -803,9 +803,9 @@ Every number is real. Each card shows what we did and what it brought in.
 
 **Heading:** Hundreds of websites. One goal: get the call.
 
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
 
-Our founder, Mark Johnson, has more than 20 years of building websites. He has built hundreds of them. Ascend AI started in 2019. Every site we build has one job: turn visitors into calls and booked work.
+Our founder, Mark Johnson, has more than 20 years of building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. Every site we build has one job: turn visitors into calls and booked work.
 
 ### 6. How you'll see your own results
 
@@ -849,7 +849,7 @@ Past clients in other fields, like a church, an internet provider and a fence an
 **Are these real clients?**
 Yes. Every card is a real past client with real numbers.
 
-**Why should I trust Ascend AI?**
+**Why should I trust Ascend AI Marketing?**
 Our founder has built websites for more than 20 years and has built hundreds of them. And you own your website, domain, Google profile, ad accounts and contact list.
 
 **How will I know if my system is working?**
@@ -881,8 +881,8 @@ Template only. Index each case study once it's filled in. Each finished case stu
 
 **Main keyword:** [Main keyword. Put it in the headline and in at least one **Heading:** field.]
 
-**SEO title:** [Client name]: [Main result] | Ascend AI
-**SEO description:** How [client name] got [main result] in [time frame] with a new website and lead system from Ascend AI.
+**SEO title:** [Client name]: [Main result] | Ascend AI Marketing
+**SEO description:** How [client name] got [main result] in [time frame] with a new website and lead system from Ascend AI Marketing.
 
 ### 1. Hero
 
@@ -918,7 +918,7 @@ Template only. Index each case study once it's filled in. Each finished case stu
 
 ### 5. Why they called us
 
-**Heading:** Why [owner first name] called Ascend AI.
+**Heading:** Why [owner first name] called Ascend AI Marketing.
 
 **Guide line:** [One line of empathy and one line of authority: 20+ years, hundreds of sites, founded 2019, real people.]
 
@@ -966,7 +966,7 @@ Template only. Index each case study once it's filled in. Each finished case stu
 
 ## Free video teardown (/teardown)
 
-**SEO title:** Free HVAC Website Teardown Video | Ascend AI
+**SEO title:** Free HVAC Website Teardown Video | Ascend AI Marketing
 **SEO description:** Get a free video teardown of your HVAC website. See where it loses calls and the 3 fixes to make first. We send it as soon as it's ready.
 
 ### 1. Hero
@@ -1020,9 +1020,9 @@ That's it. No call needed. No sales pitch in the video.
 
 **Heading:** Led by a founder who has built hundreds of websites.
 
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
 
-Our founder, Mark Johnson, has more than 20 years of building websites. He has built hundreds of them. Ascend AI started in 2019. Mark records each teardown himself. He knows what makes a homeowner call, and what makes them leave.
+Our founder, Mark Johnson, has more than 20 years of building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. Mark records each teardown himself. He knows what makes a homeowner call, and what makes them leave.
 
 ### 6. How it works
 
@@ -1087,8 +1087,8 @@ Yes. It's yours to share with anyone who works on your site.
 
 ## Book a call (/book)
 
-**SEO title:** Book a 15-Minute Call | Ascend AI
-**SEO description:** Book a free 15-minute call with Ascend AI. See where your HVAC shop loses calls and leads, and get a clear plan to fix it. No pressure.
+**SEO title:** Book a 15-Minute Call | Ascend AI Marketing
+**SEO description:** Book a free 15-minute call with Ascend AI Marketing. See where your HVAC shop loses calls and leads, and get a clear plan to fix it. No pressure.
 
 ### 1. Hero
 
@@ -1138,9 +1138,9 @@ That's why this call is 15 minutes. Short, clear and useful.
 
 **Heading:** Real people who answer.
 
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
 
-Our founder, Mark Johnson, has more than 20 years of building websites. He has built hundreds of them. Ascend AI started in 2019. You'll talk to a real person, not a call center.
+Our founder, Mark Johnson, has more than 20 years of building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. You'll talk to a real person, not a call center.
 
 ### 6. How it works
 

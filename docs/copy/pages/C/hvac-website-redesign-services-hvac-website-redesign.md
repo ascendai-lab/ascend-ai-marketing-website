@@ -10,8 +10,8 @@ Homeowners with a broken AC in July won't wait. They go back to Google and call 
 It's frustrating. You don't love sending people to your own website.
 A good shop should not lose a job to a voicemail.
 We know what makes an old site work again.
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
-Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI started in 2019. We keep what works, cut what doesn't and rebuild the rest around more calls.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
+Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. We keep what works, cut what doesn't and rebuild the rest around more calls.
 Etheric Networks (past client) got 45 qualified leads in 60 days.
 "Within just two months, we saw incredible results." Camille, Etheric Networks
 Miracle Temple C.O.G.I.C. (past client, church website): over $750,000 given online through the giving system we built. We've been their web partner for 12+ years, and we still are.

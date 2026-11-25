@@ -1,0 +1,40 @@
+---
+/** The three-step plan as a small card. A step that ends in "(Done.)" shows as done. */
+import Icon from './Icon.astro'
+
+interface Props {
+  heading?: string
+  steps: string[]
+  after?: string
+}
+
+const { heading, steps, after } = Astro.props
+---
+
+<div class="card plan-box">
+  {heading && <p class="t-h4 plan-box__h">{heading}</p>}
+  <ol>
+    {steps.map((step, i) => {
+      const done = /\(Done\.\)$/.test(step)
+      return (
+        <li class:list={[done && 'is-done']}>
+          <span class="plan-box__n">{done ? <Icon name="check" /> : i + 1}</span>
+          <span>{step.replace(/\s*\(Done\.\)$/, '')}{done && <em> Done.</em>}</span>
+        </li>
+      )
+    })}
+  </ol>
+  {after && <p class="plan-box__after">{after}</p>}
+</div>
+
+<style>
+  .plan-box { display: grid; gap: var(--space-4); }
+  .plan-box ol { display: grid; gap: var(--space-3); }
+  .plan-box li { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-body); color: var(--surface-fg); }
+  .plan-box__n { flex: none; width: 1.75rem; height: 1.75rem; border-radius: var(--radius-full); display: grid; place-items: center; font-size: var(--text-xs); font-weight: var(--weight-strong); background: var(--color-bg); color: var(--color-green-900); }
+  .plan-box__n :global(.icon) { width: 0.875rem; height: 0.875rem; }
+  .plan-box li.is-done .plan-box__n { background: var(--color-brand-deep); color: var(--color-white); }
+  .plan-box li.is-done > span:last-child { color: var(--surface-muted); }
+  .plan-box em { font-style: normal; font-size: var(--text-sm); color: var(--color-brand); font-weight: var(--weight-medium); }
+  .plan-box__after { font-size: var(--text-sm); color: var(--surface-muted); }
+</style>

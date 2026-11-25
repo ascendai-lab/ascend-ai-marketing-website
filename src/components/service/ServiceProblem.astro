@@ -1,0 +1,42 @@
+---
+/** The problem: the heading and a phone full of missed calls on the left, the story on the right. The last line lands as the turn. */
+import Section from '@components/ui/Section.astro'
+import MissedCallsPanel from '@components/ui/MissedCallsPanel.astro'
+import type { ServiceSectionCopy } from '@/content/services'
+
+interface Props {
+  section: ServiceSectionCopy
+}
+
+const { section } = Astro.props
+const paragraphs = section.blocks.flatMap((b) => (b.type === 'p' ? [b.text] : []))
+// The copy's "Bold line" is the turn; without one, the last of several paragraphs is.
+const boldBlock = section.blocks.find((b) => b.type === 'bold')
+const bold = boldBlock?.type === 'bold' ? boldBlock.text : undefined
+const close = bold ?? (paragraphs.length > 1 ? paragraphs.at(-1) : undefined)
+const body = close && !bold ? paragraphs.slice(0, -1) : paragraphs
+---
+
+<Section surface="cream">
+  <div class="columns">
+    <div class="problem__aside">
+      <div data-reveal>
+        <h2 class="t-h2">{section.heading}</h2>
+      </div>
+    </div>
+    <div class="problem__body">
+      {body.map((p) => <p class="body-lg">{p}</p>)}
+      {close && <p class="lead strong problem__close">{close}</p>}
+      <div class="problem__panel"><MissedCallsPanel /></div>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .problem__body { display: grid; gap: var(--space-4); }
+  .problem__body .body-lg + .body-lg { margin-top: 0; }
+  .problem__close { margin-top: var(--space-4); font-weight: var(--weight-medium); max-width: calc(40 * var(--ch)); text-wrap: balance; }
+  .problem__aside { display: grid; gap: var(--space-10); }
+  .problem__panel { margin-top: var(--space-6); }
+  .problem__panel :global(.missed) { justify-self: stretch; max-width: none; }
+</style>

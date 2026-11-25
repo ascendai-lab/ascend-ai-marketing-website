@@ -1,0 +1,38 @@
+---
+/**
+ * How visitors opt in to text messages (for the A2P 10DLC campaign review). Mark's wording, used as
+ * written. Public, but left out of the menus and the sitemap. The screenshot is the live teardown
+ * form with the optional, unchecked consent box.
+ */
+import LegalPage from '@components/page/LegalPage.astro'
+import { PRIVACY_PATH, TERMS_PATH, CONTACT_EMAIL, smsConsent } from '@/content/legal'
+
+const page = { title: 'How we get permission to text you', updated: '', intro: '', sections: [] }
+---
+
+<LegalPage page={page} path="/sms-opt-in" description="How Ascend AI Marketing gets permission before sending text messages, and how to stop them.">
+  <section class="sms-optin">
+    <p>Ascend AI Marketing only texts people who ask us to.</p>
+    <p>When you fill out our free video teardown, missed call quiz or book-a-call form, you can add your mobile number. Below that field is an optional box. It is unchecked to start. If you check it, you agree to this:</p>
+    <blockquote>{smsConsent.text}</blockquote>
+    <p>Texting is optional. You can send any of our forms without checking the box, and we will only reach you by email or phone.</p>
+    <p>You can also opt in by texting START to <a href="sms:+18567464121">(856) 746-4121</a>.</p>
+    <p><strong>What we text:</strong> replies to your questions, appointment confirmations and reminders, and account updates. No promotional texts.</p>
+    <p><strong>How to stop:</strong> reply STOP to any message. Reply HELP for help, or email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+    <p>We never share your mobile number or consent with third parties for marketing.</p>
+    <figure>
+      <img src="/images/sms/sms-opt-in-teardown-form.jpg" width="616" height="664" loading="lazy" alt="Teardown form showing the optional, unchecked text message consent box." />
+    </figure>
+    <p><a href={PRIVACY_PATH}>Privacy Policy</a> · <a href={TERMS_PATH}>Terms</a></p>
+  </section>
+</LegalPage>
+
+<style>
+  .sms-optin { display: grid; gap: var(--space-4); }
+  .sms-optin p, .sms-optin blockquote { font-size: var(--text-body-lg); line-height: 1.65; color: var(--surface-body); }
+  .sms-optin strong { color: var(--surface-fg); font-weight: var(--weight-strong); }
+  .sms-optin blockquote { padding: var(--space-4) var(--space-5); border-radius: var(--radius-md); background: var(--color-surface-muted); font-style: italic; }
+  .sms-optin a { text-decoration: underline; text-underline-offset: 2px; }
+  .sms-optin figure { margin-block: var(--space-4); }
+  .sms-optin img { display: block; width: 100%; max-width: 38.5rem; height: auto; border-radius: var(--radius-lg); }
+</style>

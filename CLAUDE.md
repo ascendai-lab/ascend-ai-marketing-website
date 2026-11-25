@@ -15,7 +15,7 @@ Read this before touching any file.
 | CMS | Sanity v6 | Studio embedded at `/studio` (can also be deployed with `npm run sanity:deploy`) |
 | Visual Editing | Sanity Presentation Tool + Stega | Requires SSR — do NOT switch to static output |
 | Hosting | Netlify | SSR via Netlify adapter. NOT Cloudflare Pages |
-| Forms | Custom API route → n8n | See `src/pages/api/contact.ts` |
+| Forms | Custom API route → LeadLine (GHL) webhook | See `src/pages/api/contact.ts` |
 | Language | TypeScript strict | No `any` types. Use Zod for runtime validation |
 
 ---
@@ -30,6 +30,18 @@ The DESIGN.md file in `.stitch/DESIGN.md` is the source of truth for ALL visual 
 
 CSS custom properties are defined in `src/styles/global.css`.
 Tailwind utility classes map to those properties wherever possible.
+
+---
+
+## Browser Support
+
+**Browser Support:** Use Baseline Widely available features freely. Newer features (Newly available or
+Chrome-only) are allowed only as progressive enhancements that fall back to today's working behavior,
+with feature detection where needed. No polyfills or fallback code over ~20 lines and no new dependencies
+for them. Phones (iOS Safari) matter most: never let a newer feature change how the site works there.
+
+Before building or changing UI, CSS, animation or client-side JS, check Google Chrome's Modern Web
+Guidance (`npx -y modern-web-guidance@latest search "<2–5 word query>"`, then `retrieve "<id>"`).
 
 ---
 
@@ -97,28 +109,37 @@ All env vars are documented in `.env.example`.
 | `PUBLIC_SANITY_DATASET` | astro.config.mjs, sanity.config.ts |
 | `SANITY_STUDIO_URL` | astro.config.mjs (stega) — optional, defaults to `/studio` |
 | `SANITY_API_READ_TOKEN` | src/sanity/lib/load.ts, api/draft-mode (server only) |
-| `N8N_CONTACT_WEBHOOK_URL` | src/pages/api/contact.ts |
+| `LEADLINE_WEBHOOK_URL` | src/pages/api/contact.ts |
 | `SITE_URL` | astro.config.mjs |
+| `PUBLIC_GHL_CALENDAR_URL` | Booking calendar embed (/book, quiz results). Optional: without it a call request form shows |
 
 ---
 
-## Forms → n8n
+## Forms → LeadLine (GoHighLevel)
 
-Contact form submissions go to `POST /api/contact`.
-That endpoint validates with Zod, then POSTs to `N8N_CONTACT_WEBHOOK_URL`.
-n8n handles routing to the client's CRM.
+Every form submission goes to `POST /api/contact`.
+That endpoint validates with Zod, then POSTs to `LEADLINE_WEBHOOK_URL`, the URL of an
+"Inbound Webhook" trigger on a LeadLine (GHL) workflow. The workflow creates or updates the contact.
+There is no n8n in this setup.
 
-The payload sent to n8n:
+Each lead is also posted to the `website-leads` Netlify form (declared in `public/__forms.html`),
+so Netlify emails a copy to the addresses under Forms → Form notifications. That copy is best effort.
+
+The payload sent to LeadLine (flat keys, easy to map in the workflow):
 ```json
 {
-  "name": "string",
+  "first_name": "string",
+  "last_name": "string",
+  "full_name": "string",
   "email": "string",
-  "phone": "string (optional)",
+  "phone": "string (may be empty)",
   "message": "string",
-  "source": "website-contact-form",
-  "timestamp": "ISO 8601",
-  "siteUrl": "string",
-  "page": "string (path the form was sent from)"
+  "source": "website-contact-form | missed-call-quiz | teardown-request | call-request",
+  "tags": "comma separated, e.g. website-lead,missed-call-quiz,interest-google-ads",
+  "sms_consent": "yes | no",
+  "page": "string",
+  "site_url": "string",
+  "timestamp": "ISO 8601"
 }
 ```
 

@@ -1,0 +1,238 @@
+---
+/**
+ * Draws a service section's content blocks in the Evergreen style:
+ *  - plain paragraphs as body copy ("You own…" becomes the ownership line)
+ *  - paragraphs or bullets that start with a bold phrase as cards (numbered when `numbered`)
+ *  - plain bullets as a tick list in a card
+ *  - a price note as a dark callout with the call button
+ *  - past client results and quotes as proof cards
+ *  - a list of services as link cards, a bold line as the turn, buttons and the "See pricing" line
+ *  - labelled lines ("Terms in plain words: …") as titled cards; a short label introduces the list after it
+ */
+import Btn from '@components/ui/Btn.astro'
+import Icon from '@components/ui/Icon.astro'
+import OwnNote from '@components/ui/OwnNote.astro'
+import { twoDigit } from '@/lib/format'
+import { inline } from '@/lib/inline'
+import { links, hero } from '@/content/home'
+import type { Block, Inline } from '@/content/services'
+
+interface Props {
+  blocks: Block[]
+  numbered?: boolean
+}
+
+const { blocks, numbered = false } = Astro.props
+
+type Group =
+  | { kind: 'prose'; items: string[] }
+  | { kind: 'bold'; text: string }
+  | { kind: 'label'; text: string }
+  | { kind: 'links'; items: { title: string; href?: string; text: string }[] }
+  | { kind: 'cta'; text: string; href: string; withBook?: boolean }
+  | { kind: 'pricing'; text: string; link: { text: string; href: string } }
+  | { kind: 'note'; text: string }
+  | { kind: 'points'; items: Inline[] }
+  | { kind: 'ticks'; items: string[]; plain?: boolean }
+  | { kind: 'own'; text: string }
+  | { kind: 'price'; text: string }
+  | { kind: 'proof'; items: { text: string; quote?: { text: string; who: string } }[] }
+
+const groups: Group[] = []
+const push = (group: Group) => {
+  const last = groups.at(-1)
+  if (last && last.kind === group.kind && 'items' in last && 'items' in group) (last.items as unknown[]).push(...group.items)
+  // A copy, so merging never changes the page's copy data (it's shared by every request).
+  else groups.push('items' in group ? ({ ...group, items: [...group.items] } as Group) : group)
+}
+// A bold-led paragraph is a card only when it sits with others like it; a lone one stays in the prose with its lead in bold.
+// Only a lead that ends in ":" or "." is a title. "**Answers calls,** so homeowners…" is one sentence, so it stays together.
+const titled = (lead?: string) => !!lead && /[:.]$/.test(lead)
+// A run of bold-led paragraphs becomes cards only when it has two or more and every lead is a title.
+// Otherwise the whole run stays as prose, so a sequence never breaks halfway or restarts its numbers.
+const isLed = (b?: Block) => (b?.type === 'p' && !!b.lead) || (b?.type === 'field' && !SINGLE.test(b.name))
+/** Labelled lines that stand alone as a note rather than a card. */
+const SINGLE = /^(limited-time line|honest line|agreement line|tip line|under the calendar)$/i
+const quizLike = (text: string) => /60-second quiz/i.test(text)
+const runOf = (i: number) => {
+  let start = i
+  let end = i
+  while (isLed(blocks[start - 1])) start--
+  while (isLed(blocks[end + 1])) end++
+  return blocks.slice(start, end + 1)
+}
+const leadRun = (i: number) => {
+  const run = runOf(i)
+  return run.length > 1 && run.every((b) => b.type === 'field' || (b.type === 'p' && titled(b.lead)))
+}
+/** An item that ends with ":" introduces the items after it: they sit under it as a sub-list. */
+const nest = (items: string[]) => {
+  const out: { text: string; children: string[] }[] = []
+  let parent: { text: string; children: string[] } | null = null
+  for (const text of items) {
+    if (parent) parent.children.push(text)
+    else out.push({ text, children: [] })
+    if (!parent && /:\s*$/.test(text)) parent = out[out.length - 1]
+  }
+  return out
+}
+for (const [i, block] of blocks.entries()) {
+  if (block.type === 'p') {
+    if (block.lead && !leadRun(i)) push({ kind: 'prose', items: [`**${block.lead}** ${block.text}`] })
+    else if (block.lead) push({ kind: 'points', items: [{ lead: block.lead, text: block.text }] })
+    else if (/^You own /.test(block.text)) groups.push({ kind: 'own', text: block.text })
+    else push({ kind: 'prose', items: [block.text] })
+  } else if (block.type === 'ul' || block.type === 'ol') {
+    if (block.items.every((item) => titled(item.lead))) push({ kind: 'points', items: block.items })
+    else {
+      // A list under "Not included" gets plain bullets, not check marks that read as "included".
+      const last = groups.at(-1)
+      const plain = last?.kind === 'label' && /not included/i.test(last.text)
+      push({ kind: 'ticks', items: block.items.map((item) => (item.lead ? `**${item.lead}** ${item.text}` : item.text)), plain })
+    }
+  } else if (block.type === 'field') {
+    if (SINGLE.test(block.name)) groups.push({ kind: 'note', text: block.text })
+    else if (leadRun(i)) push({ kind: 'points', items: [{ lead: `${block.name}.`, text: block.text }] })
+    else push({ kind: 'prose', items: [`**${block.name}:** ${block.text}`] })
+  } else if (block.type === 'bold') groups.push({ kind: 'bold', text: block.text })
+  else if (block.type === 'label') groups.push({ kind: 'label', text: block.text })
+  else if (block.type === 'links') push({ kind: 'links', items: block.items })
+  else if (block.type === 'cta') {
+    // A quiz button right after a line offering the call gets the call button beside it, so both promises have a way in.
+    const last = groups.at(-1)
+    const offersCall = last?.kind === 'prose' && last.items.some((text) => /minute call/i.test(text))
+    groups.push({ kind: 'cta', text: block.text, href: block.href || (quizLike(block.text) ? links.quiz : links.book), withBook: offersCall && quizLike(block.text) })
+  }
+  else if (block.type === 'pricing') groups.push({ kind: 'pricing', text: block.text, link: block.link })
+  else if (block.type === 'price') groups.push({ kind: 'price', text: block.text })
+  else if (block.type === 'result') push({ kind: 'proof', items: [{ text: block.text }] })
+  else if (block.type === 'quote') {
+    const last = groups.at(-1)
+    if (last?.kind === 'proof') last.items[last.items.length - 1].quote = { text: block.text, who: block.who }
+  }
+}
+---
+
+<div class="blocks">
+  {groups.map((group) => {
+    if (group.kind === 'prose') return <div class="blocks__prose">{group.items.map((text) => <p class="body-lg" set:html={inline(text)} />)}</div>
+    if (group.kind === 'own') return <OwnNote text={group.text} />
+    if (group.kind === 'bold') return <p class="lead strong blocks__bold" set:html={inline(group.text)} />
+    if (group.kind === 'note') return <p class="card surface-deep blocks__note" set:html={inline(group.text)} />
+    if (group.kind === 'label') return <h3 class="t-h4 blocks__label">{group.text.replace(/:$/, '')}</h3>
+    if (group.kind === 'cta') return <div class="actions"><Btn href={group.href} icon="arrow" variant={quizLike(group.text) ? 'primary' : 'secondary'}>{group.text}</Btn>{group.withBook && <Btn href={links.book} variant="secondary">{hero.secondary}</Btn>}</div>
+    if (group.kind === 'pricing')
+      return <p class="blocks__pricing">{group.text} <a class="link" href={group.link.href || links.plan}>{group.link.text}</a></p>
+    if (group.kind === 'links')
+      return (
+        <ul class:list={['blocks__links', group.items.length === 3 && 'blocks__links--stack']}>
+          {[...group.items].sort((a, b) => Number(Boolean(b.href)) - Number(Boolean(a.href))).map((item) => (
+            <li class:list={['card blocks__link', item.href ? 'blocks__link--go' : 'blocks__link--plain']}>
+              <h3 class="t-h4">{item.href ? <a href={item.href}>{item.title}</a> : item.title}</h3>
+              <p set:html={inline(item.text)} />
+              {item.href && <span class="blocks__go" aria-hidden="true"><Icon name="arrow" /></span>}
+            </li>
+          ))}
+        </ul>
+      )
+    if (group.kind === 'points')
+      return (
+        <ul class:list={['blocks__points', group.items.length === 3 ? 'grid-points-1' : group.items.length > 2 && group.items.length !== 4 ? 'grid-points-3' : 'grid-points-2']}>
+          {group.items.map((item, i) => (
+            <li class="card blocks__point">
+              {numbered && <span class="blocks__num">{twoDigit(i)}</span>}
+              <h3 class="t-h4" set:html={inline((item.lead ?? '').replace(/:$/, ''))} />
+              {item.text && <p set:html={inline(item.text)} />}
+            </li>
+          ))}
+        </ul>
+      )
+    if (group.kind === 'ticks')
+      return (
+        <div class="card blocks__ticks">
+          <ul class="ticks">{nest(group.items).map((item) => (
+            <li>{group.plain ? <span class="blocks__dot" aria-hidden="true" /> : <Icon name="check" />}<span set:html={inline(item.text)} />
+              {item.children.length > 0 && <ul class="ticks blocks__sub">{item.children.map((text) => <li><span class="blocks__dot" aria-hidden="true" /><span set:html={inline(text)} /></li>)}</ul>}
+            </li>
+          ))}</ul>
+        </div>
+      )
+    if (group.kind === 'price')
+      return (
+        <div class="card surface-deep blocks__price">
+          <p class="tag">Price</p>
+          <p class="blocks__price-text" set:html={inline(group.text)} />
+          <div class="actions"><Btn href={links.quiz} icon="arrow">{hero.primary}</Btn><Btn href={links.book} variant="secondary">{hero.secondary}</Btn></div>
+        </div>
+      )
+    return (
+      <ul class="blocks__proof">
+        {group.items.map((item) => (
+          <li class="card blocks__result">
+            <p class="tag">Past client</p>
+            <p class="blocks__result-text">{item.text}</p>
+            {item.quote && <blockquote><p>"{item.quote.text}"</p><footer>{item.quote.who}</footer></blockquote>}
+          </li>
+        ))}
+      </ul>
+    )
+  })}
+</div>
+
+<style>
+  .blocks { display: grid; gap: var(--space-8); }
+  .blocks__prose { max-width: var(--measure); }
+  .blocks__prose :global(strong) { color: var(--surface-fg); font-weight: var(--weight-strong); }
+  .blocks__points { display: grid; gap: var(--grid-gap); }
+  .blocks__point { display: flex; flex-direction: column; gap: var(--space-2); }
+  .blocks__point p { font-size: var(--text-body); line-height: 1.55; color: var(--surface-muted); }
+  .blocks__num { font-size: var(--text-sm); letter-spacing: 0.06em; font-variant-numeric: tabular-nums; color: var(--color-brand); margin-bottom: var(--space-4); }
+  .blocks__ticks { padding-block: var(--space-2); }
+  .blocks__ticks .ticks li span { color: var(--surface-fg); }
+  .blocks__ticks .ticks li:has(> .blocks__sub) { flex-wrap: wrap; }
+  .blocks__ticks .ticks li:has(> .blocks__sub) > span:not(.blocks__dot) { flex: 1; min-width: 0; }
+  .blocks__sub { flex-basis: 100%; margin-top: var(--space-1); padding-left: calc(0.375rem + 0.8rem + var(--space-3)); }
+  .blocks__sub li { padding-block: 0.6rem; }
+  .blocks__sub li span:not(.blocks__dot) { color: var(--surface-body); }
+  .blocks__ticks .ticks .blocks__dot { flex: none; width: 0.375rem; height: 0.375rem; margin: 0.6em 0.4rem 0; border-radius: var(--radius-full); background: var(--surface-muted); }
+  .blocks__price { display: grid; gap: var(--space-5); justify-items: start; }
+  .blocks__price-text { font-size: var(--text-body-lg); line-height: 1.55; color: var(--surface-fg); max-width: calc(52 * var(--ch)); }
+  .blocks__price-text :global(.link) { color: var(--color-accent); }
+  .blocks__proof { display: grid; gap: var(--grid-gap); }
+  /* Proof after a list of points reads as its own group, not one more row of the list. */
+  .blocks__points + .blocks__proof { margin-top: var(--space-8); }
+  .blocks__result { display: grid; gap: var(--space-4); align-content: start; }
+  .blocks__result .tag { justify-self: start; }
+  .blocks__result-text { font-size: var(--text-h4); line-height: 1.45; color: var(--surface-fg); letter-spacing: -0.01em; }
+  .blocks__result blockquote { padding-top: var(--space-4); border-top: 1px solid var(--surface-line); }
+  .blocks__result blockquote p { font-style: italic; color: var(--surface-body); }
+  .blocks__result footer { margin-top: var(--space-2); font-size: var(--text-sm); font-weight: var(--weight-strong); color: var(--surface-fg); }
+  .blocks__bold { max-width: var(--measure); }
+  .blocks__note { font-size: var(--text-body-lg); line-height: 1.5; color: var(--surface-fg); max-width: var(--measure); }
+  .blocks__label { margin-bottom: calc(var(--space-4) - var(--space-8)); }
+  .blocks__pricing { font-size: var(--text-body); color: var(--surface-muted); }
+  .blocks__links { display: grid; gap: var(--grid-gap); }
+  .blocks__link { position: relative; display: grid; gap: var(--space-2); align-content: start; }
+  /* Cards without a page of their own are flat, so they don't look clickable. */
+  .blocks__link--plain { background: none; box-shadow: none; border: 1px solid var(--surface-line); }
+  .blocks__link p { font-size: var(--text-body); line-height: 1.55; color: var(--surface-muted); }
+  /* Only the title makes room for the arrow; the description runs the full width of the card. */
+  .blocks__link--go h3 { padding-right: 2.75rem; }
+  .blocks__link--go { transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
+  .blocks__link--go h3 a::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+  .blocks__link--go:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+  .blocks__link--go:has(a:focus-visible) { outline: 3px solid var(--surface-fg, var(--color-text)); outline-offset: 3px; }
+  .blocks__link--go a:focus-visible { outline: none; }
+  .blocks__go { position: absolute; top: var(--space-6); right: var(--space-6); width: 2.25rem; height: 2.25rem; border-radius: var(--radius-full); display: grid; place-items: center; background: var(--color-bg); color: var(--color-brand-deep); transition: background-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out); }
+  .blocks__go :global(.icon) { width: 1rem; height: 1rem; }
+  .blocks__link--go:hover .blocks__go { background: var(--color-brand-deep); color: var(--color-white); }
+  @media (min-width: 641px) {
+    /* Three cards stack as wide rows; two columns would leave one alone under the other two. */
+    .blocks__links:not(.blocks__links--stack) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .blocks__links > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+    .grid-points-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-points-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-points-3 > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+    .blocks__proof { grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+  }
+</style>

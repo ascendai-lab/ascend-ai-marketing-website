@@ -1,22 +1,60 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro'
 import PageBuilder from '@components/blocks/PageBuilder.astro'
+import CopyPage from '@components/page/CopyPage.astro'
 import { loadQuery } from '@cms/lib/load'
+import { emptyLayout } from '@cms/lib/types'
 import { layoutQuery, pageQuery } from '@cms/queries'
+import { stegaClean } from '@sanity/client/stega'
+import { brand, about } from '@/content/home'
+import { findPage } from '@/content/pages'
 
 const slug = Astro.params.slug?.replace(/\/$/, '')
 if (!slug) return Astro.rewrite('/404')
 
 const { draftMode } = Astro.locals
-const [layout, page] = await Promise.all([loadQuery(draftMode, layoutQuery), loadQuery(draftMode, pageQuery, { slug })])
-if (!page) return Astro.rewrite('/404')
+// A CMS page with this slug wins. Without one (or if the CMS can't be reached), the page renders from
+// the approved copy (category and core pages), and anything else is the 404 page.
+const [layout, page] = await Promise.all([loadQuery(draftMode, layoutQuery).catch(() => emptyLayout), loadQuery(draftMode, pageQuery, { slug }).catch(() => null)])
+const copy = page ? undefined : findPage(`/${slug}`)
+if (!page && !copy) return Astro.rewrite('/404')
 
-const startsWithHero = page.pageBuilder?.[0]?._type === 'hero'
+const startsWithHero = page?.pageBuilder?.[0]?._type === 'hero'
+const origin = Astro.site ?? new URL(Astro.url.origin)
+const provider = { '@type': stegaClean(layout.settings?.businessType) || 'LocalBusiness', name: stegaClean(layout.settings?.siteName) || brand.name }
+const crumbs = (items: { name: string; path: string }[]) => ({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.name, item: new URL(item.path, origin).href })),
+})
+const jsonLd = !copy
+  ? []
+  : copy.kind === 'category'
+    ? [
+        { '@context': 'https://schema.org', '@type': 'Service', name: copy.title, description: copy.seo.description, areaServed: 'US', provider },
+        crumbs([{ name: 'Home', path: '/' }, { name: 'Services', path: '/services' }, { name: copy.title, path: copy.path }]),
+      ]
+    : copy.path === '/about'
+      ? [
+          { '@context': 'https://schema.org', '@type': 'AboutPage', name: copy.seo.title, description: copy.seo.description, url: new URL(copy.path, origin).href },
+          { '@context': 'https://schema.org', '@type': 'Person', name: 'Mark Johnson', jobTitle: 'Founder', worksFor: provider, image: new URL(about.photo.src, origin).href },
+          crumbs([{ name: 'Home', path: '/' }, { name: 'About', path: copy.path }]),
+        ]
+      : [crumbs([{ name: 'Home', path: '/' }, { name: copy.title, path: copy.path }])]
+const phone = stegaClean(layout.settings?.phone) || undefined
 ---
 
-<BaseLayout layout={layout} title={page.title} seo={page.seo}>
-  {!startsWithHero && (
-    <header class="section bg-muted"><div class="container"><h1 class="section-heading">{page.title}</h1></div></header>
-  )}
-  <PageBuilder blocks={page.pageBuilder} document={page} settings={layout.settings} firstHeroIsH1={startsWithHero} />
-</BaseLayout>
+{
+  page ? (
+    <BaseLayout layout={layout} title={page.title} seo={page.seo}>
+      {!startsWithHero && (
+        <header class="section bg-muted"><div class="container"><h1 class="section-heading">{page.title}</h1></div></header>
+      )}
+      <PageBuilder blocks={page.pageBuilder} document={page} settings={layout.settings} firstHeroIsH1={startsWithHero} />
+    </BaseLayout>
+  ) : (
+    <BaseLayout layout={layout} seo={{ metaTitle: copy!.seo.title, metaDescription: copy!.seo.description }} jsonLd={jsonLd} quizTag={copy!.quizTag}>
+      <CopyPage page={copy!} phone={phone} />
+    </BaseLayout>
+  )
+}

@@ -1,0 +1,49 @@
+---
+import Section from '@components/ui/Section.astro'
+import SectionHead from '@components/ui/SectionHead.astro'
+import Btn from '@components/ui/Btn.astro'
+import Icon from '@components/ui/Icon.astro'
+import OwnNote from '@components/ui/OwnNote.astro'
+import { pricing, links, hero } from '@/content/home'
+---
+
+<Section surface="cream" anchorId="pricing">
+  <SectionHead eyebrow={pricing.eyebrow} heading={pricing.heading} intro={pricing.intro} align="center" />
+
+  <div class="plan surface-deep">
+    <div class="plan__main">
+      <p class="tag">{pricing.tag} <span class="tag tag--accent">{pricing.save}</span></p>
+      <p class="plan__amount"><s><span class="sr-only">Was </span>{pricing.was}</s><span class="sr-only">Now </span>{pricing.now}</p>
+      <p class="plan__term">{pricing.term}</p>
+      <div class="actions plan__actions">
+        <Btn href={links.quiz} icon="arrow">{hero.primary}</Btn>
+        <Btn href={links.plan} variant="link" icon="arrow-ur">{pricing.planLink}</Btn>
+      </div>
+    </div>
+    <div class="card surface-white plan__incl">
+      <h3 class="t-h4">{pricing.includesTitle}</h3>
+      <ul class="ticks">
+        {pricing.includes.map((item) => <li><Icon name="check" />{item}</li>)}
+      </ul>
+    </div>
+  </div>
+
+  <OwnNote lead={pricing.own.lead} text={pricing.own.text} class="plan__own" />
+</Section>
+
+<style>
+  .plan { display: grid; border-radius: var(--radius-xl); overflow: hidden; }
+  .plan__main { padding: clamp(var(--space-6), 4vw, var(--space-12)); display: flex; flex-direction: column; justify-content: center; }
+  .plan__main > .tag { padding: 0.375rem 0.375rem 0.375rem 0.875rem; font-size: var(--text-sm); }
+  .plan__main > .tag .tag { padding: 0.375rem 0.625rem; }
+  .plan__amount { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-3); margin: var(--space-8) 0 var(--space-3); font-size: var(--text-price); line-height: 1; letter-spacing: -0.05em; font-weight: var(--weight-heading); color: var(--surface-fg); }
+  .plan__amount s { font-size: var(--text-figure); letter-spacing: -0.02em; color: var(--color-text-inverse-faint); }
+  .plan__term { font-size: var(--text-body-lg); color: var(--surface-muted); margin-bottom: var(--space-10); }
+  .plan__incl { margin: 0.625rem; border-radius: var(--radius-lg); }
+  .plan__incl .t-h4 { margin-bottom: var(--space-3); }
+  :global(.own.plan__own) { margin: var(--space-8) auto 0; }
+  @media (min-width: 960px) {
+    .plan { grid-template-columns: 1.1fr 1fr; }
+    .plan__incl { padding: var(--space-10); }
+  }
+</style>

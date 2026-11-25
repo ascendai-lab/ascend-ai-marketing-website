@@ -32,8 +32,8 @@ A call handling score from A to F. It shows how well you catch calls and leads t
 3 fixes you can use today. Picked from your answers. You can do them with or without us.
 It takes about 60 seconds. The results page shows your number and an offer to book a 15-minute call. If you want help, book it. If not, you still keep the fixes.
 Built by a founder who has built hundreds of websites.
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
-Our founder, Mark Johnson, has more than 20 years of building websites. He has built hundreds of them. Ascend AI started in 2019.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
+Our founder, Mark Johnson, has more than 20 years of building websites. He has built hundreds of them. Ascend AI Marketing started in 2019.
 We serve HVAC shops across the U.S. You reach real people, not a ticket system.
 Here's how to fix the leak.
 Take the 60-second quiz.

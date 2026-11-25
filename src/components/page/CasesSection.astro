@@ -1,0 +1,50 @@
+---
+/** Past client cards (work page): the result first, then what we did, the outcome and any quote. */
+import Section from '@components/ui/Section.astro'
+import SectionHead from '@components/ui/SectionHead.astro'
+import Icon from '@components/ui/Icon.astro'
+import type { CaseCard, ServiceSectionCopy } from '@/content/services'
+
+interface Props {
+  section: ServiceSectionCopy
+  surface: 'cream' | 'white'
+}
+
+const { section, surface } = Astro.props
+const cards = section.blocks.filter((b): b is { type: 'case' } & CaseCard => b.type === 'case')
+---
+
+<Section surface={surface} anchorId="results">
+  <SectionHead eyebrow="Past client results" heading={section.heading} />
+  <ul class="cases" data-reveal>
+    {cards.map((card) => (
+      <li class="card case">
+        <p class="tag">{card.kind}</p>
+        <h3 class="case__name">{card.name}</h3>
+        <p class="case__headline">{card.headline}</p>
+        <div class="case__did">
+          <p class="case__label">What we did</p>
+          <ul class="ticks">{card.did.map((item) => <li><Icon name="check" /><span>{item}</span></li>)}</ul>
+        </div>
+        <p class="case__result"><strong>Result.</strong> {card.result}</p>
+        {card.quote && <blockquote class="case__quote"><p>"{card.quote.text}"</p><footer>{card.quote.who}</footer></blockquote>}
+      </li>
+    ))}
+  </ul>
+</Section>
+
+<style>
+  .cases { display: grid; gap: var(--grid-gap); }
+  .case { display: flex; flex-direction: column; gap: var(--space-4); }
+  .case .tag { align-self: flex-start; }
+  .case__name { font-size: var(--text-sm); font-weight: var(--weight-strong); color: var(--surface-muted); letter-spacing: 0; }
+  .case__headline { font-size: var(--text-h3); line-height: 1.2; letter-spacing: -0.02em; font-weight: var(--weight-medium); color: var(--surface-fg); margin-top: calc(var(--space-2) * -1); }
+  .case__label { font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--surface-muted); margin-bottom: var(--space-2); }
+  .case__did .ticks li span { color: var(--surface-fg); font-size: var(--text-body); }
+  .case__result { font-size: var(--text-body); color: var(--surface-body); margin-top: auto; padding-top: var(--space-4); border-top: 1px solid var(--surface-line); }
+  .case__result strong { color: var(--surface-fg); }
+  .case__quote p { font-style: italic; color: var(--surface-body); }
+  .case__quote footer { margin-top: var(--space-2); font-size: var(--text-sm); font-weight: var(--weight-strong); color: var(--surface-fg); }
+  @media (min-width: 761px) { .cases { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 960px) { .cases { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+</style>

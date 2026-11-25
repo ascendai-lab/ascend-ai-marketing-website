@@ -9,8 +9,8 @@ Your office does the same steps every week. Remind maintenance plan members. Che
 Each step is small. Together, they eat the day. When the phones get busy, these steps slip. A lead sits. A customer forgets. A job goes to someone else.
 You know these things matter. There's no time. Every task that slips feels like money left on the table. A good shop should not lose a job to a voicemail or a missed step.
 We build workflows around how your shop runs
-We've watched good contractors lose jobs to slow callbacks and missed follow-up. That's why Ascend AI exists. We build simple workflows that do the repeat work for you.
-Mark Johnson founded Ascend AI in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
+We've watched good contractors lose jobs to slow callbacks and missed follow-up. That's why Ascend AI Marketing exists. We build simple workflows that do the repeat work for you.
+Mark Johnson founded Ascend AI Marketing in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
 Custom workflows in three steps
 Take the 60-second quiz. See what missed calls and slow follow-up may cost your shop.
 Book a 15-minute call. We look at the repeat work in your office.

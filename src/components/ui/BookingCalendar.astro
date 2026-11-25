@@ -1,0 +1,40 @@
+---
+/**
+ * The booking calendar: the GoHighLevel calendar embed when PUBLIC_GHL_CALENDAR_URL is set
+ * (its after-booking redirect should be /book/confirmed). Without it, a short call request form.
+ */
+import LeadForm from './LeadForm.astro'
+
+interface Props {
+  id: string
+}
+
+const { id } = Astro.props
+const calendar = import.meta.env.PUBLIC_GHL_CALENDAR_URL
+---
+
+{calendar ? (
+  <div class="booking surface-white">
+    <iframe src={calendar} title="Book a 15-minute call" loading="lazy" id={id}></iframe>
+  </div>
+) : (
+  <LeadForm
+    id={id}
+    fields={[
+      { name: 'name', label: 'Name' },
+      { name: 'shop', label: 'Shop name' },
+      { name: 'email', label: 'Email' },
+      { name: 'phone', label: 'Mobile (optional)', required: false },
+    ]}
+    button="Book a 15-minute call"
+    source="call-request"
+    subject="Wants a 15-minute call."
+    event="call_request"
+    success="Thanks. We'll reach out to set a time for your 15-minute call."
+  />
+)}
+
+<style>
+  .booking { background: var(--color-white); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-lg); }
+  .booking iframe { display: block; width: 100%; min-height: 44rem; border: 0; }
+</style>

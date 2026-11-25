@@ -1,0 +1,46 @@
+---
+/** "Serving HVAC shops nationwide": the copy on the left, three climate cards on the right. */
+import Section from '@components/ui/Section.astro'
+import Icon, { type IconName } from '@components/ui/Icon.astro'
+
+interface Props {
+  eyebrow?: string
+  heading: string
+  body: string[]
+  surface?: 'cream' | 'white'
+  /** Climate cards on the right. Without them, the copy sits on the right of the heading. */
+  climates?: { icon: IconName; title: string; text: string }[]
+}
+
+const { heading, body, surface = 'white', climates } = Astro.props
+---
+
+<Section surface={surface}>
+  {climates ? (
+    <div class="split">
+      <div>
+        <h2 class="t-h2">{heading}</h2>
+        <div class="nation__body">{body.map((p) => <p class="body-lg">{p}</p>)}</div>
+      </div>
+      <ul class="nation__list">
+        {climates.map((c) => (
+          <li class="card card--row"><span class="icon-chip"><Icon name={c.icon} /></span><div><strong>{c.title}</strong><span>{c.text}</span></div></li>
+        ))}
+      </ul>
+    </div>
+  ) : (
+    <div class="split split--top">
+      <div>
+        <h2 class="t-h2">{heading}</h2>
+      </div>
+      <div>{body.map((p) => <p class="body-lg">{p}</p>)}</div>
+    </div>
+  )}
+</Section>
+
+<style>
+  .nation__body { margin-top: var(--stack-body); }
+  .nation__list { display: grid; gap: var(--space-3); }
+  .nation__list strong { display: block; font-size: var(--text-h4); font-weight: var(--weight-medium); letter-spacing: -0.01em; line-height: var(--leading-snug); }
+  .nation__list span:not(.icon-chip) { font-size: var(--text-body); color: var(--surface-muted); }
+</style>

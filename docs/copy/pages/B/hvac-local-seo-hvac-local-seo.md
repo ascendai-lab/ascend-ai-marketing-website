@@ -10,8 +10,8 @@ People also ask ChatGPT who to call. If your facts online are thin or don't matc
 Maybe you paid for SEO before. You got a report full of charts, not more calls. That stings when you know you're the better shop.
 A good shop should not lose a job because it's hard to find.
 We do the work Google looks for, and we explain it in plain words.
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
-Our founder, Mark Johnson, has built websites for more than 20 years. He has built hundreds of them. We started Ascend AI in 2019. You reach a real team, not a ticket system.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
+Our founder, Mark Johnson, has built websites for more than 20 years. He has built hundreds of them. We started Ascend AI Marketing in 2019. You reach a real team, not a ticket system.
 We make your shop easier to find. Then we keep it fresh, so homeowners keep finding you.
 No one can promise the top spot on Google or a mention in ChatGPT. We won't either.
 Etheric Networks (past client): local SEO and a custom website. 45 qualified leads in 60 days. "Within just two months, we saw incredible results." Camille, Etheric Networks

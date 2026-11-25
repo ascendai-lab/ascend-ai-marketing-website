@@ -1,0 +1,35 @@
+---
+import Section from '@components/ui/Section.astro'
+import Icon from '@components/ui/Icon.astro'
+import MissedCallsPanel from '@components/ui/MissedCallsPanel.astro'
+import { problem } from '@/content/home'
+---
+
+<Section surface="cream" class="problem">
+  <div class="split split--top">
+    <div>
+      <h2 class="t-h2">{problem.heading}</h2>
+      <p class="lead problem__statement">{problem.statement} <strong>{problem.turn}</strong></p>
+    </div>
+    <MissedCallsPanel />
+  </div>
+
+  <ul class="grid-2 problem__pains">
+    {problem.pains.map((pain) => (
+      <li class="card card--row"><span class="icon-chip"><Icon name={pain.icon} /></span><p>{pain.text}</p></li>
+    ))}
+  </ul>
+
+  <div class="problem__feel" data-reveal>
+    <p class="body-lg">{problem.feel}</p>
+    <p class="lead strong">{problem.close}</p>
+  </div>
+</Section>
+
+<style>
+  .problem__statement { margin-top: var(--space-8); }
+  .problem__statement strong { display: block; margin-top: var(--space-3); color: var(--color-brand); font-weight: var(--weight-medium); }
+  .problem__pains { margin-top: var(--section-head-gap); }
+  .problem__feel { margin-top: var(--space-14); max-width: 46rem; }
+  .problem__feel .lead { margin-top: var(--stack-body); max-width: none; }
+</style>

@@ -1,20 +1,27 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro'
 import PageBuilder from '@components/blocks/PageBuilder.astro'
-import EmptyState from '@components/ui/EmptyState.astro'
+import EvergreenHome from '@components/home/EvergreenHome.astro'
 import { loadQuery } from '@cms/lib/load'
 import { homePageQuery, layoutQuery } from '@cms/queries'
+import { brand, hero } from '@/content/home'
+import { emptyLayout } from '@cms/lib/types'
 
 const { draftMode } = Astro.locals
-const [layout, page] = await Promise.all([loadQuery(draftMode, layoutQuery), loadQuery(draftMode, homePageQuery)])
+// If the CMS can't be reached, the homepage still renders from src/content/home.ts.
+const [layout, page] = await Promise.all([
+  loadQuery(draftMode, layoutQuery).catch(() => emptyLayout),
+  loadQuery(draftMode, homePageQuery).catch(() => null),
+])
+const seo = page?.seo ?? { metaTitle: `${brand.name} · HVAC websites and lead systems`, metaDescription: hero.body }
 ---
 
-<BaseLayout layout={layout} seo={page?.seo}>
+<BaseLayout layout={layout} seo={seo} jsonLd={[{ '@context': 'https://schema.org', '@type': 'WebSite', name: brand.name, url: (Astro.site ?? new URL(Astro.url.origin)).href }]}>
   {
     page?.pageBuilder?.length ? (
       <PageBuilder blocks={page.pageBuilder} document={page} settings={layout.settings} />
     ) : (
-      <EmptyState />
+      <EvergreenHome />
     )
   }
 </BaseLayout>

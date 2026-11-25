@@ -9,8 +9,8 @@ Or the ad sends people to a home page with no clear offer and no call button. Th
 Maybe an agency ran your ads before and kept the account in their name. You never knew what you got for the money. That feeling sticks.
 A good shop should not pay for a call that goes to voicemail.
 HVAC ads work best when someone answers.
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
-Mark Johnson founded Ascend AI in 2019. He has 20+ years of building websites and has built hundreds. You reach a real team, not a ticket system.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
+Mark Johnson founded Ascend AI Marketing in 2019. He has 20+ years of building websites and has built hundreds. You reach a real team, not a ticket system.
 Our view: ads pay off when calls get a reply. If no one picks up, more ads mean more missed calls. So on the call, we look at how your shop answers leads before we talk about ads.
 A fence and tree company (past client): over $100,000 in revenue from Google Ads and local SEO. We cut ad spend outside their service area. Then we turned their tree service ads into booked jobs. They hit #1 on Google Maps for "fence company," "fence contractor" and "fence installation."
 Three steps to ads that turn into jobs.

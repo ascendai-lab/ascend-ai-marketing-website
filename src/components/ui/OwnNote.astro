@@ -1,0 +1,20 @@
+---
+/** The ownership line: a key icon and "You own everything…". Pass the bold lead and the rest of the sentence. */
+import Icon from './Icon.astro'
+
+interface Props {
+  lead?: string
+  text: string
+  class?: string
+}
+
+const { lead, text, class: className } = Astro.props
+---
+
+<p class:list={['own', className]}><Icon name="key" /><span>{lead && <><strong>{lead}</strong> </>}{text}</span></p>
+
+<style>
+  .own { display: flex; gap: var(--space-4); align-items: flex-start; max-width: 58rem; font-size: var(--text-body); color: var(--surface-muted); }
+  .own :global(.icon) { width: var(--icon-size); height: var(--icon-size); color: var(--color-brand); margin-top: 0.2rem; }
+  .own strong { color: var(--surface-fg); }
+</style>

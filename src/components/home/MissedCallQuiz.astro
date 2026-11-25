@@ -1,0 +1,353 @@
+---
+/**
+ * The missed-call quiz (it lives on /missed-calls): 5 questions, then name and email.
+ * The lead goes to /api/contact (→ LeadLine) with the page's interest tag, then the visitor lands on
+ * /missed-calls/results with their dollar range, call handling score and 3 fixes, so a finished
+ * quiz is a page view that's easy to track. Copy is the approved quiz copy, used as written.
+ */
+interface Props {
+  id: string
+  /** The interest tag sent with the lead ("google-ads" → interest-google-ads). The page's ?interest= wins. */
+  interest?: string
+}
+const { id, interest } = Astro.props
+import { links } from '@/content/home'
+import { RESULTS_PATH, QUESTIONS } from '@/content/quiz'
+import { consent, smsConsent, PRIVACY_PATH, TERMS_PATH } from '@/content/legal'
+import Icon from '@components/ui/Icon.astro'
+
+// The quiz is rendered here, on the server, so the first question is on screen with the page;
+// the script only adds the behavior. A link from another page's quiz card (?a=2) starts at question 2.
+const a = Astro.url.searchParams.get('a')
+const preset = a !== null && /^\d+$/.test(a) && Number(a) < QUESTIONS[0].a.length ? Number(a) : null
+const startStep = preset === null ? 0 : 1
+const letter = (j: number) => String.fromCharCode(65 + j)
+const fields = [
+  { name: 'first', label: 'First name', type: 'text', auto: 'given-name', required: true },
+  { name: 'shop', label: 'Shop name', type: 'text', auto: 'organization', required: true },
+  { name: 'email', label: 'Email', type: 'email', auto: 'email', required: true },
+  { name: 'mobile', label: 'Mobile (optional)', type: 'tel', auto: 'tel', required: false },
+] as const
+---
+
+<div class="quiz surface-white" id={id} data-quiz data-book={links.book} data-results={RESULTS_PATH} data-interest={interest} data-sms-needs-phone={smsConsent.needsPhone}>
+  <div class="quiz__top">
+    <p class="quiz__count" aria-live="polite">{startStep === 0 ? 'Question 1 of 5' : 'Question 2 of 5'}</p>
+    <ol class="quiz__bar" aria-hidden="true">
+      {QUESTIONS.map((_, i) => <li class={i < startStep ? 'done' : i === startStep ? 'now' : undefined} />)}
+    </ol>
+  </div>
+  {QUESTIONS.map((item, i) => (
+    <fieldset class="quiz__step" data-step={i} hidden={i !== startStep}>
+      <legend class="quiz__q">{item.q}</legend>
+      <div class="quiz__options">
+        {item.a.map((label, j) => (
+          <button type="button" class="quiz__option" data-answer={j} aria-pressed={i === 0 && preset === j ? 'true' : undefined}>
+            <span class="quiz__key">{letter(j)}</span><span>{label}</span>
+          </button>
+        ))}
+      </div>
+    </fieldset>
+  ))}
+  <form class="quiz__step quiz__form" data-step="5" hidden novalidate>
+    <p class="quiz__ready">Your results are ready.</p>
+    <p class="quiz__q">Where should we send your full report?</p>
+    <div class="quiz__fields">
+      {fields.map((f) => (
+        <label class="field">
+          <span>{f.label}</span>
+          <input
+            name={f.name}
+            type={f.type}
+            autocomplete={f.auto}
+            required={f.required}
+            id={`${id}-${f.name}`}
+            aria-describedby={`${id}-${f.name}-error`}
+            enterkeyhint={f.name === 'mobile' ? 'send' : 'next'}
+            {...(f.name === 'email' ? { autocapitalize: 'none', autocorrect: 'off', spellcheck: 'false' } : {})}
+          />
+          <span class="field__error" id={`${id}-${f.name}-error`}></span>
+        </label>
+      ))}
+    </div>
+    <div class="sms-consent">
+      <label class="sms-consent__label">
+        <input type="checkbox" name="smsConsent" value="yes" id={`${id}-sms`} aria-describedby={`${id}-sms-error`} />
+        <span>{smsConsent.text} <a href={PRIVACY_PATH}>{smsConsent.privacy}</a> · <a href={TERMS_PATH}>{smsConsent.terms}</a></span>
+      </label>
+      <span class="field__error" id={`${id}-sms-error`}></span>
+    </div>
+    <input type="text" name="website" tabindex="-1" autocomplete="off" class="sr-only" aria-hidden="true" />
+    <button type="submit" class="btn btn--primary">Show my results <Icon name="arrow" /></button>
+    <p class="quiz__form-error field__error" role="alert"></p>
+    <p class="quiz__small">You'll get your report and a few short emails from our team.</p>
+    <p class="quiz__consent">{consent.text} <a href={PRIVACY_PATH}>Privacy policy</a>.</p>
+  </form>
+  <button type="button" class="quiz__back" hidden={startStep === 0}>Back</button>
+  <noscript>
+    <p class="quiz__fallback">Want to know what missed calls cost your shop? <a href={links.book}>Book a 15-minute call</a> and we'll walk through it with you.</p>
+  </noscript>
+</div>
+
+<script>
+  import { animateHeight } from '@/scripts/animate-height'
+  import { QUESTIONS, RESULT_KEY, type QuizResult } from '@/content/quiz'
+
+  type Layer = { push: (event: Record<string, unknown>) => void }
+  const track = (event: string, data: Record<string, unknown> = {}) => {
+    const w = window as unknown as { dataLayer?: Layer }
+    w.dataLayer = w.dataLayer ?? ([] as unknown as Layer)
+    w.dataLayer.push({ event, ...data })
+  }
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  const CALLS = [12, 35, 75, 120]
+  const LOST_SHARE = [0.8, 0.3, 0.45, 0.6]
+  const LOST_POINTS = [3, 0, 1, 2]
+  const MISS = [0.03, 0.1, 0.2, 0.33]
+  const VALUE = [220, 600, 2200, 6500]
+  const SPEED = [0.55, 0.8, 1, 1.15]
+  /** Share of calls that are new paying work (the rest are existing customers, vendors, spam). */
+  const NEW_WORK = 0.4
+  /** Share of new-work calls a shop books when it does answer: low and high end of the range. */
+  const CLOSE = [0.25, 0.45]
+  /** Estimates above this read as "more than", so the number stays believable. */
+  const CAP = 50000
+  const GRADE_STEPS = ['A', 'B', 'C', 'D', 'F']
+  /** Fixes in priority order. The first 3 that fit the answers are shown. */
+  const FIXES: { when: (a: number[]) => boolean; fix: [string, string] }[] = [
+    { when: (a) => a[1] === 0 || a[1] === 3, fix: ['Get every call answered, day or night.', 'Voicemail sends homeowners to the next shop on the list.'] },
+    { when: (a) => a[2] > 0, fix: ['Text back every missed call in seconds.', 'A quick text keeps the homeowner talking to you, not the next shop.'] },
+    { when: (a) => a[4] > 0, fix: ['Call back web leads within 5 minutes.', 'A homeowner with no heat wants an answer now.'] },
+    { when: () => true, fix: ['Follow up on every quote.', 'A short check-in a few days later wins jobs that would go quiet.'] },
+    { when: () => true, fix: ['Ask for a review after every job.', 'Reviews help homeowners pick you over the next shop.'] },
+  ]
+
+  const money = (n: number) => {
+    const step = n < 1000 ? 50 : n < 10000 ? 100 : 500
+    return '$' + (Math.round(n / step) * step).toLocaleString('en-US')
+  }
+
+  function build(root: HTMLElement) {
+    const id = root.id
+    const answers: number[] = []
+    let current = 0
+    const params = new URLSearchParams(window.location.search)
+    const interest = (params.get('interest') || root.dataset.interest || '').replace(/[^a-z0-9-]/g, '')
+
+    // Moving between steps: the old step fades out, then the panel eases to its new height
+    // while the new step slides up into place. `after` runs once the new step is on screen.
+    let first = true
+    let swapId = 0
+    const show = (step: number, after?: () => void) => {
+      current = step
+      const id = ++swapId
+      const old = root.querySelector<HTMLElement>('.quiz__step:not([hidden])')
+      const opacity = old ? getComputedStyle(old).opacity : '1'
+      // Stop any fade still running on the visible step (for example Back right after an answer).
+      old?.getAnimations().forEach((a) => { if (!(a instanceof CSSAnimation)) a.cancel() })
+      if (old && Number(old.dataset.step) === step) {
+        // Staying on the same step: bring it back from wherever its fade had got to.
+        if (!reduceMotion && Number(opacity) < 1) old.animate([{ opacity }, { opacity: 1 }], { duration: 160, easing: 'ease-out' })
+        after?.()
+        return
+      }
+      // Already mostly faded (for example Back pressed again during a fade): swap straight away.
+      if (first || reduceMotion || !old || Number(opacity) < 0.3) { swap(step); after?.(); return }
+      old.animate([{ opacity }, { opacity: 0 }], { duration: 110, easing: 'linear', fill: 'forwards' }).finished.then((fade) => {
+        if (id !== swapId) return
+        swap(step)
+        fade.cancel()
+        after?.()
+      }, () => {})
+    }
+    const swap = (step: number) => {
+      const from = root.getBoundingClientRect().height
+      root.getAnimations().forEach((a) => { if (!(a instanceof CSSTransition)) a.cancel() })
+      root.querySelectorAll<HTMLElement>('.quiz__step').forEach((el) => {
+        el.hidden = Number(el.dataset.step) !== step
+        el.classList.toggle('is-entering', !el.hidden && !first)
+      })
+      root.querySelectorAll('.quiz__bar li').forEach((li, i) => { li.className = i < step ? 'done' : i === step ? 'now' : '' })
+      root.querySelector('.quiz__count')!.textContent = step < 5 ? `Question ${step + 1} of 5` : 'Last step'
+      root.querySelector<HTMLElement>('.quiz__back')!.hidden = step === 0
+      if (!first) animateHeight(root, from, root.getBoundingClientRect().height)
+      first = false
+    }
+    // Moves keyboard focus to the step on screen, so it never drops to the page when a button hides.
+    // After a tap or click, focus goes to the question itself, so no answer looks picked already.
+    const focusStep = (step: number, byPointer = false) => {
+      const question = root.querySelector<HTMLElement>(`[data-step="${step}"] .quiz__q`)
+      if (byPointer && question) { question.tabIndex = -1; question.focus({ preventScroll: true }); return }
+      const el = root.querySelector<HTMLElement>(`[data-step="${step}"] :is([aria-pressed="true"], .quiz__option, input)`)
+      el?.focus({ preventScroll: true })
+    }
+
+    root.addEventListener('click', (event) => {
+      const target = event.target as Element
+      const opt = target.closest<HTMLButtonElement>('.quiz__option')
+      if (opt) {
+        const step = Number(opt.closest<HTMLElement>('.quiz__step')!.dataset.step)
+        if (answers.length === 0) track('quiz_start', { quiz_interest: interest })
+        answers[step] = Number(opt.dataset.answer)
+        opt.parentElement!.querySelectorAll('.quiz__option').forEach((b) => b.setAttribute('aria-pressed', b === opt ? 'true' : 'false'))
+        const byPointer = (event as MouseEvent).detail > 0
+        show(step + 1, () => focusStep(step + 1, byPointer))
+      }
+      if (target.closest('.quiz__back')) {
+        const back = Math.max(0, current - 1)
+        const byPointer = (event as MouseEvent).detail > 0
+        show(back, () => focusStep(back, byPointer))
+      }
+    })
+
+    const form = root.querySelector<HTMLFormElement>('.quiz__form')!
+    // Fields are checked when the visitor leaves them (once typed in), and a message clears as soon as
+    // the value is fixed. Submitting checks everything and moves to the first problem.
+    const required = [...form.querySelectorAll<HTMLInputElement>('input[required]')]
+    const problem = (input: HTMLInputElement) => {
+      const value = input.value.trim()
+      if (!value) {
+        const label = input.closest('label')?.querySelector('span')?.textContent?.trim().toLowerCase()
+        return label ? `Enter your ${label}.` : 'Please fill this in.'
+      }
+      if (input.type === 'email' && (input.validity.typeMismatch || !/^\S+@\S+\.\S+$/.test(value))) return 'Enter a valid email, like you@yourshop.com.'
+      return ''
+    }
+    const showError = (input: HTMLInputElement, message: string) => {
+      input.setAttribute('aria-invalid', message ? 'true' : 'false')
+      const error = document.getElementById(`${input.id}-error`)
+      if (error) error.textContent = message
+    }
+    required.forEach((input) => {
+      let edited = false
+      input.addEventListener('input', () => {
+        edited = true
+        if (input.getAttribute('aria-invalid') === 'true' && !problem(input)) showError(input, '')
+      })
+      input.addEventListener('blur', () => { if (edited) showError(input, problem(input)) })
+    })
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault()
+      let ok = true
+      required.forEach((input) => {
+        const message = problem(input)
+        showError(input, message)
+        if (message && ok) { input.focus(); ok = false }
+      })
+      // Ticking the text box needs a mobile number to text.
+      const sms = form.querySelector<HTMLInputElement>('input[name="smsConsent"]')
+      const mobile = form.querySelector<HTMLInputElement>('input[name="mobile"]')
+      const smsError = document.getElementById(`${id}-sms-error`)
+      if (smsError) smsError.textContent = ''
+      if (ok && sms?.checked && mobile && !mobile.value.trim()) {
+        mobile.setAttribute('aria-invalid', 'true')
+        if (smsError) smsError.textContent = root.dataset.smsNeedsPhone ?? ''
+        mobile.focus()
+        ok = false
+      }
+      if (!ok) return
+      const data = new FormData(form)
+      const first = String(data.get('first')).trim()
+      const shop = String(data.get('shop')).trim()
+
+      const missed = CALLS[answers[0]] * 4.33 * MISS[answers[2]]
+      const lostJobs = missed * LOST_SHARE[answers[1]] * SPEED[answers[4]] * NEW_WORK
+      const low = Math.max(150, lostJobs * CLOSE[0] * VALUE[answers[3]])
+      const high = Math.max(400, lostJobs * CLOSE[1] * VALUE[answers[3]])
+      const range = low >= CAP ? `more than ${money(CAP)}` : high > CAP ? `about ${money(low)} to ${money(CAP)} or more` : `about ${money(low)} to ${money(high)}`
+      const points = answers[2] + LOST_POINTS[answers[1]] + answers[4]
+      const grade = GRADE_STEPS[Math.min(4, Math.floor(points / 2))]
+
+      const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]')!
+      submit.disabled = true
+      const summary = QUESTIONS.map((item, i) => `${item.q} ${item.a[answers[i]]}`).join('\n')
+      const formError = form.querySelector<HTMLElement>('.quiz__form-error')!
+      formError.textContent = ''
+      let saved = false
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: first.length > 1 ? first : `${first} (${shop})`,
+            email: String(data.get('email')).trim(),
+            phone: String(data.get('mobile') || '').trim() || undefined,
+            smsConsent: Boolean(String(data.get('mobile') || '').trim()) && data.get('smsConsent') === 'yes',
+            message: `Missed call quiz. Shop: ${shop}. Estimate: ${range} a month. Score: ${grade}.\n${summary}`,
+            page: window.location.pathname,
+            source: 'missed-call-quiz',
+            interest: interest || undefined,
+            website: String(data.get('website') || ''),
+          }),
+        })
+        saved = res.ok
+      } catch {
+        saved = false
+      }
+      submit.disabled = false
+      // Only show results once the lead is saved, so nobody walks away thinking we have their details.
+      if (!saved) {
+        const link = Object.assign(document.createElement('a'), { href: root.dataset.book ?? '/book', textContent: 'book a 15-minute call' })
+        formError.replaceChildren("We couldn't send that just now. Please try again in a moment, or ", link, '.')
+        submit.focus()
+        return
+      }
+
+      const result: QuizResult = { first, shop, range, grade, fixes: FIXES.filter((f) => f.when(answers)).slice(0, 3).map(({ fix }) => fix), email: String(data.get('email')).trim(), phone: String(data.get('mobile') || '').trim() || undefined }
+      try { sessionStorage.setItem(RESULT_KEY, JSON.stringify(result)) } catch { /* the results page shows its general version */ }
+      track('quiz_complete', { quiz_interest: interest, quiz_grade: grade })
+      window.location.assign(root.dataset.results ?? '/missed-calls/results')
+    })
+
+    // A visitor who picked an answer on another page's quiz card starts at question 2.
+    const start = Number(params.get('a'))
+    if (params.has('a') && start >= 0 && start < QUESTIONS[0].a.length) {
+      answers[0] = start
+      root.querySelector(`[data-step="0"] [data-answer="${start}"]`)?.setAttribute('aria-pressed', 'true')
+      track('quiz_start', { quiz_interest: interest })
+      show(1)
+      return
+    }
+    show(0)
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-quiz]').forEach(build)
+</script>
+
+<style>
+  .quiz { background: var(--color-white); color: var(--color-text); border-radius: var(--radius-xl); padding: clamp(var(--space-6), 3vw, var(--space-8)); box-shadow: var(--shadow-lg);
+    --btn-bg: var(--color-brand-deep); --btn-fg: var(--color-white); --btn-hover: var(--color-ink); }
+  .quiz :global(.quiz__top) { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-6); }
+  .quiz :global(.quiz__count) { font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--color-text-muted); }
+  .quiz :global(.quiz__bar) { display: flex; gap: var(--space-1); }
+  .quiz :global(.quiz__bar li) { width: 1.375rem; height: 5px; border-radius: 3px; background: var(--color-border); }
+  .quiz :global(.quiz__bar li.done), .quiz :global(.quiz__bar li.now) { background: var(--color-brand-deep); }
+  .quiz :global(.quiz__step) { border: 0; min-width: 0; }
+  .quiz :global(.quiz__q) { display: block; color: var(--color-text); padding: 0; font-size: var(--text-question); line-height: 1.25; letter-spacing: -0.01em; font-weight: var(--weight-medium); margin-bottom: var(--space-5); }
+  .quiz :global(.sms-consent) { margin-block: var(--space-4) var(--space-5); }
+  .quiz :global(.quiz__consent) { margin-top: var(--space-3); font-size: var(--text-xs); line-height: 1.5; color: var(--color-text-muted); }
+  .quiz :global(.quiz__consent a) { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+  .quiz :global(.quiz__options) { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+  .quiz :global(.quiz__option) { display: flex; align-items: center; gap: var(--space-3); min-height: 3.625rem; padding: var(--space-3) var(--space-4); text-align: left; font-size: var(--text-body); line-height: 1.3; background: var(--color-surface-muted); border: 1px solid var(--color-border); border-radius: var(--radius-md); transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out); }
+  @media (hover: hover) { .quiz :global(.quiz__option:hover) { border-color: var(--color-brand-deep); } }
+  .quiz :global(.quiz__q:focus) { outline: none; }
+  .quiz :global(.quiz__option[aria-pressed='true']) { background: var(--color-brand-deep); color: var(--color-white); border-color: var(--color-brand-deep); }
+  .quiz :global(.quiz__key) { flex: none; width: 1.625rem; height: 1.625rem; border-radius: var(--radius-full); display: grid; place-items: center; font-size: var(--text-2xs); font-weight: var(--weight-strong); background: var(--color-white); color: var(--color-green-900); }
+  .quiz :global(.quiz__back) { margin-top: var(--space-4); min-height: 44px; min-width: 44px; padding-inline: var(--space-3); margin-left: calc(var(--space-3) * -1); background: none; border: 0; font-size: var(--text-sm); text-decoration: underline; text-underline-offset: 3px; color: var(--color-text-muted); }
+  .quiz :global(.quiz__ready) { font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-2); }
+  .quiz :global(.quiz__fields) { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); align-items: start; margin-bottom: var(--space-5); }
+  .quiz :global(.field) { display: grid; gap: var(--space-2); font-size: var(--text-sm); font-weight: var(--weight-medium); }
+  .quiz :global(.field__error) { font-size: var(--text-xs); font-weight: var(--weight-medium); color: var(--color-error); }
+  .quiz :global(.field__error:empty) { display: none; }
+  .quiz__fallback { font-size: var(--text-body-lg); }
+  .quiz__fallback a { color: var(--color-brand); text-decoration: underline; text-underline-offset: 4px; }
+  .quiz :global(.field input[aria-invalid='true']) { border-color: var(--color-error); box-shadow: 0 0 0 1px var(--color-error); }
+  .quiz :global(.quiz__small) { margin-top: var(--space-3); font-size: var(--text-xs); color: var(--color-text-muted); }
+  @media (max-width: 640px) { .quiz :global(:is(.quiz__options, .quiz__fields)) { grid-template-columns: 1fr; } }
+  @keyframes quiz-step-in { from { opacity: 0; transform: translateY(var(--space-2)); } }
+  .quiz :global(.quiz__step.is-entering) { animation: quiz-step-in var(--dur-accordion) var(--ease-reveal); }
+  .quiz :global(.quiz__bar li) { transition: background-color var(--dur-base) var(--ease-out); }
+  @media (prefers-reduced-motion: reduce) { .quiz :global(.quiz__step.is-entering) { animation: none; } }
+</style>

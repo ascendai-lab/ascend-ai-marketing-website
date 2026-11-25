@@ -10,8 +10,8 @@ Meanwhile, the other shop has more reviews and gets the call. It happens even wh
 It's frustrating to lose on a number. And when that homeowner does call you, the crew is on a job. The call goes to voicemail, and they try the next name.
 A good shop should not lose a job to a voicemail or a thin review count.
 Asking for reviews, the right way.
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
-Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI started in 2019. We set up a simple way to ask every customer the same way.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
+Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. We set up a simple way to ask every customer the same way.
 Etheric Networks (past client): local SEO and a custom website. 45 qualified leads in 60 days.
 "Within just two months, we saw incredible results." Camille, Etheric Networks
 Three steps to more Google reviews.

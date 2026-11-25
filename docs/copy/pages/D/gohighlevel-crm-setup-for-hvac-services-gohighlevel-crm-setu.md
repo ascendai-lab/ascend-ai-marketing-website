@@ -9,8 +9,8 @@ Your leads are all over the place. Some are in your cell phone. Some are in emai
 Quotes go out, and nobody follows up. A homeowner asks about a new system, then goes quiet. Weeks later, you see a competitor's van in their driveway.
 You know jobs are falling through the cracks. You can't see where. It feels like money is slipping away. A good shop should not lose a job to a voicemail or a lost note.
 We set up GoHighLevel CRM for how HVAC works
-We've watched good contractors lose jobs to slow callbacks. We've seen them lose their websites to agencies too. That's why Ascend AI exists.
-Mark Johnson founded Ascend AI in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
+We've watched good contractors lose jobs to slow callbacks. We've seen them lose their websites to agencies too. That's why Ascend AI Marketing exists.
+Mark Johnson founded Ascend AI Marketing in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
 Etheric Networks (past client) got 45 qualified leads in 60 days. "Within just two months, we saw incredible results." Camille, Etheric Networks. We also linked their web forms to their sales team, so every lead got a fast follow-up.
 Your CRM in three steps
 Take the 60-second quiz. See what missed calls may cost your shop.

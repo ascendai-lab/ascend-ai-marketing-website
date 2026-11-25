@@ -10,8 +10,8 @@ You paid for the attention and didn't get the call.
 And when someone does call, the crew is on a job. The call goes to voicemail. The lead goes cold.
 It's frustrating to spend money and not know what worked. A good shop should not lose a job to a voicemail.
 Pages built for one job.
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
-Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI started in 2019. We build landing pages with one offer and one clear next step: call.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
+Our founder, Mark Johnson, has 20+ years building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. We build landing pages with one offer and one clear next step: call.
 Etheric Networks (past client) got 45 qualified leads in 60 days.
 "Within just two months, we saw incredible results." Camille, Etheric Networks
 Miracle Temple C.O.G.I.C. (past client, church website): over $750,000 given online through the giving system we built. We've been their web partner for 12+ years, and we still are.

@@ -1,0 +1,67 @@
+---
+/**
+ * "Pick a time": the GoHighLevel booking calendar (PUBLIC_GHL_CALENDAR_URL), with the call-in line,
+ * the quiz tip and the teardown option beside it. Without a calendar link, a short call request form
+ * stands in, so the page never shows an empty box.
+ */
+import Section from '@components/ui/Section.astro'
+import Btn from '@components/ui/Btn.astro'
+import Icon from '@components/ui/Icon.astro'
+import BookingCalendar from '@components/ui/BookingCalendar.astro'
+import { links, hero } from '@/content/home'
+import type { ServiceSectionCopy } from '@/content/services'
+
+interface Props {
+  section: ServiceSectionCopy
+  phone?: string
+  surface: 'cream' | 'white'
+}
+
+const { section, phone, surface } = Astro.props
+const fields = section.fields ?? {}
+const callLine = fields['Under the calendar']
+const hasCalendar = Boolean(import.meta.env.PUBLIC_GHL_CALENDAR_URL)
+// Without a calendar (a request form shows instead), the line about the calendar waiting doesn't fit.
+const notReady = hasCalendar ? fields['Not ready to book?'] : fields['Not ready to book?']?.replace(/\s*When you're ready to talk, this calendar[^.]*\./, '')
+const tel = phone?.replace(/[^\d+]/g, '')
+---
+
+<Section surface={surface} anchorId="calendar">
+  <div class="split split--top cal">
+    <div class="cal__head" data-reveal>
+      <h2 class="t-h2">{section.heading}</h2>
+    </div>
+    <div class="cal__side">
+      {fields['Tip line'] && (
+        <p class="card surface-deep cal__tip"><Icon name="zap" /><span>{fields['Tip line']} <a class="link" href={links.quiz}>{hero.primary}</a></span></p>
+      )}
+      {callLine && phone && (
+        <p class="cal__call"><Icon name="phone" /><span>{callLine.replace(/\s*\[BUSINESS PHONE\]/, '')} <a class="link" href={`tel:${tel}`}>{phone}</a></span></p>
+      )}
+      {notReady && (
+        <div class="cal__later">
+          <p class="t-h4">Not ready to book?</p>
+          <p>{notReady}</p>
+          <Btn href={links.teardown} variant="link" icon="arrow-ur">Get a free video teardown</Btn>
+        </div>
+      )}
+    </div>
+    <div class="cal__form"><BookingCalendar id="book-calendar" /></div>
+  </div>
+</Section>
+
+<style>
+  /* Phones: heading, then the form, then the extras. Desktop: the form on the right. */
+  .cal { grid-template-areas: 'head' 'form' 'side'; row-gap: var(--space-8); }
+  .cal__head { grid-area: head; }
+  .cal__form { grid-area: form; }
+  .cal__side { grid-area: side; display: grid; gap: var(--space-5); align-content: start; }
+  @media (min-width: 960px) { .cal { grid-template-areas: 'head form' 'side form'; grid-template-rows: auto 1fr; row-gap: var(--space-5); } }
+  .cal__tip { display: flex; gap: var(--space-3); align-items: flex-start; font-size: var(--text-body); color: var(--surface-fg); }
+  .cal__tip :global(.icon), .cal__call :global(.icon) { width: var(--icon-size); height: var(--icon-size); color: var(--color-brand); flex: none; margin-top: 0.15rem; }
+  .cal__tip :global(.icon) { color: var(--color-accent); }
+  .cal__call { display: flex; gap: var(--space-3); font-size: var(--text-body); }
+  .cal__later { display: grid; gap: var(--space-2); padding-top: var(--space-5); border-top: 1px solid var(--surface-line); }
+  .cal__later p:not(.t-h4) { color: var(--surface-muted); }
+  .cal__later :global(.link) { justify-self: start; }
+</style>

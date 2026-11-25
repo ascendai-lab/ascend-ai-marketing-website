@@ -1,0 +1,31 @@
+---
+/** The Evergreen homepage, section by section. Shown until the CMS home page has sections. */
+import HomeHero from './HomeHero.astro'
+import HomeProblem from './HomeProblem.astro'
+import HomeResults from './HomeResults.astro'
+import HomeReviews from './HomeReviews.astro'
+import HomeAbout from './HomeAbout.astro'
+import HomeIncluded from './HomeIncluded.astro'
+import HomePricing from './HomePricing.astro'
+import HomeServices from './HomeServices.astro'
+import StepsSection from '@components/sections/StepsSection.astro'
+import StorySection from '@components/sections/StorySection.astro'
+import NationwideSection from '@components/sections/NationwideSection.astro'
+import FaqSection from '@components/sections/FaqSection.astro'
+import QuizSection from '@components/sections/QuizSection.astro'
+import { steps, success, nationwide, faq, finalCta } from '@/content/home'
+---
+
+<HomeHero />
+<HomeProblem />
+<HomeResults />
+<HomeReviews />
+<HomeAbout />
+<StepsSection anchorId="steps" heading={steps.heading} note={steps.note} items={steps.items} />
+<HomeIncluded />
+<StorySection heading={success.heading} body={success.body} close={success.close} />
+<HomePricing />
+<HomeServices />
+<NationwideSection heading={nationwide.heading} body={[nationwide.body]} climates={nationwide.climates} />
+<FaqSection heading={faq.heading} body={faq.body} items={faq.items} />
+<QuizSection heading={finalCta.heading} />

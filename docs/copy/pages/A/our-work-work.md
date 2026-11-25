@@ -46,8 +46,8 @@ Created the brand from the ground up.
 Designed and built the launch page.
 A new church opened its doors with a full brand and launch page.
 Hundreds of websites. One goal: get the call.
-We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI exists.
-Our founder, Mark Johnson, has more than 20 years of building websites. He has built hundreds of them. Ascend AI started in 2019. Every site we build has one job: turn visitors into calls and booked work.
+We've watched good contractors lose jobs to slow callbacks. We've watched them lose their own websites to agencies. That's why Ascend AI Marketing exists.
+Our founder, Mark Johnson, has more than 20 years of building websites. He has built hundreds of them. Ascend AI Marketing started in 2019. Every site we build has one job: turn visitors into calls and booked work.
 You won't have to guess if it's working.
 Call tracking. Every call shows up in your inbox, and you keep your number.
 One inbox. Every call, text and form lands in one place. You can see each lead and what happened next.
@@ -67,7 +67,7 @@ What kinds of businesses are these?
 Past clients in other fields, like a church, an internet provider and a fence and tree company.
 Are these real clients?
 Yes. Every card is a real past client with real numbers.
-Why should I trust Ascend AI?
+Why should I trust Ascend AI Marketing?
 Our founder has built websites for more than 20 years and has built hundreds of them. And you own your website, domain, Google profile, ad accounts and contact list.
 How will I know if my system is working?
 Every call, text and form lands in your inbox as it comes in. You see it yourself, not in a report you can't read.

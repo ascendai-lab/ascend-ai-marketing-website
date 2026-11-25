@@ -6,13 +6,12 @@ interface Props {
   as?: 'h1' | 'h2'
 }
 
-const { heading, intro, eyebrow, as: Tag = 'h2' } = Astro.props
+const { heading, intro, as: Tag = 'h2' } = Astro.props
 ---
 
 {
   (heading || intro) && (
     <header class="section-header">
-      {eyebrow && <span class="eyebrow">{eyebrow}</span>}
       {heading && <Tag class="section-heading">{heading}</Tag>}
       {intro && <p class="section-intro">{intro}</p>}
     </header>

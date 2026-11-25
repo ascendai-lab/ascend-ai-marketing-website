@@ -10,7 +10,7 @@ Maybe you boosted a few posts and got likes, not jobs. Maybe an agency ran ads, 
 It's frustrating. The homeowners are out there, and you can't reach them. And when one does reach out, a slow reply can lose them. A good shop should not lose a job to a voicemail.
 Meta ads that feed a lead system
 We've watched good contractors spend on ads, then lose the leads to slow follow-up. That's why our Facebook and Instagram ads work best with a lead system that replies in seconds.
-Mark Johnson founded Ascend AI in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
+Mark Johnson founded Ascend AI Marketing in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
 Facebook and Instagram ads in three steps
 Take the 60-second quiz. See what missed calls may cost you before you spend on ads.
 Book a 15-minute call. We look at your slow months and what you want to sell.

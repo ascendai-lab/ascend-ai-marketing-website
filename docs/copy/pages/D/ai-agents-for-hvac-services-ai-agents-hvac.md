@@ -9,8 +9,8 @@ Calls and texts pile up while you're on a job. After hours, they wait until morn
 Hiring another office person costs a lot. And many leads ask the same things. What are your hours? Do you service my area? Can someone look at my AC?
 So you answer at dinner. Or you don't, and the job goes to the next shop. It's tiring, and money slips away. A good shop should not lose a job to a voicemail or an unread text.
 We build AI agents that work inside your rules
-We've watched good contractors lose jobs to slow callbacks. That's why Ascend AI exists. We build AI agents that answer calls and texts and book the visit. Hard cases go to your people.
-Mark Johnson founded Ascend AI in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
+We've watched good contractors lose jobs to slow callbacks. That's why Ascend AI Marketing exists. We build AI agents that answer calls and texts and book the visit. Hard cases go to your people.
+Mark Johnson founded Ascend AI Marketing in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
 Your AI agent in three steps
 Take the 60-second quiz. See what missed calls may cost your shop.
 Book a 15-minute call. We look at the calls and questions your shop gets most.

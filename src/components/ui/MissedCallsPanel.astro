@@ -1,0 +1,26 @@
+---
+/** A phone's call log: three missed calls with no voicemail. Product UI, so it is decorative for screen readers. */
+import Icon from './Icon.astro'
+
+const calls = ['9:12 AM', '11:40 AM', '2:14 PM']
+---
+
+<div class="missed" aria-hidden="true">
+  <p class="missed__day">Today</p>
+  <ul class="ui-panel">
+    {calls.map((time) => (
+      <li class="ui-row"><span class="ui-missed"><Icon name="phone-missed" /></span><div><strong>Missed call</strong><span>{time} · No voicemail</span></div></li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .missed { background: var(--color-green-900); border-radius: var(--radius-xl); padding: var(--space-6); max-width: 26rem; justify-self: end; width: 100%; }
+  .missed__day { color: var(--color-text-inverse-muted); font-size: var(--text-xs); letter-spacing: var(--tracking-label); text-transform: uppercase; margin-bottom: var(--space-3); }
+  .missed .ui-panel { gap: 0; padding: var(--space-2) var(--space-4); }
+  .missed .ui-row { padding: var(--space-3) 0; }
+  .missed .ui-row + .ui-row { border-top: 1px solid var(--color-border); }
+  @media (max-width: 959px) { .missed { justify-self: start; } }
+  /* Tablets: the column is wide, so the call log fills it instead of leaving half of it empty. */
+  @media (min-width: 641px) and (max-width: 959px) { .missed { max-width: none; } }
+</style>

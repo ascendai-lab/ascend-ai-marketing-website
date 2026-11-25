@@ -1,4 +1,4 @@
-# Ascend AI StoryBrand copy: custom software page (version 5)
+# Ascend AI Marketing StoryBrand copy: custom software page (version 5)
 
 ---
 
@@ -7,7 +7,7 @@
 **Slug:** /services/custom-software-hvac
 **Category:** AI Agents and Automation
 
-**SEO title:** Custom Software and CRMs for HVAC Companies | Ascend AI
+**SEO title:** Custom Software and CRMs for HVAC Companies | Ascend AI Marketing
 **SEO description:** Custom CRMs and software for HVAC shops. Built around how you work, owned by you and priced on your needs. It can lower your software bills.
 **Short description:** We build custom software for HVAC shops, like a CRM made for how you work. It can replace tools you rent every month, and you own it.
 
@@ -34,9 +34,9 @@ It's frustrating to pay more every year for tools that don't fit. A good shop sh
 ### 3. About us
 **Heading:** We build tools that fit how your shop works
 
-We've watched good contractors lose jobs to slow callbacks. We've watched them pay too much for tools that don't fit. That's why Ascend AI exists. We build websites, apps and custom tools.
+We've watched good contractors lose jobs to slow callbacks. We've watched them pay too much for tools that don't fit. That's why Ascend AI Marketing exists. We build websites, apps and custom tools.
 
-Mark Johnson founded Ascend AI in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
+Mark Johnson founded Ascend AI Marketing in 2019. He has 20+ years building websites and has built hundreds of them. You get a real team you can reach, not a ticket system.
 
 ### 4. Steps
 **Heading:** Custom software in three steps
